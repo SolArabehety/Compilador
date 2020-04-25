@@ -22,25 +22,28 @@ programa:
 	{printf(" Fin COMPILADOR ok\n");};
 
 est_declaracion:
-	DEFVAR{printf("     DECLARACIONES\n");} declaraciones ENDDEF {printf("    Fin de las Declaraciones\n");}
-        ;
+	DEFVAR{printf("		DECLARACIONES\n");} declaraciones ENDDEF {printf("    Fin de las Declaraciones\n");}
+	;
 
 declaraciones:         	        	
-	     declaracion 
+		declaracion
 	    | declaraciones declaracion
-    	     ;
+		;
 
-declaracion:  
-           lista_var DOSPUNTOS FLOAT 
-           |lista_var DOSPUNTOS INTEGER
-           |lista_var DOSPUNTOS STRING 
-           ;
+declaracion:
+		   type DOSPUNTOS lista_declaracion  {printf("	DECLARACION\n");}
+		   ;
 
-lista_var:  
-	 ID  
-	 |ID COMA lista_var 
- 	 ;
+type:  
+	FLOAT
+	|INTEGER
+	|STRING
+	;
 
+lista_declaracion:  
+				ID P_Y_C lista_declaracion
+				|ID 
+				;
  
 algoritmo: 
          {printf("      COMIENZO de BLOQUES\n");} bloque

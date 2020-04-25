@@ -1,10 +1,10 @@
 DEFVAR
-a,b:FLOAT
-c:INTEGER
-d:FLOAT
-e,f:INTEGER
-g:STRING
+    FLOAT : a1; b1
+    STRING: variable1
+    FLOAT : p1; p2; p3
+    INT:a;b
 ENDDEF
+
 
 const1 = 9.46
 const2 = .6
