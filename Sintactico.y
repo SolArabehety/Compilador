@@ -26,24 +26,24 @@ est_declaracion:
 	;
 
 declaraciones:         	        	
-							declaracion
-							| declaraciones declaracion
-							;
+			declaracion
+			| declaraciones declaracion
+			;
 
 declaracion:
-						type DOSPUNTOS lista_declaracion  {printf("	DECLARACION\n");}
-						;
+			type DOSPUNTOS lista_declaracion  {printf("	DECLARACION\n");}
+			;
 
 type:  
-		FLOAT
-		|INTEGER
-		|STRING
-		;
+	FLOAT
+	|INTEGER
+	|STRING
+	;
 
 lista_declaracion:  
-									ID P_Y_C lista_declaracion
-									|ID 
-									;
+				ID P_Y_C lista_declaracion
+				|ID 
+				;
  
 algoritmo: 
          {printf("      COMIENZO de BLOQUES\n");} bloque
