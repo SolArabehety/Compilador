@@ -1,0 +1,9 @@
+
+------------------------------ TABLA DE  SIMBOLOS ------------------------------
+Nombre: _@b  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
+Nombre: _@c  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
+Nombre: _@d  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
+Nombre: _@f  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
+Nombre: _@g  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
+
+------------------------------ TABLA DE  SIMBOLOS ------------------------------

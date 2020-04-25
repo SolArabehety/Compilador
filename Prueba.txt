@@ -1,9 +1,11 @@
 DEFVAR
-a,b:FLOAT
-c:INTEGER
-d:FLOAT
-e,f:INTEGER
-g:STRING
+
+a,b : FLOAT
+c : INTEGER
+d : FLOAT
+e,f : INTEGER
+g : STRING
+
 ENDDEF
 
 const1 = 9.46
@@ -20,8 +22,14 @@ THEN
 g = "sarasa"
 ENDIF
 
+b = 0
 WHILE(a>2)
 THEN
+	WHILE(b<3)
+		THEN
+		b = b+1
+		ENDWHILE
+
 d = d * 2
 ENDWHILE
 
