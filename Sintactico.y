@@ -59,28 +59,30 @@ programa:
 	};
 
 est_declaracion:
-	DEFVAR{printf("     DECLARACIONES\n");} declaraciones ENDDEF {printf("    Fin de las Declaraciones\n");}
-        ;
+	DEFVAR{printf("		DECLARACIONES\n");} declaraciones ENDDEF {printf("    Fin de las Declaraciones\n");}
+	;
 
 		
-declaraciones:         	        	
-	     declaracion 
-	    | declaraciones declaracion
-    	     ;
+declaraciones:   
+			declaracion
+			| declaraciones declaracion
+			;
+	
 
-declaracion:  
-           lista_var DOSPUNTOS tipo_variable 
-           ;
-
-lista_var:  
-	 ID     {  insertar_ID_en_Tabla($<str_val>$);}
-	 |ID COMA lista_var { insertar_ID_en_Tabla($<str_val>$);}
- 	 ;
+declaracion:
+			tipo_variable DOSPUNTOS lista_declaracion  {printf("	DECLARACION\n");}
+			;
 
 tipo_variable:
 		STRING		{			} 
 	| 	INTEGER 	{					};
 	|	FLOAT		{				} 
+
+lista_declaracion:  
+				ID P_Y_C lista_declaracion {  insertar_ID_en_Tabla($<str_val>$);}
+				|ID  {  insertar_ID_en_Tabla($<str_val>$);}
+				;
+
  
 algoritmo: 
          {printf("      COMIENZO de BLOQUES\n");} bloque
