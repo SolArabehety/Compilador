@@ -1,0 +1,30 @@
+DEFVAR
+a,b:FLOAT
+c:INTEGER
+d:FLOAT
+e,f:INTEGER
+g:STRING
+ENDDEF
+
+const1 = 9.46
+const2 = .6
+const3=6.
+
+a = a+b
+a += b
+d = a+b
+d= e*f
+
+IF(a>b)
+THEN
+g = "sarasa"
+ENDIF
+
+WHILE(a>2)
+THEN
+d = d * 2
+ENDWHILE
+
+WRITE "sarasa"
+READ g
+WRITE g
