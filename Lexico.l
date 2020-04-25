@@ -65,7 +65,7 @@ ENTERO               		{DIGITO}+
 "ENDDEF"   			{return ENDDEF;}
 "FLOAT"   			{return FLOAT;}
 "STRING"   			{return STRING;}
-"INTEGER"   			{return INTEGER;}
+"INT"   			{return INTEGER;}
 "WRITE"   			{return WRITE;}
 "READ"   			{return READ;}
 "COMB"                          {return COMB;}
