@@ -1,8 +1,12 @@
 
 ------------------------------ TABLA DE  SIMBOLOS ------------------------------
-Nombre: _@b1  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
-Nombre: _@variable1  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
-Nombre: _@p3  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
-Nombre: _@b  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
+Nombre: a1  | Tipo: FLOAT   | Valor:  | Limite: 2147483647 | Longitud:  
+Nombre: b1  | Tipo: FLOAT   | Valor:  | Limite: 2147483647 | Longitud:  
+Nombre: variable1  | Tipo: STRING   | Valor:  | Limite: 30 | Longitud:  
+Nombre: p1  | Tipo: FLOAT   | Valor:  | Limite: 2147483647 | Longitud:  
+Nombre: p2  | Tipo: FLOAT   | Valor:  | Limite: 2147483647 | Longitud:  
+Nombre: p3  | Tipo: FLOAT   | Valor:  | Limite: 2147483647 | Longitud:  
+Nombre: a  | Tipo: INTEGER   | Valor:  | Limite: 32768 | Longitud:  
+Nombre: b  | Tipo: INTEGER   | Valor:  | Limite: 32768 | Longitud:  
 
 ------------------------------ TABLA DE  SIMBOLOS ------------------------------

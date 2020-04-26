@@ -11,15 +11,7 @@
 int yystopparser=0;
 FILE  *yyin;
 
-
-#define LIM_REAL 2147483647
-#define LIM_INT 32768
-#define LIM_STR 30
-
-
-// char tokens[100][100];  
-// int indexTokens = 0; 	
-// void guardarTokens(char*);
+int tipo;
 
 %}
 
@@ -48,8 +40,8 @@ est_declaracion:
 
 		
 declaraciones:   
-			declaracion
-			| declaraciones declaracion
+				declaraciones declaracion
+			 |	declaracion
 			;
 	
 
@@ -58,15 +50,22 @@ declaracion:
 			;
 
 tipo_variable:
-		STRING		{			} 
-	| 	INTEGER 	{					};
-	|	FLOAT		{				} 
+		STRING		{tipo = 1; } 
+	| 	INTEGER 	{tipo = 2;}
+	|	FLOAT		{tipo = 3;} 
+
 
 lista_declaracion:  
-				ID P_Y_C lista_declaracion {  insertar_ID_en_Tabla($<str_val>$);}
-				|ID  {  insertar_ID_en_Tabla($<str_val>$);}
-				;
+				lista_declaracion P_Y_C  ID  
+					{  
+						insertar_ID_en_Tabla($<str_val>$, tipo);
+					}
+				|ID  
+					{  
+						insertar_ID_en_Tabla($<str_val>$, tipo);
+					};
 
+ 
  
 algoritmo: 
          {printf("      COMIENZO de BLOQUES\n");} bloque
@@ -176,3 +175,5 @@ int yyerror(void)
 	 system ("Pause");
 	 exit (1);
      }
+
+

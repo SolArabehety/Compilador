@@ -4,6 +4,10 @@
 #include <conio.h>
 #include <stdio.h>
 
+#define LIM_REAL 2147483647
+#define LIM_INT 32768
+#define LIM_STR 30
+
 typedef struct 
 {   char nombre[100];
     char tipo  [11];
@@ -13,8 +17,7 @@ typedef struct
 } tablaDeSimbolos;
 
 void guardarTOS();
-void asignarTipo(int);
-void insertar_ID_en_Tabla(char*);
+void insertar_ID_en_Tabla(char*, int);
 int buscarEnTOSID(char*);
 
 int TOStop = 0;	
@@ -48,15 +51,35 @@ void guardarTOS()
 	  }
 }
 
-void insertar_ID_en_Tabla(char* token)
+
+// tipo = 1 - STRING
+// tiop = 2 - INTEGER
+// tipo = 3 - FLOAT
+void insertar_ID_en_Tabla(char* token, int tipo)
 {
-	char aux[100];
-	strcpy(aux,"_@");
-	strcat(aux, token);
-	if(!buscarEnTOSID(aux))
+	if(!buscarEnTOSID(token))
 	{
-		strcpy(TOS[TOStop].nombre, aux);
-		strcpy(TOS[TOStop].tipo,"ID" );
+		strcpy(TOS[TOStop].nombre, token);
+		
+		switch(tipo){
+		case 1:
+			strcpy(TOS[TOStop].tipo, "STRING");
+			TOS[TOStop].limite = LIM_STR;
+		break;
+		
+		case 2:
+			strcpy(TOS[TOStop].tipo, "INTEGER");
+			TOS[TOStop].limite = LIM_INT;
+		break;
+		
+		case 3:
+			strcpy(TOS[TOStop].tipo, "FLOAT");
+				TOS[TOStop].limite = LIM_REAL;
+		break;
+			
+		}
+	
+		
 		TOStop++;
 	}
 }
