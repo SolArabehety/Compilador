@@ -1,12 +1,19 @@
 
 ------------------------------ TABLA DE  SIMBOLOS ------------------------------
-Nombre: a1  | Tipo: FLOAT   | Valor:  | Limite: 2147483647 | Longitud:  
-Nombre: b1  | Tipo: FLOAT   | Valor:  | Limite: 2147483647 | Longitud:  
-Nombre: variable1  | Tipo: STRING   | Valor:  | Limite: 30 | Longitud:  
-Nombre: p1  | Tipo: FLOAT   | Valor:  | Limite: 2147483647 | Longitud:  
-Nombre: p2  | Tipo: FLOAT   | Valor:  | Limite: 2147483647 | Longitud:  
-Nombre: p3  | Tipo: FLOAT   | Valor:  | Limite: 2147483647 | Longitud:  
-Nombre: a  | Tipo: INTEGER   | Valor:  | Limite: 32768 | Longitud:  
-Nombre: b  | Tipo: INTEGER   | Valor:  | Limite: 32768 | Longitud:  
+Nombre: a1  | Tipo: FLOAT   | Valor:    | Longitud:  
+Nombre: b1  | Tipo: FLOAT   | Valor:    | Longitud:  
+Nombre: variable1  | Tipo: STRING   | Valor:    | Longitud:  
+Nombre: p1  | Tipo: FLOAT   | Valor:    | Longitud:  
+Nombre: p2  | Tipo: FLOAT   | Valor:    | Longitud:  
+Nombre: p3  | Tipo: FLOAT   | Valor:    | Longitud:  
+Nombre: a  | Tipo: INTEGER   | Valor:    | Longitud:  
+Nombre: b  | Tipo: INTEGER   | Valor:    | Longitud:  
+Nombre: const1  | Tipo: CONST_REAL   | Valor: 9.460000   | Longitud:  
+Nombre: const2  | Tipo: CONST_REAL   | Valor: 0.600000   | Longitud:  
+Nombre: const3  | Tipo: CONST_REAL   | Valor: 6.000000   | Longitud:  
+Nombre: test_expr  | Tipo: CONST_INT   | Valor: 2   | Longitud:  
+Nombre:   | Tipo: CONST_STRING   | Valor: "sarasa"   | Longitud: 8 
+Nombre: d  | Tipo: CONST_INT   | Valor: 2   | Longitud:  
+Nombre:   | Tipo: CONST_STRING   | Valor: g   | Longitud: 1 
 
 ------------------------------ TABLA DE  SIMBOLOS ------------------------------

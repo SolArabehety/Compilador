@@ -14,6 +14,7 @@ extern int yylineno;
 
 
 int tipo;
+char* nombreToken;
 
 char* decs[LIM_SIMBOLOS];       // Declaraciones
 int decsIndex = 0;              // Indice de declaraciones
@@ -87,8 +88,8 @@ algoritmo:
     ;
 
 bloque:  
-    sentencia
-    | bloque sentencia
+	bloque sentencia
+    | sentencia
     ;
 
 sentencia:
@@ -106,8 +107,9 @@ ciclo:
     | WHILE P_A condicion P_C THEN  { printf("     WHILE THEN ENDWHILE\n"); } bloque ENDWHILE
     ;
 
+// TEMA ESPECIAL: ASIGNACIONES ESPECIALES 
 asignacion: 
-    ID ASIG expresion           { printf("    ASIGNACION\n"); }
+    ID ASIG {nombreToken = $1;} expresion        
     | ID ASIG_MAS expresion     { printf("    ASIGNACION +=\n"); }
     | ID ASIG_MEN expresion     { printf("    ASIGNACION -=\n"); }
     | ID ASIG_MULT expresion    { printf("    ASIGNACION +=\n"); }
@@ -115,7 +117,11 @@ asignacion:
     ;
 
 salida_pantalla:
-    WRITE expresion             { printf("    SALIDA_PANTALLA\n"); }
+    WRITE expresion             
+		{ 
+			printf("    SALIDA_PANTALLA\n"); 
+			insertar_STRING_en_Tabla($<str_val>2);
+		}
     ;
 
 ingreso_valor:
@@ -149,9 +155,9 @@ comparacion:
     ;
 
 expresion:
-    termino
-    | expresion OP_SUMA termino
+      expresion OP_SUMA termino
     | expresion OP_RESTA termino
+	| termino
     ;
 
 termino: 
@@ -161,11 +167,26 @@ termino:
     ;
 
 factor: 
-    ID
-    | REAL
-    | ENTERO  
+    P_A expresion P_C
+    
+	| ID 
+		{
+			
+		}
+    
+	| REAL		
+		{
+			insertar_REAL_en_Tabla(nombreToken, $<float_val>$);
+		}
+		
+    | ENTERO    
+		{	
+			insertar_ENTERO_en_Tabla(nombreToken,$<int_val>$);
+		}
     | CADENA
-    | P_A expresion P_C
+		{
+			insertar_STRING_en_Tabla($<str_val>$);
+		}
     ;
 
 %%
