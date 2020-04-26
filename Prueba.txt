@@ -4,7 +4,6 @@ DEFVAR
     STRING: variable1
     FLOAT : p1; p2; p3
     INT:a;b
-
 ENDDEF
 
 
