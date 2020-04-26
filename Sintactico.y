@@ -7,29 +7,29 @@
 #include "y.tab.h"
 #include "tabla_simbolos.h"
 
-#define LIM_REAL 			2147483647
-#define LIM_INT 			32768
-#define LIM_STR 			30
+#define LIM_REAL            2147483647
+#define LIM_INT             32768
+#define LIM_STR             30
 
 int yystopparser=0;
 FILE *yyin;
 extern int yylineno;
 
-char* decs[LIM_SIMBOLOS];			// Declaraciones
-int decsIndex = 0;					// Indice de declaraciones
+char* decs[LIM_SIMBOLOS];       // Declaraciones
+int decsIndex = 0;              // Indice de declaraciones
 
 void validarIdDeclaracion(char*);
 
 // char tokens[100][100];  
-// int indexTokens = 0; 	
+// int indexTokens = 0;     
 // void guardarTokens(char*);
 
 %}
 
 %union {
-	int int_val;
-	double float_val;
-	char *str_val;
+    int int_val;
+    double float_val;
+    char *str_val;
 }
 
 %token ID COMENTARIO_INICIO COMENTARIO_FIN COMENTARIOS CADENA REAL ENTERO 
@@ -40,157 +40,154 @@ void validarIdDeclaracion(char*);
 %type <str_val> ID
 %%
 
-programa:  	   
-	{ printf("Inicia COMPILADOR\n");} 
-	est_declaracion algoritmo    
-	{	guardarTOS();
-		printf("Fin COMPILADOR ok\n");
-	};
+programa:         
+    {   printf("Inicia COMPILADOR\n"); } 
+    est_declaracion algoritmo    
+    {   guardarTOS();
+        printf("Fin COMPILADOR ok\n");
+    };
 
 est_declaracion:
-	DEFVAR{printf("		DECLARACIONES\n");} declaraciones ENDDEF {printf("    Fin de las Declaraciones\n");}
-	;
+    DEFVAR  { printf("        DECLARACIONES\n"); } declaraciones ENDDEF { printf("    Fin de las Declaraciones\n"); }
+    ;
 
-		
+        
 declaraciones:   
-			declaracion
-			| declaraciones declaracion
-			;
-	
+    declaracion
+    | declaraciones declaracion
+    ;
+    
 
 declaracion:
-			tipo_variable DOSPUNTOS lista_declaracion  {printf("	DECLARACION\n");}
-			;
+    tipo_variable DOSPUNTOS lista_declaracion  {printf("    DECLARACION\n");}
+    ;
 
 tipo_variable:
-		STRING		{			} 
-	| 	INTEGER 	{					};
-	|	FLOAT		{				} 
+    STRING          {     } 
+    | INTEGER       {     }
+    | FLOAT         {     } 
+    ;
 
 lista_declaracion:  
-				lista_declaracion P_Y_C ID  { validarIdDeclaracion($3); insertar_ID_en_Tabla($<str_val>$);}
-				|ID  { validarIdDeclaracion($1); insertar_ID_en_Tabla($<str_val>$);}
-				;
+    lista_declaracion P_Y_C ID  { validarIdDeclaracion($3); insertar_ID_en_Tabla($<str_val>$); }
+    | ID  { validarIdDeclaracion($1); insertar_ID_en_Tabla($<str_val>$); }
+    ;
 
  
 algoritmo: 
-         {printf("      COMIENZO de BLOQUES\n");} bloque
-         ;
+    { printf("      COMIENZO de BLOQUES\n"); } bloque
+    ;
 
 bloque:  
-      sentencia
-      |bloque sentencia
-      ;
+    sentencia
+    | bloque sentencia
+    ;
 
 sentencia:
-	 ciclo
-	 |seleccion  
-	 |asignacion
-	 |salida_pantalla
-         |ingreso_valor      
-	 |factorial
-	 |combinatorio
-	 ;
+    ciclo
+    | seleccion  
+    | asignacion
+    | salida_pantalla
+    | ingreso_valor      
+    | factorial
+    | combinatorio
+    ;
 
 ciclo:
-     WHILE P_A condicion P_C { printf("     WHILE\n");} LL_A bloque LL_C
-     | WHILE P_A condicion P_C THEN  { printf("     WHILE THEN ENDWHILE\n");} bloque ENDWHILE
-          ;
+    WHILE P_A condicion P_C         { printf("     WHILE\n"); } LL_A bloque LL_C
+    | WHILE P_A condicion P_C THEN  { printf("     WHILE THEN ENDWHILE\n"); } bloque ENDWHILE
+    ;
 
 asignacion: 
-          ID ASIG expresion {printf("    ASIGNACION\n");}
-	  | ID ASIG_MAS expresion  {printf("    ASIGNACION +=\n");}
-	  | ID ASIG_MEN expresion  {printf("    ASIGNACION -=\n");}
-	  | ID ASIG_MULT expresion  {printf("    ASIGNACION +=\n");}
-	  | ID ASIG_DIV expresion  {printf("    ASIGNACION +=\n");}
-	  ;
+    ID ASIG expresion           { printf("    ASIGNACION\n"); }
+    | ID ASIG_MAS expresion     { printf("    ASIGNACION +=\n"); }
+    | ID ASIG_MEN expresion     { printf("    ASIGNACION -=\n"); }
+    | ID ASIG_MULT expresion    { printf("    ASIGNACION +=\n"); }
+    | ID ASIG_DIV expresion     { printf("    ASIGNACION +=\n"); }
+    ;
 
 salida_pantalla:
-	WRITE expresion {printf("    SALIDA_PANTALLA\n");}
-	;
+    WRITE expresion             { printf("    SALIDA_PANTALLA\n"); }
+    ;
 
 ingreso_valor:
-	READ factor  {printf("    INGRESO_VALOR_READ\n");}
-	;
+    READ factor                 { printf("    INGRESO_VALOR_READ\n"); }
+    ;
 
 factorial:
-	FACT P_A expresion P_C {printf("    FACTORIAL\n");}
-	;
+    FACT P_A expresion P_C      { printf("    FACTORIAL\n"); }
+    ;
 
 combinatorio:
-	COMB P_A expresion COMA expresion P_C {printf("    FACTORIAL\n");}	
-	;
+    COMB P_A expresion COMA expresion P_C { printf("    FACTORIAL\n"); }    
+    ;
 
 seleccion: 
-    	 IF  P_A condicion P_C LL_A bloque LL_C {printf("     IF\n");}
-        | IF P_A condicion P_C THEN bloque ENDIF {printf("     IF THEN END IF\n");}
-	| IF P_A condicion P_C LL_A bloque LL_C ELSE LL_A bloque LL_C {printf("     IF con ELSE\n");}	 
-;
+    IF  P_A condicion P_C LL_A bloque LL_C                          { printf("     IF\n"); }
+    | IF P_A condicion P_C THEN bloque ENDIF                        { printf("     IF THEN END IF\n"); }
+    | IF P_A condicion P_C LL_A bloque LL_C ELSE LL_A bloque LL_C   { printf("     IF con ELSE\n"); }     
+    ;
 
 condicion:
-         comparacion 
-	 ;
+    comparacion 
+    ;
 
 comparacion:
-	 expresion OP_MAY_IG expresion
-	 |expresion OP_MEN_IG expresion
-	 |expresion OP_MEN expresion
-	 |expresion OP_MAY expresion
-	 |expresion OP_DISTINTO expresion
-	   ;
+    expresion OP_MAY_IG expresion
+    | expresion OP_MEN_IG expresion
+    | expresion OP_MEN expresion
+    | expresion OP_MAY expresion
+    | expresion OP_DISTINTO expresion
+    ;
 
 expresion:
-         termino
-	 |expresion OP_SUMA termino
-	 |expresion OP_RESTA termino
- 	 ;
+    termino
+    | expresion OP_SUMA termino
+    | expresion OP_RESTA termino
+    ;
 
 termino: 
-       factor
-       |termino OP_MUL factor
-       |termino OP_DIV factor
-       ;
+    factor
+    | termino OP_MUL factor
+    | termino OP_DIV factor
+    ;
 
 factor: 
-      ID
-      | REAL
-      | ENTERO  
-      | CADENA
-			| P_A expresion P_C
-      ;
+    ID
+    | REAL
+    | ENTERO  
+    | CADENA
+    | P_A expresion P_C
+    ;
 
 %%
-int main(int argc,char *argv[])
-{
-  if ((yyin = fopen(argv[1], "rt")) == NULL)
-  {
-	printf("\nNo se puede abrir el archivo: %s\n", argv[1]);
-  }
-  else
-  {
-	yyparse();
-  }
-  fclose(yyin);
-  return 0;
+int main(int argc,char *argv[]) {
+    if ((yyin = fopen(argv[1], "rt")) == NULL) {
+        printf("\nNo se puede abrir el archivo: %s\n", argv[1]);
+    } else {
+        yyparse();
+    }
+
+    fclose(yyin);
+    return 0;
 }
 
-int yyerror(void)
-     {
-       printf("Syntax Error\n");
-	 system ("Pause");
-	 exit (1);
-     }
+int yyerror(void) {
+    printf("Syntax Error\n");
+    system ("Pause");
+    exit (1);
+}
 
 void validarIdDeclaracion(char* id) {
-	int i;
+    int i;
 
-	for(i = 0; i < decsIndex; i++) {
-		if(strcmp(decs[i], id) == 0) {
-			printf("\nError en la linea %d: El ID '%s' ya ha sido declarado.\n", yylineno, id);
-			exit(1);
-		}
-	}
+    for(i = 0; i < decsIndex; i++) {
+        if(strcmp(decs[i], id) == 0) {
+            printf("\nError en la linea %d: El ID '%s' ya ha sido declarado.\n", yylineno, id);
+            exit(1);
+        }
+    }
 
-	decs[decsIndex] = strdup(id);
-	decsIndex++;
+    decs[decsIndex] = strdup(id);
+    decsIndex++;
 }
