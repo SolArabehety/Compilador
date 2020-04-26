@@ -5,10 +5,17 @@
 #include <string.h>
 #include <math.h>
 #include "y.tab.h"
+
 FILE  *yyin;
-int yylval;
-char *yyltext;
-char *yytext;
+
+
+#define LIM_STR 30
+#define LIM_ID 30
+
+int validarLongitud(int);
+void mostrarError(char *);
+
+char auxS[100];
 
 %}
 %option noyywrap  
@@ -71,31 +78,76 @@ ENTERO               		{DIGITO}+
 "COMB"                          {return COMB;}
 "FACT"                          {return FACT;}
 
-{ID}				{return ID;}
-{ENTERO}		{	int num = atoi(yytext); 		
-				if(num >= 0 && num <= 65535){
+{ID}			{   sprintf(auxS,"%s", yytext);
+					if(validarLongitud(ID) == 0) 
+						mostrarError(yytext);
+					yylval.str_val=auxS;
+					return ID;
+				}
+
+{ENTERO}		{	if(validarLongitud(ENTERO) == 0) 
+						mostrarError(yytext);
+					sscanf(yytext,"%d",&(yylval.int_val));
 					return ENTERO;
 				}
-				else	{
-					printf("Error. Integer fuera de rango.\n");
-					system ("Pause");
-					exit(1);
-				} 
-			}
-{CADENA} 			{return CADENA;}
-{REAL} 			{	double num = atof(yytext);
-				double cotaMayor = (3.4)*(exp(38));			
-				if(num >= 0 && num <= cotaMayor){
-					return REAL; 
+				
+{CADENA} 		{	if(validarLongitud(CADENA) == 0) 
+						mostrarError(yytext);
+					sprintf(auxS,"%s", yytext);
+					yylval.str_val=auxS; 
+					return CADENA;}
+
+{REAL} 			{	
+					if(validarLongitud(REAL) == 0) 
+						mostrarError(yytext);
+					sscanf(yytext,"%lf",&(yylval.float_val));
+					return REAL;
 				}
-				else{
-					printf("Error. Real fuera de rango.\n");
-			 		system ("Pause");
-					exit(2);
-				}
-			}
+				
+			
 
 {COMENTARIOS}
 "\n"      		
 "\t"		
+%%
+
+void mostrarError(char *mensaje) {
+  printf("ERROR!!!: %s\n", mensaje);
+  system ("Pause");
+  exit(2);
+}
+
+int validarLongitud(int tipo){
+	int entero;
+	int real;
+	switch(tipo){
+		case ENTERO:
+			sscanf(yytext,"%d",&entero);
+			if(entero >= 0 && entero <= 65535)
+				return 1;
+			return 0;
+			break;
+		case CADENA:
+			if(strlen(yytext) <= LIM_STR) 
+				return 1;
+			return 0;
+			break;
+		case REAL:
+			sscanf(yytext,"%lf",&real);
+			double num = atof(yytext);
+			double cotaMayor = (3.4)*(exp(38));			
+			if(num >= 0 && num <= cotaMayor)
+				return 1; 
+						
+			return 0;
+			break;
+		case ID:
+			if(strlen(yytext) <= LIM_ID)
+				return 1;
+			return 0;
+			break;
+	}
+	return 0;
+}
+
  

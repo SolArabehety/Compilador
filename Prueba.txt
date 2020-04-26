@@ -1,8 +1,10 @@
 DEFVAR
+
     FLOAT : a1; b1
     STRING: variable1
     FLOAT : p1; p2; p3
     INT:a;b
+
 ENDDEF
 
 
@@ -20,8 +22,14 @@ THEN
 g = "sarasa"
 ENDIF
 
+b = 0
 WHILE(a>2)
 THEN
+	WHILE(b<3)
+		THEN
+		b = b+1
+		ENDWHILE
+
 d = d * 2
 ENDWHILE
 
