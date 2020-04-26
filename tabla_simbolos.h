@@ -4,6 +4,8 @@
 #include <conio.h>
 #include <stdio.h>
 
+#define LIM_SIMBOLOS 	100 // Cantidad de símbolos que va a poder manejar la tabla
+
 typedef struct 
 {   char nombre[100];
     char tipo  [11];
@@ -18,7 +20,7 @@ void insertar_ID_en_Tabla(char*);
 int buscarEnTOSID(char*);
 
 int TOStop = 0;	
-tablaDeSimbolos TOS[100];
+tablaDeSimbolos TOS[LIM_SIMBOLOS];
 
 void guardarTOS()
 {

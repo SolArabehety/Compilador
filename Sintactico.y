@@ -7,15 +7,18 @@
 #include "y.tab.h"
 #include "tabla_simbolos.h"
 
+#define LIM_REAL 			2147483647
+#define LIM_INT 			32768
+#define LIM_STR 			30
 
 int yystopparser=0;
-FILE  *yyin;
+FILE *yyin;
+extern int yylineno;
 
+char* decs[LIM_SIMBOLOS];			// Declaraciones
+int decsIndex = 0;					// Indice de declaraciones
 
-#define LIM_REAL 2147483647
-#define LIM_INT 32768
-#define LIM_STR 30
-
+void validarIdDeclaracion(char*);
 
 // char tokens[100][100];  
 // int indexTokens = 0; 	
@@ -33,6 +36,8 @@ FILE  *yyin;
 %token OP_SUMA OP_RESTA OP_MUL OP_DIV ASIG P_A P_C LL_A LL_C P_Y_C COMA OP_MAY_IG OP_MEN_IG 
 %token OP_MAY OP_MEN OP_DISTINTO C_A C_C DOSPUNTOS OP_IGUAL ASIG_MAS ASIG_MEN ASIG_MULT ASIG_DIV
 %token DEFVAR ENDDEF WRITE IF THEN ELSE ENDIF WHILE ENDWHILE FLOAT INTEGER AND OR NOT STRING READ COMB FACT
+
+%type <str_val> ID
 %%
 
 programa:  	   
@@ -63,8 +68,8 @@ tipo_variable:
 	|	FLOAT		{				} 
 
 lista_declaracion:  
-				ID P_Y_C lista_declaracion {  insertar_ID_en_Tabla($<str_val>$);}
-				|ID  {  insertar_ID_en_Tabla($<str_val>$);}
+				lista_declaracion P_Y_C ID  { validarIdDeclaracion($3); insertar_ID_en_Tabla($<str_val>$);}
+				|ID  { validarIdDeclaracion($1); insertar_ID_en_Tabla($<str_val>$);}
 				;
 
  
@@ -169,10 +174,23 @@ int main(int argc,char *argv[])
   return 0;
 }
 
-
 int yyerror(void)
      {
        printf("Syntax Error\n");
 	 system ("Pause");
 	 exit (1);
      }
+
+void validarIdDeclaracion(char* id) {
+	int i;
+
+	for(i = 0; i < decsIndex; i++) {
+		if(strcmp(decs[i], id) == 0) {
+			printf("\nError en la linea %d: El ID '%s' ya ha sido declarado.\n", yylineno, id);
+			exit(1);
+		}
+	}
+
+	decs[decsIndex] = strdup(id);
+	decsIndex++;
+}
