@@ -1,8 +1,12 @@
 
 ------------------------------ TABLA DE  SIMBOLOS ------------------------------
+Nombre: _@a1  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
 Nombre: _@b1  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
 Nombre: _@variable1  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
+Nombre: _@p1  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
+Nombre: _@p2  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
 Nombre: _@p3  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
+Nombre: _@a  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
 Nombre: _@b  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
 
 ------------------------------ TABLA DE  SIMBOLOS ------------------------------

@@ -4,7 +4,6 @@ DEFVAR
     STRING: variable1
     FLOAT : p1; p2; p3
     INT:a;b
-
 ENDDEF
 
 
@@ -16,6 +15,7 @@ a = a+b
 a += b
 d = a+b
 d= e*f
+test_expr = (2 + 5) * 3
 
 IF(a>b)
 THEN
