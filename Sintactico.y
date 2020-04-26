@@ -167,6 +167,7 @@ factor:
       | REAL
       | ENTERO  
       | CADENA
+			| P_A expresion P_C
       ;
 
 %%

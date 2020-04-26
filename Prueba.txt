@@ -16,6 +16,7 @@ a = a+b
 a += b
 d = a+b
 d= e*f
+test_expr = (2 + 5) * 3
 
 IF(a>b)
 THEN
