@@ -33,12 +33,12 @@ ENTERO               		{DIGITO}+
 %%
 
 "="				{return ASIG;}
-"+="				{return ASIG_MAS;}
-"-="				{return ASIG_MEN;}
-"*="				{return ASIG_MULT;}
-"/="			        {return ASIG_DIV;}
-"=="				{return OP_IGUAL;}
-"!="				{return OP_DISTINTO;}
+"+="			{return ASIG_MAS;}
+"-="			{return ASIG_MEN;}
+"*="			{return ASIG_MULT;}
+"/="			{return ASIG_DIV;}
+"=="			{return OP_IGUAL;}
+"!="			{return OP_DISTINTO;}
 "+"				{return OP_SUMA;}
 "-"				{return OP_RESTA;}
 "*"				{return OP_MUL;}
@@ -46,37 +46,37 @@ ENTERO               		{DIGITO}+
 "("				{return P_A;}
 ")"				{return P_C;}
 ";"				{return P_Y_C;}             
-":"         			{return DOSPUNTOS;}
-","         			{return COMA;}
-"{"         			{return LL_A;}
-"}"         			{return LL_C;}
-"["         			{return C_A;}
-"]"         			{return C_C;}
-"***/"        			{return COMENTARIO_INICIO;}
-"/***"        			{return COMENTARIO_FIN; }
-">" 				{return OP_MAY; } 
-">=" 				{return OP_MAY_IG; } 
-"<" 				{return OP_MEN; } 
-"<=" 				{return OP_MEN_IG; } 
+":"         	{return DOSPUNTOS;}
+","         	{return COMA;}
+"{"         	{return LL_A;}
+"}"         	{return LL_C;}
+"["         	{return C_A;}
+"]"         	{return C_C;}
+"***/"        	{return COMENTARIO_INICIO;}
+"/***"        	{return COMENTARIO_FIN; }
+">" 			{return OP_MAY; } 
+">=" 			{return OP_MAY_IG; } 
+"<" 			{return OP_MEN; } 
+"<=" 			{return OP_MEN_IG; } 
 			
-"IF"   				{return IF;}
-"THEN"   			{return THEN;}
-"ELSE"   			{return ELSE;}
-"ENDIF"   			{return ENDIF;}
-"WHILE"   			{return WHILE;}
-"ENDWHILE"			{return ENDWHILE;}
-"AND"   			{return AND;}
-"OR"   				{return OR;}
-"NOT"				{return NOT;}
-"DEFVAR"   			{return DEFVAR;}
-"ENDDEF"   			{return ENDDEF;}
-"FLOAT"   			{return FLOAT;}
-"STRING"   			{return STRING;}
-"INT"   			{return INTEGER;}
-"WRITE"   			{return WRITE;}
-"READ"   			{return READ;}
-"COMB"                          {return COMB;}
-"FACT"                          {return FACT;}
+"IF"   			{return IF;}
+"THEN"   		{return THEN;}
+"ELSE"   		{return ELSE;}
+"ENDIF"   		{return ENDIF;}
+"WHILE"   		{return WHILE;}
+"ENDWHILE"		{return ENDWHILE;}
+"AND"   		{return AND;}
+"OR"   			{return OR;}
+"NOT"			{return NOT;}
+"DEFVAR"   		{return DEFVAR;}
+"ENDDEF"   		{return ENDDEF;}
+"FLOAT"   		{return FLOAT;}
+"STRING"   		{return STRING;}
+"INT"   		{return INTEGER;}
+"WRITE"   		{return WRITE;}
+"READ"			{return READ;}
+"COMB"			{return COMB;}
+"FACT"			{return FACT;}
 
 {ID}			{   sprintf(auxS,"%s", yytext);
 					if(validarLongitud(ID) == 0) 
@@ -117,10 +117,10 @@ void mostrarError(char *mensaje) {
   exit(2);
 }
 
-int validarLongitud(int tipo){
+int validarLongitud(int tipo) {
 	int entero;
 	int real;
-	switch(tipo){
+	switch(tipo) {
 		case ENTERO:
 			sscanf(yytext,"%d",&entero);
 			if(entero >= 0 && entero <= 65535)
