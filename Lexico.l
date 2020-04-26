@@ -23,13 +23,13 @@ char auxS[100];
 
 DIGITO				[0-9]
 LETRA				[a-zA-Z]
-ID				{LETRA}({LETRA}|{DIGITO}|_)*
-COMENTARIO_INICIO 		"***/"
-COMENTARIO_FIN 			"/***"
+ID					{LETRA}({LETRA}|{DIGITO}|_)*
+COMENTARIO_INICIO	"***/"
+COMENTARIO_FIN		"/***"
 COMENTARIOS			COMENTARIO_INICIO[^"\n]+COMENTARIO_FIN
-CADENA               		\"[^"\n]+\"
-REAL              		({DIGITO}*"."{DIGITO}+)|("."{DIGITO}+)|({DIGITO}+"."{DIGITO}*)
-ENTERO               		{DIGITO}+
+CADENA				\"[^"\n]+\"
+REAL				({DIGITO}*"."{DIGITO}+)|("."{DIGITO}+)|({DIGITO}+"."{DIGITO}*)
+entero				{DIGITO}+
 %%
 
 "="				{return ASIG;}
@@ -45,40 +45,40 @@ ENTERO               		{DIGITO}+
 "/"				{return OP_DIV;}
 "("				{return P_A;}
 ")"				{return P_C;}
-";"				{return P_Y_C;}             
-":"         	{return DOSPUNTOS;}
-","         	{return COMA;}
-"{"         	{return LL_A;}
-"}"         	{return LL_C;}
-"["         	{return C_A;}
-"]"         	{return C_C;}
-"***/"        	{return COMENTARIO_INICIO;}
-"/***"        	{return COMENTARIO_FIN; }
+";"				{return P_Y_C;}
+":"				{return DOSPUNTOS;}
+","				{return COMA;}
+"{"				{return LL_A;}
+"}"				{return LL_C;}
+"["				{return C_A;}
+"]"				{return C_C;}
+"***/"			{return COMENTARIO_INICIO;}
+"/***"			{return COMENTARIO_FIN; }
 ">" 			{return OP_MAY; } 
 ">=" 			{return OP_MAY_IG; } 
 "<" 			{return OP_MEN; } 
 "<=" 			{return OP_MEN_IG; } 
 			
-"IF"   			{return IF;}
-"THEN"   		{return THEN;}
-"ELSE"   		{return ELSE;}
-"ENDIF"   		{return ENDIF;}
-"WHILE"   		{return WHILE;}
+"IF"			{return IF;}
+"THEN"			{return THEN;}
+"ELSE"			{return ELSE;}
+"ENDIF"			{return ENDIF;}
+"WHILE"			{return WHILE;}
 "ENDWHILE"		{return ENDWHILE;}
-"AND"   		{return AND;}
-"OR"   			{return OR;}
+"AND"			{return AND;}
+"OR"			{return OR;}
 "NOT"			{return NOT;}
-"DEFVAR"   		{return DEFVAR;}
-"ENDDEF"   		{return ENDDEF;}
-"FLOAT"   		{return FLOAT;}
-"STRING"   		{return STRING;}
-"INT"   		{return INTEGER;}
-"WRITE"   		{return WRITE;}
+"DEFVAR"		{return DEFVAR;}
+"ENDDEF"		{return ENDDEF;}
+"FLOAT"			{return FLOAT;}
+"STRING"		{return STRING;}
+"INT"			{return INTEGER;}
+"WRITE"			{return WRITE;}
 "READ"			{return READ;}
 "COMB"			{return COMB;}
 "FACT"			{return FACT;}
 
-{ID}			{   sprintf(auxS,"%s", yytext);
+{ID}			{	sprintf(auxS,"%s", yytext);
 					if(validarLongitud(ID) == 0) 
 						mostrarError(yytext);
 					yylval.str_val=auxS;
