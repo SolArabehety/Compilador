@@ -28,7 +28,7 @@ COMENTARIO_INICIO 		"***/"
 COMENTARIO_FIN 			"/***"
 COMENTARIOS			COMENTARIO_INICIO[^"\n]+COMENTARIO_FIN
 CADENA               		\"[^"\n]+\"
-REAL              		({DIGITO}*"."{DIGITO}+)|("."{DIGITO}+)
+REAL              		({DIGITO}*"."{DIGITO}+)|("."{DIGITO}+)|({DIGITO}+"."{DIGITO}*)
 ENTERO               		{DIGITO}+
 %%
 
