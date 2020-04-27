@@ -113,7 +113,7 @@ ciclo:
     ;
 
 declaracion_constante:
-    CONST ID { strcpy(nombreToken, $2); } ASIG expresion
+    CONST ID { validarIdDeclaracion($2); strcpy(nombreToken, $2); } ASIG expresion
     ;
 
 // TEMA ESPECIAL: ASIGNACIONES ESPECIALES 
