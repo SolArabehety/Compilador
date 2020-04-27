@@ -32,7 +32,7 @@ REAL                ({DIGITO}*"."{DIGITO}+)|("."{DIGITO}+)|({DIGITO}+"."{DIGITO}
 ENTERO              {DIGITO}+
 %%
 
-"="             {return ASIG;}
+":="             {return ASIG;}
 "+="            {return ASIG_MAS;}
 "-="            {return ASIG_MEN;}
 "*="            {return ASIG_MULT;}

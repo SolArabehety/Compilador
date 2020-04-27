@@ -8,42 +8,42 @@ ENDDEF
 
 ***/ Comentario de prueba /***
 
-CONST const1 = 9.46
-CONST const2 = .6
-CONST const3 = 6.
+CONST const1 := 9.46
+CONST const2 := .6
+CONST const3 := 6.
 
-a = a+b
+a := a+b
 a += b
-d = a+b
-d= e*f
-test_expr = (2 + 5) * 3
+d := a+b
+d := e*f
+test_expr := (2 + 5) * 3
 
 IF(a>b)
 THEN
-g = "sarasa"
+g := "sarasa"
 ENDIF
 
 IF(NOT((a>=b) AND (d>=e)))
 THEN
-h = "sarasa"
+h := "sarasa"
 ENDIF
 
 IF((a>=b) OR (d>=e))
 THEN
-h = "sarasa"
+h := "sarasa"
 ENDIF
 
 COMB (5,2)
 
-b = 0
+b := 0
 WHILE(a>2)
 THEN
 	WHILE(b<3)
 		THEN
-		b = b+1
+		b := b+1
 		ENDWHILE
 
-d = d * 2
+d := d * 2
 ENDWHILE
 
 DISPLAY "sarasa"
