@@ -19,12 +19,15 @@ char* decs[LIM_SIMBOLOS];       // Declaraciones
 int decsIndex = 0;              // Indice de declaraciones
 
 void validarIdDeclaracion(char*);
+int yyerror(char*);
 
 // char tokens[100][100];  
 // int indexTokens = 0;     
 // void guardarTokens(char*);
 
 %}
+
+%error-verbose
 
 %union {
     int int_val;
@@ -183,8 +186,12 @@ int main(int argc,char *argv[]) {
     return 0;
 }
 
-int yyerror(void) {
-    printf("Syntax Error\n");
+int yyerror(char* mensaje_error) {
+    /*  Ojo con esto. Según leí en el manual de Bison, el mensaje de error puede
+        ser que no sea 100% preciso. De un modo u otro, si aparece un error entonces
+        es porque lo hubo; lo que no garantiza que el mensaje diga ciertamente qué
+        fue lo que produjo el error. */
+    printf("\nError en la linea %d: %s\n", yylineno, mensaje_error);
     system ("Pause");
     exit (1);
 }
