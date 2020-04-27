@@ -10,7 +10,7 @@ ENDDEF
 
 const1 = 9.46
 const2 = .6
-const3=6.
+const3 = 6.
 
 a = a+b
 a += b

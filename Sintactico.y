@@ -7,13 +7,14 @@
 #include "y.tab.h"
 #include "tabla_simbolos.h"
 
-#define LIM_REAL            2147483647
-#define LIM_INT             32768
-#define LIM_STR             30
 
 int yystopparser=0;
 FILE *yyin;
 extern int yylineno;
+
+
+int tipo;
+char* nombreToken;
 
 char* decs[LIM_SIMBOLOS];       // Declaraciones
 int decsIndex = 0;              // Indice de declaraciones
@@ -21,9 +22,6 @@ int decsIndex = 0;              // Indice de declaraciones
 void validarIdDeclaracion(char*);
 int yyerror(char*);
 
-// char tokens[100][100];  
-// int indexTokens = 0;     
-// void guardarTokens(char*);
 
 %}
 
@@ -56,35 +54,46 @@ est_declaracion:
 
         
 declaraciones:   
-    declaracion
-    | declaraciones declaracion
-    ;
-    
+
+				declaraciones declaracion
+			 |	declaracion
+			;
+	
+
 
 declaracion:
     tipo_variable DOSPUNTOS lista_declaracion  {printf("    DECLARACION\n");}
     ;
 
 tipo_variable:
-    STRING          {     } 
-    | INTEGER       {     }
-    | FLOAT         {     } 
-    ;
+		STRING		{tipo = 1; } 
+	| 	INTEGER 	{tipo = 2;}
+	|	FLOAT		{tipo = 3;} 
+
+
 
 lista_declaracion:  
-    lista_declaracion P_Y_C ID  { validarIdDeclaracion($3); insertar_ID_en_Tabla($<str_val>$); }
-    | ID  { validarIdDeclaracion($1); insertar_ID_en_Tabla($<str_val>$); }
-    ;
+				lista_declaracion P_Y_C  ID  
+					{  
+						validarIdDeclaracion($3);
+						insertar_ID_en_Tabla($<str_val>$, tipo);
+					}
+				|ID  
+					{  
+						validarIdDeclaracion($1);
+						insertar_ID_en_Tabla($<str_val>$, tipo);
+					};
 
+ 
  
 algoritmo: 
     { printf("      COMIENZO de BLOQUES\n"); } bloque
     ;
 
 bloque:  
-    sentencia
-    | bloque sentencia
-	;
+	bloque sentencia
+    | sentencia
+    ;
 
 sentencia:
     ciclo
@@ -101,8 +110,9 @@ ciclo:
     | WHILE P_A condicion P_C THEN  { printf("     WHILE THEN ENDWHILE\n"); } bloque ENDWHILE
     ;
 
+// TEMA ESPECIAL: ASIGNACIONES ESPECIALES 
 asignacion: 
-    ID ASIG expresion           { printf("    ASIGNACION\n"); }
+    ID ASIG {nombreToken = $1;} expresion        
     | ID ASIG_MAS expresion     { printf("    ASIGNACION +=\n"); }
     | ID ASIG_MEN expresion     { printf("    ASIGNACION -=\n"); }
     | ID ASIG_MULT expresion    { printf("    ASIGNACION +=\n"); }
@@ -110,7 +120,11 @@ asignacion:
     ;
 
 salida_pantalla:
-    WRITE expresion             { printf("    SALIDA_PANTALLA\n"); }
+    WRITE expresion             
+		{ 
+			printf("    SALIDA_PANTALLA\n"); 
+			insertar_STRING_en_Tabla($<str_val>2);
+		}
     ;
 
 ingreso_valor:
@@ -155,9 +169,9 @@ comparacion:
     ;
 
 expresion:
-    termino
-    | expresion OP_SUMA termino
+      expresion OP_SUMA termino
     | expresion OP_RESTA termino
+	| termino
     ;
 
 termino: 
@@ -167,11 +181,26 @@ termino:
     ;
 
 factor: 
-    ID
-    | REAL
-    | ENTERO  
+    P_A expresion P_C
+    
+	| ID 
+		{
+			
+		}
+    
+	| REAL		
+		{
+			insertar_REAL_en_Tabla(nombreToken, $<float_val>$);
+		}
+		
+    | ENTERO    
+		{	
+			insertar_ENTERO_en_Tabla(nombreToken,$<int_val>$);
+		}
     | CADENA
-    | P_A expresion P_C
+		{
+			insertar_STRING_en_Tabla($<str_val>$);
+		}
     ;
 
 %%
@@ -209,3 +238,4 @@ void validarIdDeclaracion(char* id) {
     decs[decsIndex] = strdup(id);
     decsIndex++;
 }
+
