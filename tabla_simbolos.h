@@ -113,7 +113,7 @@ int buscarNombreEnTS(char* val)
 // tipo = 3 - FLOAT
 void insertar_ID_en_Tabla(char* token, int tipo)
 {
-    printf("\nAgregando ID en table: %s, %d\n", token, tipo);
+    // printf("\nAgregando ID en table: %s, %d\n", token, tipo);
 	if(!buscarNombreEnTS(token))
 	{
 		strcpy(TOS[TOStop].nombre, token);
