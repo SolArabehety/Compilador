@@ -44,16 +44,16 @@ void guardarTOS()
         printf("No se puede crear el archivo de la tabla de simbolos");
         exit(1);
     }
-    fprintf(tos,"\n------------------------------ TABLA DE  SIMBOLOS ------------------------------\n");
+    fprintf(tos,"\n--------------------------------------------- TABLA DE  SIMBOLOS ---------------------------------------------\n\n");
     for (i=0; i< TOStop; i++)
     {
         sprintf(aux, "%d", TOS[i].longitud);
         if(strcmp(aux, "0") == 0)
             aux[0] = '\0';
-        fprintf(tos,"Nombre: %s  | Tipo: %s   | Valor: %s   | Longitud: %s \n",TOS[i].nombre, TOS[i].tipo, TOS[i].valor, aux);
+        fprintf(tos,"Nombre: %-25s  | Tipo: %-15s   | Valor: %-25s   | Longitud: %-10s \n",TOS[i].nombre, TOS[i].tipo, TOS[i].valor, aux);
     }
 
-    fprintf(tos,"\n------------------------------ TABLA DE  SIMBOLOS ------------------------------\n");
+    fprintf(tos,"\n--------------------------------------------- TABLA DE  SIMBOLOS ---------------------------------------------\n");
     
     if(fclose(tos)!=0)
     {
