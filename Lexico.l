@@ -71,8 +71,8 @@ ENTERO              {DIGITO}+
 "FLOAT"         {return FLOAT;}
 "STRING"        {return STRING;}
 "INT"           {return INTEGER;}
-"WRITE"         {return WRITE;}
-"READ"          {return READ;}
+"DISPLAY"       {return DISPLAY;}
+"GET"           {return GET;}
 "COMB"          {return COMB;}
 "FACT"          {return FACT;}
 

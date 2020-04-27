@@ -46,6 +46,6 @@ THEN
 d = d * 2
 ENDWHILE
 
-WRITE "sarasa"
-READ g
-WRITE g
+DISPLAY "sarasa"
+GET g
+DISPLAY g

@@ -1,17 +1,3 @@
-<<<<<<< HEAD
-
------------------------------- TABLA DE  SIMBOLOS ------------------------------
-Nombre: _@a1  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
-Nombre: _@b1  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
-Nombre: _@variable1  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
-Nombre: _@p1  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
-Nombre: _@p2  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
-Nombre: _@p3  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
-Nombre: _@a  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
-Nombre: _@b  | Tipo: ID   | Valor:  | Limite: 0 | Longitud:  
-
------------------------------- TABLA DE  SIMBOLOS ------------------------------
-=======
 
 ------------------------------ TABLA DE  SIMBOLOS ------------------------------
 Nombre: a1  | Tipo: FLOAT   | Valor:    | Longitud:  
@@ -27,8 +13,8 @@ Nombre: const2  | Tipo: CONST_REAL   | Valor: 0.600000   | Longitud:
 Nombre: const3  | Tipo: CONST_REAL   | Valor: 6.000000   | Longitud:  
 Nombre: test_expr  | Tipo: CONST_INT   | Valor: 2   | Longitud:  
 Nombre:   | Tipo: CONST_STRING   | Valor: "sarasa"   | Longitud: 8 
+Nombre: "sarasa"  | Tipo: CONST_INT   | Valor: 5   | Longitud:  
 Nombre: d  | Tipo: CONST_INT   | Valor: 2   | Longitud:  
 Nombre:   | Tipo: CONST_STRING   | Valor: g   | Longitud: 1 
 
 ------------------------------ TABLA DE  SIMBOLOS ------------------------------
->>>>>>> primera_entrega

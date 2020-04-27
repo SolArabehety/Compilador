@@ -36,7 +36,7 @@ int yyerror(char*);
 %token ID COMENTARIO_INICIO COMENTARIO_FIN COMENTARIOS CADENA REAL ENTERO 
 %token OP_SUMA OP_RESTA OP_MUL OP_DIV ASIG P_A P_C LL_A LL_C P_Y_C COMA OP_MAY_IG OP_MEN_IG 
 %token OP_MAY OP_MEN OP_DISTINTO C_A C_C DOSPUNTOS OP_IGUAL ASIG_MAS ASIG_MEN ASIG_MULT ASIG_DIV
-%token DEFVAR ENDDEF WRITE IF THEN ELSE ENDIF WHILE ENDWHILE FLOAT INTEGER AND OR NOT STRING READ COMB FACT
+%token DEFVAR ENDDEF DISPLAY IF THEN ELSE ENDIF WHILE ENDWHILE FLOAT INTEGER AND OR NOT STRING GET COMB FACT
 
 %type <str_val> ID
 %%
@@ -120,7 +120,7 @@ asignacion:
     ;
 
 salida_pantalla:
-    WRITE expresion             
+    DISPLAY expresion             
 		{ 
 			printf("    SALIDA_PANTALLA\n"); 
 			insertar_STRING_en_Tabla($<str_val>2);
@@ -128,7 +128,7 @@ salida_pantalla:
     ;
 
 ingreso_valor:
-    READ factor                 { printf("    INGRESO_VALOR_READ\n"); }
+    GET factor                 { printf("    INGRESO_VALOR_GET\n"); }
     ;
 
 factorial:
