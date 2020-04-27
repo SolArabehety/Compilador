@@ -19,6 +19,7 @@ Nombre: _2                         | Tipo: CONST_INT         | Valor: 2         
 Nombre: _5                         | Tipo: CONST_INT         | Valor: 5                           | Longitud:            
 Nombre: _3                         | Tipo: CONST_INT         | Valor: 3                           | Longitud:            
 Nombre: _"sarasa"                  | Tipo: CONST_STRING      | Valor: "sarasa"                    | Longitud: 8          
+Nombre: _15                        | Tipo: CONST_INT         | Valor: 15                          | Longitud:            
 Nombre: _0                         | Tipo: CONST_INT         | Valor: 0                           | Longitud:            
 Nombre: _1                         | Tipo: CONST_INT         | Valor: 1                           | Longitud:            
 

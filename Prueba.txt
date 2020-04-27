@@ -36,7 +36,8 @@ THEN
 h := "sarasa"
 ENDIF
 
-COMB (5,2)
+a := COMB(5,2)
+b := 15 * (12 + FACT(5 + 5))
 
 b := 0
 WHILE(a>2)

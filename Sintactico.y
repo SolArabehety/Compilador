@@ -206,6 +206,8 @@ factor:
 		{
 			insertar_STRING_en_Tabla($1);
 		}
+    | factorial
+    | combinatorio
     ;
 
 %%
