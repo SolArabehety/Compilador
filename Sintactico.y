@@ -19,6 +19,7 @@ char* decs[LIM_SIMBOLOS];       // Declaraciones
 int decsIndex = 0;              // Indice de declaraciones
 
 void validarIdDeclaracion(char*);
+void validarIdExistente(char*);
 int yyerror(char*);
 
 
@@ -79,7 +80,7 @@ lista_declaracion:
 						validarIdDeclaracion($3);
 						insertar_ID_en_Tabla($<str_val>$, tipo);
 					}
-				|ID  
+				| ID  
 					{  
 						validarIdDeclaracion($1);
 						insertar_ID_en_Tabla($<str_val>$, tipo);
@@ -118,11 +119,11 @@ declaracion_constante:
 
 // TEMA ESPECIAL: ASIGNACIONES ESPECIALES 
 asignacion: 
-    ID ASIG expresion        
-    | ID ASIG_MAS expresion     { printf("    ASIGNACION +=\n"); }
-    | ID ASIG_MEN expresion     { printf("    ASIGNACION -=\n"); }
-    | ID ASIG_MULT expresion    { printf("    ASIGNACION +=\n"); }
-    | ID ASIG_DIV expresion     { printf("    ASIGNACION +=\n"); }
+    ID { validarIdExistente($1); } ASIG expresion        
+    | ID { validarIdExistente($1); } ASIG_MAS expresion     { printf("    ASIGNACION +=\n"); }
+    | ID { validarIdExistente($1); } ASIG_MEN expresion     { printf("    ASIGNACION -=\n"); }
+    | ID { validarIdExistente($1); } ASIG_MULT expresion    { printf("    ASIGNACION +=\n"); }
+    | ID { validarIdExistente($1); } ASIG_DIV expresion     { printf("    ASIGNACION +=\n"); }
     ;
 
 salida_pantalla:
@@ -188,9 +189,9 @@ termino:
 factor: 
     P_A expresion P_C
     
-	| ID 
+	| ID
 		{
-			
+			validarIdExistente($1);
 		}
     
 	| REAL		
@@ -246,3 +247,15 @@ void validarIdDeclaracion(char* id) {
     decsIndex++;
 }
 
+void validarIdExistente(char* id) {
+    int i;
+
+    for(i = 0; i < decsIndex; i++) {
+        if(strcmp(decs[i], id) == 0) {
+            return;
+        }
+    }
+
+    printf("\nError en la linea %d: El ID '%s' no ha sido declarado.\n", yylineno, id);
+    exit(1);
+}

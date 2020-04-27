@@ -1,9 +1,9 @@
 DEFVAR
 
-    FLOAT : a1; b1
-    STRING: variable1
+    FLOAT : a1; b1; test_expr
+    STRING: variable1; g; h
     FLOAT : p1; p2; p3
-    INT:a;b
+    INT:a;b;d;e;f
 ENDDEF
 
 ***/ Comentario de prueba /***
