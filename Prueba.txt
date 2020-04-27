@@ -22,6 +22,18 @@ THEN
 g = "sarasa"
 ENDIF
 
+IF(NOT((a>=b) AND (d>=e)))
+THEN
+h = "sarasa"
+ENDIF
+
+IF((a>=b) OR (d>=e))
+THEN
+h = "sarasa"
+ENDIF
+
+COMB (5,2)
+
 b = 0
 WHILE(a>2)
 THEN

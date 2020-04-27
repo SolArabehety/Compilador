@@ -81,7 +81,7 @@ algoritmo:
 bloque:  
     sentencia
     | bloque sentencia
-    ;
+	;
 
 sentencia:
     ciclo
@@ -119,7 +119,7 @@ factorial:
     ;
 
 combinatorio:
-    COMB P_A expresion COMA expresion P_C { printf("    FACTORIAL\n"); }    
+    COMB P_A expresion COMA expresion P_C { printf("    FACTORIAL COMBINATORIO\n"); }    
     ;
 
 seleccion: 
@@ -129,14 +129,25 @@ seleccion:
     ;
 
 condicion:
-    comparacion 
+    comparacion
+	| comparacion_doble
+	| comparacion_negada
     ;
+	
+comparacion_negada:
+	NOT P_A comparacion P_C 	{ printf("    NOT\n"); }
+	| NOT P_A comparacion_doble P_C 	{ printf("    NOT\n"); }
+
+comparacion_doble:
+	P_A comparacion P_C AND P_A comparacion P_C 	{ printf("    AND\n"); }
+	| P_A comparacion P_C OR P_A comparacion P_C 	{ printf("    OR\n"); }
+	;
 
 comparacion:
-    expresion OP_MAY_IG expresion
-    | expresion OP_MEN_IG expresion
-    | expresion OP_MEN expresion
-    | expresion OP_MAY expresion
+    expresion OP_MAY_IG expresion		
+    | expresion OP_MEN_IG expresion		
+    | expresion OP_MEN expresion			
+    | expresion OP_MAY expresion		
     | expresion OP_DISTINTO expresion
     ;
 
