@@ -21,6 +21,8 @@ d := a+b
 d := e*f
 test_expr := (2 + 5) * 3
 
+***/ Comentario ***/ anidado /*** /***
+
 IF(a>b)
 THEN
 g := "sarasa"
