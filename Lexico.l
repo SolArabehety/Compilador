@@ -26,13 +26,13 @@ LETRA               [a-zA-Z]
 ID                  {LETRA}({LETRA}|{DIGITO}|_)*
 COMENTARIO_INICIO   "***/"
 COMENTARIO_FIN      "/***"
-COMENTARIOS         COMENTARIO_INICIO[^"\n]+COMENTARIO_FIN
+COMENTARIOS         {COMENTARIO_INICIO}[^"\n]+{COMENTARIO_FIN}
 CADENA              \"[^"\n]+\"
 REAL                ({DIGITO}*"."{DIGITO}+)|("."{DIGITO}+)|({DIGITO}+"."{DIGITO}*)
 ENTERO              {DIGITO}+
 %%
 
-"="             {return ASIG;}
+":="            {return ASIG;}
 "+="            {return ASIG_MAS;}
 "-="            {return ASIG_MEN;}
 "*="            {return ASIG_MULT;}
@@ -52,8 +52,6 @@ ENTERO              {DIGITO}+
 "}"             {return LL_C;}
 "["             {return C_A;}
 "]"             {return C_C;}
-"***/"          {return COMENTARIO_INICIO;}
-"/***"          {return COMENTARIO_FIN; }
 ">"             {return OP_MAY; } 
 ">="            {return OP_MAY_IG; } 
 "<"             {return OP_MEN; } 
@@ -73,10 +71,11 @@ ENTERO              {DIGITO}+
 "FLOAT"         {return FLOAT;}
 "STRING"        {return STRING;}
 "INT"           {return INTEGER;}
-"WRITE"         {return WRITE;}
-"READ"          {return READ;}
+"DISPLAY"       {return DISPLAY;}
+"GET"           {return GET;}
 "COMB"          {return COMB;}
 "FACT"          {return FACT;}
+"CONST"         {return CONST;}
 
 {ID}            {   sprintf(auxS,"%s", yytext);
                     if(validarLongitud(ID) == 0) 
@@ -105,6 +104,7 @@ ENTERO              {DIGITO}+
                 }
                 
 {COMENTARIOS}
+
 "\n"              
 "\t"        
 %%

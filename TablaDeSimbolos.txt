@@ -1,19 +1,34 @@
 
------------------------------- TABLA DE  SIMBOLOS ------------------------------
-Nombre: a1  | Tipo: FLOAT   | Valor:    | Longitud:  
-Nombre: b1  | Tipo: FLOAT   | Valor:    | Longitud:  
-Nombre: variable1  | Tipo: STRING   | Valor:    | Longitud:  
-Nombre: p1  | Tipo: FLOAT   | Valor:    | Longitud:  
-Nombre: p2  | Tipo: FLOAT   | Valor:    | Longitud:  
-Nombre: p3  | Tipo: FLOAT   | Valor:    | Longitud:  
-Nombre: a  | Tipo: INTEGER   | Valor:    | Longitud:  
-Nombre: b  | Tipo: INTEGER   | Valor:    | Longitud:  
-Nombre: const1  | Tipo: CONST_REAL   | Valor: 9.460000   | Longitud:  
-Nombre: const2  | Tipo: CONST_REAL   | Valor: 0.600000   | Longitud:  
-Nombre: const3  | Tipo: CONST_REAL   | Valor: 6.000000   | Longitud:  
-Nombre: test_expr  | Tipo: CONST_INT   | Valor: 2   | Longitud:  
-Nombre:   | Tipo: CONST_STRING   | Valor: "sarasa"   | Longitud: 8 
-Nombre: d  | Tipo: CONST_INT   | Valor: 2   | Longitud:  
-Nombre:   | Tipo: CONST_STRING   | Valor: g   | Longitud: 1 
+--------------------------------------------- TABLA DE  SIMBOLOS ---------------------------------------------
 
------------------------------- TABLA DE  SIMBOLOS ------------------------------
+Nombre:                              Tipo:                    Valor:                              Longitud:            
+______________________________________________________________________________________________________________
+a1                                 | FLOAT                  |                                   |                      
+b1                                 | FLOAT                  |                                   |                      
+test_expr                          | FLOAT                  |                                   |                      
+variable1                          | STRING                 |                                   |                      
+g                                  | STRING                 |                                   |                      
+h                                  | STRING                 |                                   |                      
+p1                                 | FLOAT                  |                                   |                      
+p2                                 | FLOAT                  |                                   |                      
+p3                                 | FLOAT                  |                                   |                      
+a                                  | INTEGER                |                                   |                      
+b                                  | INTEGER                |                                   |                      
+d                                  | INTEGER                |                                   |                      
+e                                  | INTEGER                |                                   |                      
+f                                  | INTEGER                |                                   |                      
+const1                             | CONST_REAL             | 9.460000                          |                      
+const2                             | CONST_REAL             | 0.600000                          |                      
+const3                             | CONST_REAL             | 6.000000                          |                      
+_155                               | CONST_INT              | 155                               |                      
+_4                                 | CONST_INT              | 4                                 |                      
+_12                                | CONST_INT              | 12                                |                      
+_2                                 | CONST_INT              | 2                                 |                      
+_5                                 | CONST_INT              | 5                                 |                      
+_3                                 | CONST_INT              | 3                                 |                      
+_"sarasa"                          | CONST_STRING           | "sarasa"                          | 8                    
+_15                                | CONST_INT              | 15                                |                      
+_0                                 | CONST_INT              | 0                                 |                      
+_1                                 | CONST_INT              | 1                                 |                      
+
+--------------------------------------------- TABLA DE  SIMBOLOS ---------------------------------------------
