@@ -11,10 +11,11 @@ Nombre: b  | Tipo: INTEGER   | Valor:    | Longitud:
 Nombre: const1  | Tipo: CONST_REAL   | Valor: 9.460000   | Longitud:  
 Nombre: const2  | Tipo: CONST_REAL   | Valor: 0.600000   | Longitud:  
 Nombre: const3  | Tipo: CONST_REAL   | Valor: 6.000000   | Longitud:  
-Nombre: test_expr  | Tipo: CONST_INT   | Valor: 2   | Longitud:  
-Nombre:   | Tipo: CONST_STRING   | Valor: "sarasa"   | Longitud: 8 
-Nombre: "sarasa"  | Tipo: CONST_INT   | Valor: 5   | Longitud:  
-Nombre: d  | Tipo: CONST_INT   | Valor: 2   | Longitud:  
-Nombre:   | Tipo: CONST_STRING   | Valor: g   | Longitud: 1 
+Nombre: _2  | Tipo: CONST_INT   | Valor: 2   | Longitud:  
+Nombre: _5  | Tipo: CONST_INT   | Valor: 5   | Longitud:  
+Nombre: _3  | Tipo: CONST_INT   | Valor: 3   | Longitud:  
+Nombre: _"sarasa"  | Tipo: CONST_STRING   | Valor: "sarasa"   | Longitud: 8 
+Nombre: _0  | Tipo: CONST_INT   | Valor: 0   | Longitud:  
+Nombre: _1  | Tipo: CONST_INT   | Valor: 1   | Longitud:  
 
 ------------------------------ TABLA DE  SIMBOLOS ------------------------------

@@ -21,14 +21,15 @@ typedef struct
 
 tablaDeSimbolos TOS[LIM_SIMBOLOS];
 int TOStop = 0;    
+char nombreToken[100] = "";
 
 void guardarTOS();
 int buscarValorEnTS(char*);
 int buscarNombreEnTS(char*);
 
 void insertar_ID_en_Tabla(char*, int);
-void insertar_ENTERO_en_Tabla(char*,int);
-void insertar_REAL_en_Tabla(char*, double);
+void insertar_ENTERO_en_Tabla(int);
+void insertar_REAL_en_Tabla(double);
 void insertar_STRING_en_Tabla(char*);
 
 // Funciones generales de la TS ------------------------------------------------------------------------
@@ -112,6 +113,7 @@ int buscarNombreEnTS(char* val)
 // tipo = 3 - FLOAT
 void insertar_ID_en_Tabla(char* token, int tipo)
 {
+    printf("\nAgregando ID en table: %s, %d\n", token, tipo);
 	if(!buscarNombreEnTS(token))
 	{
 		strcpy(TOS[TOStop].nombre, token);
@@ -139,49 +141,81 @@ void insertar_ID_en_Tabla(char* token, int tipo)
 	}
 }
 
+void insertar_ENTERO_en_Tabla(int valor)
+{		
+    char valorString[100];
+    char nombreSimbolo[100];
+    sprintf(valorString, "%d", valor);
 
+    if(strcmp(nombreToken, "") == 0) {
+        // si no hay nombre token, entonces es una constante sin nombre
+        // le inventamos nombre con un "_" y el valor
+        strcpy(nombreSimbolo, "_");
+        strcat(nombreSimbolo, valorString);
+    } else {
+        // si hay nombre token, entonces es una constante con nombre
+        // usamos el nombreToken como nombre del símbolos
+        strcpy(nombreSimbolo, nombreToken);
+        // 'destruimos' el nombreToken para que no sea reusado por accidente
+        strcpy(nombreToken, "");
+    }
 
-void insertar_ENTERO_en_Tabla(char* nombreToken,int token)
-{			
-	if(!buscarNombreEnTS(nombreToken))
+    // printf("\nAgregando ENTERO en table: %s, %d\n", nombreSimbolo, valor);
+	if(!buscarNombreEnTS(nombreSimbolo))
 	{
-		char tokenString[100];
-		sprintf(tokenString, "%d", token);		
-		
-		strcpy(TOS[TOStop].nombre,nombreToken);
-		strcpy(TOS[TOStop].tipo,"CONST_INT");
-	    strcpy(TOS[TOStop].valor, tokenString);
+		strcpy(TOS[TOStop].nombre, nombreSimbolo);
+		strcpy(TOS[TOStop].tipo, "CONST_INT");
+	    strcpy(TOS[TOStop].valor, valorString);
 
 		TOStop++;
 	}
 }
 
-void insertar_REAL_en_Tabla(char* nombreToken, double token)
-{
-	if(!buscarNombreEnTS(nombreToken))
+void insertar_REAL_en_Tabla(double valor)
+{		
+    char valorString[100];
+    char nombreSimbolo[100];
+    sprintf(valorString, "%lf", valor);
+
+    if(strcmp(nombreToken, "") == 0) {
+        strcpy(nombreSimbolo, "_");
+        strcat(nombreSimbolo, valorString);
+    } else {
+        strcpy(nombreSimbolo, nombreToken);
+        strcpy(nombreToken, "");
+    }
+
+    // printf("\nAgregando REAL en table: %s, %f\n", nombreSimbolo, valor);
+	if(!buscarNombreEnTS(nombreSimbolo))
 	{
-		char tokenString[100];
-		sprintf(tokenString, "%lf", token);		
-		
-		strcpy(TOS[TOStop].nombre,nombreToken);
-		strcpy(TOS[TOStop].tipo,"CONST_REAL");
-	    strcpy(TOS[TOStop].valor, tokenString);
+		strcpy(TOS[TOStop].nombre, nombreSimbolo);
+		strcpy(TOS[TOStop].tipo, "CONST_REAL");
+	    strcpy(TOS[TOStop].valor, valorString);
 
 		TOStop++;
 	}
 }
 
-void insertar_STRING_en_Tabla(char* token)
-{
-	if(!buscarValorEnTS(token))
+void insertar_STRING_en_Tabla(char* valor)
+{		
+    char nombreSimbolo[100];
+
+    if(strcmp(nombreToken, "") == 0) {
+        strcpy(nombreSimbolo, "_");
+        strcat(nombreSimbolo, valor);
+    } else {
+        strcpy(nombreSimbolo, nombreToken);
+        strcpy(nombreToken, "");
+    }
+
+    // printf("\nAgregando ENTERO en table: %s, %d\n", nombreSimbolo, valor);
+	if(!buscarNombreEnTS(nombreSimbolo))
 	{
-		strcpy(TOS[TOStop].nombre, "");
-		strcpy(TOS[TOStop].tipo,"CONST_STRING" );
-		strcpy(TOS[TOStop].valor, token);
-		TOS[TOStop].longitud = (strlen(token));
-	
+		strcpy(TOS[TOStop].nombre, nombreSimbolo);
+		strcpy(TOS[TOStop].tipo, "CONST_STRING");
+	    strcpy(TOS[TOStop].valor, valor);
+        TOS[TOStop].longitud = (strlen(valor));
+
 		TOStop++;
 	}
 }
-
-

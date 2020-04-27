@@ -8,9 +8,9 @@ ENDDEF
 
 ***/ Comentario de prueba /***
 
-const1 = 9.46
-const2 = .6
-const3 = 6.
+CONST const1 = 9.46
+CONST const2 = .6
+CONST const3 = 6.
 
 a = a+b
 a += b

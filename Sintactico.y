@@ -14,7 +14,6 @@ extern int yylineno;
 
 
 int tipo;
-char* nombreToken;
 
 char* decs[LIM_SIMBOLOS];       // Declaraciones
 int decsIndex = 0;              // Indice de declaraciones
@@ -36,9 +35,11 @@ int yyerror(char*);
 %token ID COMENTARIO_INICIO COMENTARIO_FIN COMENTARIOS CADENA REAL ENTERO 
 %token OP_SUMA OP_RESTA OP_MUL OP_DIV ASIG P_A P_C LL_A LL_C P_Y_C COMA OP_MAY_IG OP_MEN_IG 
 %token OP_MAY OP_MEN OP_DISTINTO C_A C_C DOSPUNTOS OP_IGUAL ASIG_MAS ASIG_MEN ASIG_MULT ASIG_DIV
-%token DEFVAR ENDDEF DISPLAY IF THEN ELSE ENDIF WHILE ENDWHILE FLOAT INTEGER AND OR NOT STRING GET COMB FACT
+%token DEFVAR ENDDEF DISPLAY IF THEN ELSE ENDIF WHILE ENDWHILE FLOAT INTEGER AND OR NOT STRING GET COMB FACT CONST
 
-%type <str_val> ID
+%type <str_val> ID CADENA
+%type <int_val> ENTERO
+%type <float_val> REAL
 %%
 
 programa:         
@@ -97,6 +98,7 @@ bloque:
 
 sentencia:
     ciclo
+    | declaracion_constante
     | seleccion  
     | asignacion
     | salida_pantalla
@@ -110,9 +112,13 @@ ciclo:
     | WHILE P_A condicion P_C THEN  { printf("     WHILE THEN ENDWHILE\n"); } bloque ENDWHILE
     ;
 
+declaracion_constante:
+    CONST ID { strcpy(nombreToken, $2); } ASIG expresion
+    ;
+
 // TEMA ESPECIAL: ASIGNACIONES ESPECIALES 
 asignacion: 
-    ID ASIG {nombreToken = $1;} expresion        
+    ID ASIG expresion        
     | ID ASIG_MAS expresion     { printf("    ASIGNACION +=\n"); }
     | ID ASIG_MEN expresion     { printf("    ASIGNACION -=\n"); }
     | ID ASIG_MULT expresion    { printf("    ASIGNACION +=\n"); }
@@ -123,7 +129,6 @@ salida_pantalla:
     DISPLAY expresion             
 		{ 
 			printf("    SALIDA_PANTALLA\n"); 
-			insertar_STRING_en_Tabla($<str_val>2);
 		}
     ;
 
@@ -190,16 +195,16 @@ factor:
     
 	| REAL		
 		{
-			insertar_REAL_en_Tabla(nombreToken, $<float_val>$);
+			insertar_REAL_en_Tabla($1);
 		}
 		
     | ENTERO    
 		{	
-			insertar_ENTERO_en_Tabla(nombreToken,$<int_val>$);
+			insertar_ENTERO_en_Tabla($1);
 		}
     | CADENA
 		{
-			insertar_STRING_en_Tabla($<str_val>$);
+			insertar_STRING_en_Tabla($1);
 		}
     ;
 

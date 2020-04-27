@@ -75,6 +75,7 @@ ENTERO              {DIGITO}+
 "GET"           {return GET;}
 "COMB"          {return COMB;}
 "FACT"          {return FACT;}
+"CONST"         {return CONST;}
 
 {ID}            {   sprintf(auxS,"%s", yytext);
                     if(validarLongitud(ID) == 0) 
