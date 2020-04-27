@@ -26,7 +26,7 @@ LETRA               [a-zA-Z]
 ID                  {LETRA}({LETRA}|{DIGITO}|_)*
 COMENTARIO_INICIO   "***/"
 COMENTARIO_FIN      "/***"
-COMENTARIOS         COMENTARIO_INICIO[^"\n]+COMENTARIO_FIN
+COMENTARIOS         {COMENTARIO_INICIO}[^"\n]+{COMENTARIO_FIN}
 CADENA              \"[^"\n]+\"
 REAL                ({DIGITO}*"."{DIGITO}+)|("."{DIGITO}+)|({DIGITO}+"."{DIGITO}*)
 ENTERO              {DIGITO}+
@@ -52,8 +52,6 @@ ENTERO              {DIGITO}+
 "}"             {return LL_C;}
 "["             {return C_A;}
 "]"             {return C_C;}
-"***/"          {return COMENTARIO_INICIO;}
-"/***"          {return COMENTARIO_FIN; }
 ">"             {return OP_MAY; } 
 ">="            {return OP_MAY_IG; } 
 "<"             {return OP_MEN; } 
@@ -105,6 +103,7 @@ ENTERO              {DIGITO}+
                 }
                 
 {COMENTARIOS}
+
 "\n"              
 "\t"        
 %%

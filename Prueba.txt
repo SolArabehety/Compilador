@@ -6,6 +6,7 @@ DEFVAR
     INT:a;b
 ENDDEF
 
+***/ Comentario de prueba /***
 
 const1 = 9.46
 const2 = .6
