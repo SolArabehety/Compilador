@@ -27,10 +27,10 @@ void guardarTOS();
 int buscarValorEnTS(char*);
 int buscarNombreEnTS(char*);
 
-void insertar_ID_en_Tabla(char*, int);
-void insertar_ENTERO_en_Tabla(int);
-void insertar_REAL_en_Tabla(double);
-void insertar_STRING_en_Tabla(char*);
+int insertar_ID_en_Tabla(char*, int);
+int insertar_ENTERO_en_Tabla(int);
+int insertar_REAL_en_Tabla(double);
+int insertar_STRING_en_Tabla(char*);
 
 // Funciones generales de la TS ------------------------------------------------------------------------
 
@@ -97,6 +97,14 @@ void getNombreTOS(char* nombre, char*aux)
 	return;
 }
 
+tablaDeSimbolos* getDirTOSPorIndice(int indice) {
+    if (indice > TOStop) {
+        printf("Error: Se intentó acceder a un indice en la tabla de simbolos que no existe: %d", indice);
+        exit(2);
+    }
+	return &TOS[indice];
+}
+
 int buscarNombreEnTS(char* val)
 {
     int i;
@@ -116,8 +124,9 @@ int buscarNombreEnTS(char* val)
 // tipo = 1 - STRING
 // tiop = 2 - INTEGER
 // tipo = 3 - FLOAT
-void insertar_ID_en_Tabla(char* token, int tipo)
+int insertar_ID_en_Tabla(char* token, int tipo)
 {
+    int TOSaux = TOStop;
     // printf("\nAgregando ID en table: %s, %d\n", token, tipo);
 	if(!buscarNombreEnTS(token))
 	{
@@ -144,10 +153,12 @@ void insertar_ID_en_Tabla(char* token, int tipo)
 		
 		TOStop++;
 	}
+    return TOSaux;
 }
 
-void insertar_ENTERO_en_Tabla(int valor)
+int insertar_ENTERO_en_Tabla(int valor)
 {		
+    int TOSaux = TOStop;
     char valorString[100];
     char nombreSimbolo[100];
     sprintf(valorString, "%d", valor);
@@ -174,10 +185,12 @@ void insertar_ENTERO_en_Tabla(int valor)
 
 		TOStop++;
 	}
+    return TOSaux;
 }
 
-void insertar_REAL_en_Tabla(double valor)
-{		
+int insertar_REAL_en_Tabla(double valor)
+{
+    int TOSaux = TOStop;
     char valorString[100];
     char nombreSimbolo[100];
     sprintf(valorString, "%lf", valor);
@@ -199,10 +212,12 @@ void insertar_REAL_en_Tabla(double valor)
 
 		TOStop++;
 	}
+    return TOSaux;
 }
 
-void insertar_STRING_en_Tabla(char* valor)
-{		
+int insertar_STRING_en_Tabla(char* valor)
+{
+    int TOSaux = TOStop;		
     char nombreSimbolo[100];
 
     if(strcmp(nombreToken, "") == 0) {
@@ -223,4 +238,5 @@ void insertar_STRING_en_Tabla(char* valor)
 
 		TOStop++;
 	}
+    return TOSaux;
 }
