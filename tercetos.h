@@ -95,7 +95,7 @@ void imprimirTercetos() {
             elemento e = tercetos[i].elementos[j];
 
             if (e.tipo == cadena) {
-                fprintf(gci, "\"%s\"", e.valor.cad);
+                fprintf(gci, "%s", e.valor.cad);
             } else if (e.tipo == indice) {
                 fprintf(gci, "[%d]", e.valor.ind + 1);
             } else {
