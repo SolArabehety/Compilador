@@ -105,12 +105,14 @@ ENTERO              {DIGITO}+
                 
 {COMENTARIOS}
 
-"\n"              
-"\t"        
+"\n"
+"\t"
+" "
+.               { printf("Caracter no reconocido: %s\n", yytext); mostrarError("Error lexico"); }
 %%
 
 void mostrarError(char *mensaje) {
-  printf("ERROR!!!: %s\n", mensaje);
+  printf("ERROR en la linea %d: %s\n", yylineno, mensaje);
   system ("Pause");
   exit(2);
 }
