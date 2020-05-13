@@ -6,7 +6,7 @@
 #include <string.h>
 #include "y.tab.h"
 #include "tabla_simbolos.h"
-
+#include "tercetos.h"
 
 int yystopparser=0;
 FILE *yyin;
@@ -47,6 +47,7 @@ programa:
     {   printf("Inicia COMPILADOR\n"); } 
     est_declaracion algoritmo    
     {   guardarTOS();
+        imprimirTercetos();
         printf("Fin COMPILADOR ok\n");
     };
 
@@ -78,12 +79,14 @@ lista_declaracion:
 				lista_declaracion P_Y_C  ID  
 					{  
 						validarIdDeclaracion($3);
-						insertar_ID_en_Tabla($<str_val>$, tipo);
+                        int ind = insertar_ID_en_Tabla($3, tipo);
+                        crearTerceto(getDirTOSPorIndice(ind)->nombre);
 					}
 				| ID  
 					{  
 						validarIdDeclaracion($1);
-						insertar_ID_en_Tabla($<str_val>$, tipo);
+						int ind = insertar_ID_en_Tabla($1, tipo);
+                        crearTerceto(getDirTOSPorIndice(ind)->nombre);
 					};
 
  
@@ -196,16 +199,19 @@ factor:
     
 	| REAL		
 		{
-			insertar_REAL_en_Tabla($1);
+			int ind = insertar_REAL_en_Tabla($1);
+            crearTerceto(getDirTOSPorIndice(ind)->nombre);
 		}
 		
     | ENTERO    
 		{	
-			insertar_ENTERO_en_Tabla($1);
+			int ind = insertar_ENTERO_en_Tabla($1);
+            crearTerceto(getDirTOSPorIndice(ind)->nombre);
 		}
     | CADENA
 		{
-			insertar_STRING_en_Tabla($1);
+			int ind = insertar_STRING_en_Tabla($1);
+            crearTerceto(getDirTOSPorIndice(ind)->nombre);
 		}
     | factorial
     | combinatorio

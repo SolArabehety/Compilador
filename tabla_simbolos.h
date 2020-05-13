@@ -27,10 +27,10 @@ void guardarTOS();
 int buscarValorEnTS(char*);
 int buscarNombreEnTS(char*);
 
-void insertar_ID_en_Tabla(char*, int);
-void insertar_ENTERO_en_Tabla(int);
-void insertar_REAL_en_Tabla(double);
-void insertar_STRING_en_Tabla(char*);
+int insertar_ID_en_Tabla(char*, int);
+int insertar_ENTERO_en_Tabla(int);
+int insertar_REAL_en_Tabla(double);
+int insertar_STRING_en_Tabla(char*);
 
 // Funciones generales de la TS ------------------------------------------------------------------------
 
@@ -97,6 +97,14 @@ void getNombreTOS(char* nombre, char*aux)
 	return;
 }
 
+tablaDeSimbolos* getDirTOSPorIndice(int indice) {
+    if (indice > TOStop) {
+        printf("Error: Se intentó acceder a un indice en la tabla de simbolos que no existe: %d", indice);
+        exit(2);
+    }
+	return &TOS[indice];
+}
+
 int buscarNombreEnTS(char* val)
 {
     int i;
@@ -104,11 +112,11 @@ int buscarNombreEnTS(char* val)
     {
         if(strcmp(TOS[i].nombre, val) == 0)
         {
-            return 1;
+            return i;
         }
     }
-    
-    return 0;
+    /* -1 quiere decir el el símbolo no existe en la tabla */
+    return -1;
 }
 
 // INSERTS ------------------------------------------------------------------------
@@ -116,38 +124,38 @@ int buscarNombreEnTS(char* val)
 // tipo = 1 - STRING
 // tiop = 2 - INTEGER
 // tipo = 3 - FLOAT
-void insertar_ID_en_Tabla(char* token, int tipo)
+int insertar_ID_en_Tabla(char* token, int tipo)
 {
+    int TOSaux = TOStop;
+    int indiceTS;
     // printf("\nAgregando ID en table: %s, %d\n", token, tipo);
-	if(!buscarNombreEnTS(token))
-	{
-		strcpy(TOS[TOStop].nombre, token);
-		
-		switch(tipo){
-		case 1:
-			strcpy(TOS[TOStop].tipo, "STRING");
-		
-		break;
-		
-		case 2:
-			strcpy(TOS[TOStop].tipo, "INTEGER");
-			
-		break;
-		
-		case 3:
-			strcpy(TOS[TOStop].tipo, "FLOAT");
-			
-		break;
-			
-		}
-	
-		
-		TOStop++;
-	}
+    if((indiceTS = buscarNombreEnTS(token)) == -1) {
+        strcpy(TOS[TOStop].nombre, token);
+        
+        switch(tipo){
+            case 1:
+                strcpy(TOS[TOStop].tipo, "STRING");
+            break;
+            
+            case 2:
+                strcpy(TOS[TOStop].tipo, "INTEGER");
+            break;
+            
+            case 3:
+                strcpy(TOS[TOStop].tipo, "FLOAT");
+            break;
+        }
+        TOStop++;
+    } else {
+        return indiceTS;
+    }
+    return TOSaux;
 }
 
-void insertar_ENTERO_en_Tabla(int valor)
+int insertar_ENTERO_en_Tabla(int valor)
 {		
+    int TOSaux = TOStop;
+    int indiceTS;
     char valorString[100];
     char nombreSimbolo[100];
     sprintf(valorString, "%d", valor);
@@ -166,18 +174,22 @@ void insertar_ENTERO_en_Tabla(int valor)
     }
 
     // printf("\nAgregando ENTERO en table: %s, %d\n", nombreSimbolo, valor);
-	if(!buscarNombreEnTS(nombreSimbolo))
-	{
-		strcpy(TOS[TOStop].nombre, nombreSimbolo);
-		strcpy(TOS[TOStop].tipo, "CONST_INT");
-	    strcpy(TOS[TOStop].valor, valorString);
+    if((indiceTS = buscarNombreEnTS(nombreSimbolo)) == -1) {
+        strcpy(TOS[TOStop].nombre, nombreSimbolo);
+        strcpy(TOS[TOStop].tipo, "CONST_INT");
+        strcpy(TOS[TOStop].valor, valorString);
 
-		TOStop++;
-	}
+        TOStop++;
+    } else {
+        return indiceTS;
+    }
+    return TOSaux;
 }
 
-void insertar_REAL_en_Tabla(double valor)
-{		
+int insertar_REAL_en_Tabla(double valor)
+{
+    int TOSaux = TOStop;
+    int indiceTS;
     char valorString[100];
     char nombreSimbolo[100];
     sprintf(valorString, "%lf", valor);
@@ -191,18 +203,22 @@ void insertar_REAL_en_Tabla(double valor)
     }
 
     // printf("\nAgregando REAL en table: %s, %f\n", nombreSimbolo, valor);
-	if(!buscarNombreEnTS(nombreSimbolo))
-	{
-		strcpy(TOS[TOStop].nombre, nombreSimbolo);
-		strcpy(TOS[TOStop].tipo, "CONST_REAL");
-	    strcpy(TOS[TOStop].valor, valorString);
+    if((indiceTS = buscarNombreEnTS(nombreSimbolo)) == -1) {
+        strcpy(TOS[TOStop].nombre, nombreSimbolo);
+        strcpy(TOS[TOStop].tipo, "CONST_REAL");
+        strcpy(TOS[TOStop].valor, valorString);
 
-		TOStop++;
-	}
+        TOStop++;
+    } else {
+        return indiceTS;
+    }
+    return TOSaux;
 }
 
-void insertar_STRING_en_Tabla(char* valor)
-{		
+int insertar_STRING_en_Tabla(char* valor)
+{
+    int TOSaux = TOStop;
+    int indiceTS;
     char nombreSimbolo[100];
 
     if(strcmp(nombreToken, "") == 0) {
@@ -213,14 +229,16 @@ void insertar_STRING_en_Tabla(char* valor)
         strcpy(nombreToken, "");
     }
 
-    // printf("\nAgregando ENTERO en table: %s, %d\n", nombreSimbolo, valor);
-	if(!buscarNombreEnTS(nombreSimbolo))
-	{
-		strcpy(TOS[TOStop].nombre, nombreSimbolo);
-		strcpy(TOS[TOStop].tipo, "CONST_STRING");
-	    strcpy(TOS[TOStop].valor, valor);
+    // printf("\nAgregando STRING en table: %s, %s\n", nombreSimbolo, valor);
+    if((indiceTS = buscarNombreEnTS(nombreSimbolo)) == -1) {
+        strcpy(TOS[TOStop].nombre, nombreSimbolo);
+        strcpy(TOS[TOStop].tipo, "CONST_STRING");
+        strcpy(TOS[TOStop].valor, valor);
         TOS[TOStop].longitud = (strlen(valor));
 
-		TOStop++;
-	}
+        TOStop++;
+    } else {
+        return indiceTS;
+    }
+    return TOSaux;
 }
