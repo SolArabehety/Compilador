@@ -62,6 +62,20 @@ elemento crearElemNull() {
     return e;
 }
 
+/*  Busca un terceto por el nombre de una constante en el primer elemento y
+    devuelve su índice, de no encontrarlo (no existe) devuelve -1. */
+int buscarTerceto(const char* val) {
+    int i;
+
+    for (i = 0; i < indTercetos; i++) {
+        if (strcmp(val, tercetos[i].elementos[0].valor.cad) == 0)
+            return i;
+    }
+
+    /* Si no se encontró el terceto, se devuelve -1 */
+    return -1;
+}
+
 /*  Crear un terceto con los elementos pasados por parámetro y se Agregamos
     al array global de tercetos */
 int crearTerceto3(elemento e1, elemento e2, elemento e3) {
@@ -87,7 +101,11 @@ int crearTerceto1(elemento e) {
     terceto t;
     int indice = indTercetos;
 
-    printf("%s", e.valor);
+    /* Antes de crearlo, nos fijamos si ya existe */
+    int idx = buscarTerceto(e.valor.cad);
+    if (idx != -1)
+        return idx;
+
     t.elementos[0] = e;
     t.elementos[1] = crearElemNull();
     t.elementos[2] = crearElemNull();
@@ -95,7 +113,6 @@ int crearTerceto1(elemento e) {
     tercetos[indice] = t;
     indTercetos++;
 
-    printf("\nEl indice es: %d", indice);
     return indice;
 }
 
