@@ -183,17 +183,17 @@ comparacion:
 expresion:
       expresion OP_SUMA termino     { $$ = crearTerceto3(crearElemStr("+"), crearElemInd($1), crearElemInd($3)); }
     | expresion OP_RESTA termino    { $$ = crearTerceto3(crearElemStr("-"), crearElemInd($1), crearElemInd($3)); }
-	| termino                       { $$ = $1; printf("\nTermino $1 es: %d", $1);}
+	| termino                       { $$ = $1; }
     ;
 
 termino: 
-    factor                      { $$ = $1; printf("\nFactor $1 es: %d", $1); }
+    factor                      { $$ = $1; }
     | termino OP_MUL factor     { $$ = crearTerceto3(crearElemStr("*"), crearElemInd($1), crearElemInd($3)); }
     | termino OP_DIV factor     { $$ = crearTerceto3(crearElemStr("/"), crearElemInd($1), crearElemInd($3)); }
     ;
 
 factor: 
-    P_A expresion P_C   { $$ = $2; printf("\nExpr $2 es: %d", $2); }
+    P_A expresion P_C   { $$ = $2; }
     
 	| ID
 		{
