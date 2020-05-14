@@ -122,7 +122,7 @@ void imprimirTercetos() {
                 fprintf(gci, "_");
             }
 
-            fprintf(gci, ",");
+            if (j < 2) fprintf(gci, ", ");
         }
         fprintf(gci, ")\n");
     }
