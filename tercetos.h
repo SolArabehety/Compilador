@@ -29,10 +29,11 @@ typedef struct terceto {
     elemento elementos[3];
 } terceto;
 
-elemento crearElementoStr(char*);
-elemento crearElementoInd(int);
-elemento crearElementoNull();
-int crearTerceto(char*);
+elemento crearElemStr(char*);
+elemento crearElemInd(int);
+elemento crearElemNull();
+int crearTerceto1(elemento);
+int crearTerceto3(elemento, elemento, elemento);
 void imprimirTercetos();
 
 /* Índice global para tercetos */
@@ -41,41 +42,60 @@ int indTercetos = 0;
 /* Array de Tercetos */
 terceto tercetos[900];
 
-elemento crearElementoStr(char* str) {
+elemento crearElemStr(char* str) {
     elemento e;
     e.valor.cad = strdup(str);
     e.tipo = cadena;
     return e;
 }
 
-elemento crearElementoInd(int ind) {
+elemento crearElemInd(int ind) {
     elemento e;
     e.valor.ind = ind;
     e.tipo = indice;
     return e;
 }
 
-elemento crearElementoNull() {
+elemento crearElemNull() {
     elemento e;
     e.tipo = nulo;
     return e;
 }
 
-int crearTerceto(char* str) {
+/*  Crear un terceto con los elementos pasados por parámetro y se Agregamos
+    al array global de tercetos */
+int crearTerceto3(elemento e1, elemento e2, elemento e3) {
     terceto t;
     int indice = indTercetos;
 
-    t.elementos[0] = crearElementoStr(str);
-    /*  Como solo se tiene 1 argumento, se asume que el resto 
-        de los elementos del terceto son nulos */
-    t.elementos[1] = crearElementoNull();
-    t.elementos[2] = crearElementoNull();
+    t.elementos[0] = e1;
+    t.elementos[1] = e2;
+    t.elementos[2] = e3;
 
     /* Agregamos el terceto al array global de tercetos */
     tercetos[indice] = t;
     indTercetos++;
 
     /* Devolvemos el índice que apunta al terceto creado */
+    return indice;
+}
+
+/*  Crear un terceto, donde el primer elemento es el valor pasado por parámetro.
+    La diferencia con crearTerceto3, es que solo se asigna el primer elemento
+    y el resto se asume que son valores nulos */
+int crearTerceto1(elemento e) {
+    terceto t;
+    int indice = indTercetos;
+
+    printf("%s", e.valor);
+    t.elementos[0] = e;
+    t.elementos[1] = crearElemNull();
+    t.elementos[2] = crearElemNull();
+
+    tercetos[indice] = t;
+    indTercetos++;
+
+    printf("\nEl indice es: %d", indice);
     return indice;
 }
 

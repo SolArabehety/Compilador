@@ -220,12 +220,11 @@ int insertar_STRING_en_Tabla(char* str)
     int TOSaux = TOStop;
     int indiceTS;
     char nombreSimbolo[100];
-    char* valor;
+    char* valor = strdup(str);
 
     // Para borrar las "" que quedan cuando se inserta una constante string
-    strcpy(valor, str);
     borrarChar(valor, '"');
-    
+
     if(strcmp(nombreToken, "") == 0) {
         strcpy(nombreSimbolo, "_");
         strcat(nombreSimbolo, valor);
