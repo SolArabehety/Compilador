@@ -41,6 +41,9 @@ int yyerror(char*);
 %type <str_val> ID CADENA
 %type <int_val> ENTERO
 %type <float_val> REAL
+%type <int_val> expresion
+%type <int_val> termino
+%type <int_val> factor
 %%
 
 programa:         
@@ -80,13 +83,13 @@ lista_declaracion:
 					{  
 						validarIdDeclaracion($3);
                         int ind = insertar_ID_en_Tabla($3, tipo);
-                        crearTerceto(getDirTOSPorIndice(ind)->nombre);
+                        crearTerceto1(crearElemStr(getDirTOSPorIndice(ind)->nombre));
 					}
 				| ID  
 					{  
 						validarIdDeclaracion($1);
 						int ind = insertar_ID_en_Tabla($1, tipo);
-                        crearTerceto(getDirTOSPorIndice(ind)->nombre);
+                        crearTerceto1(crearElemStr(getDirTOSPorIndice(ind)->nombre));
 					};
 
  
@@ -122,11 +125,11 @@ declaracion_constante:
 
 // TEMA ESPECIAL: ASIGNACIONES ESPECIALES 
 asignacion: 
-    ID { validarIdExistente($1); } ASIG expresion        
+    ID { validarIdExistente($1); } ASIG expresion           { printf("    ASIGNACION :=\n"); }    
     | ID { validarIdExistente($1); } ASIG_MAS expresion     { printf("    ASIGNACION +=\n"); }
     | ID { validarIdExistente($1); } ASIG_MEN expresion     { printf("    ASIGNACION -=\n"); }
-    | ID { validarIdExistente($1); } ASIG_MULT expresion    { printf("    ASIGNACION +=\n"); }
-    | ID { validarIdExistente($1); } ASIG_DIV expresion     { printf("    ASIGNACION +=\n"); }
+    | ID { validarIdExistente($1); } ASIG_MULT expresion    { printf("    ASIGNACION *=\n"); }
+    | ID { validarIdExistente($1); } ASIG_DIV expresion     { printf("    ASIGNACION /=\n"); }
     ;
 
 salida_pantalla:
@@ -178,40 +181,41 @@ comparacion:
     ;
 
 expresion:
-      expresion OP_SUMA termino
-    | expresion OP_RESTA termino
-	| termino
+      expresion OP_SUMA termino     { $$ = crearTerceto3(crearElemStr("+"), crearElemInd($1), crearElemInd($3)); }
+    | expresion OP_RESTA termino    { $$ = crearTerceto3(crearElemStr("-"), crearElemInd($1), crearElemInd($3)); }
+	| termino                       { $$ = $1; }
     ;
 
 termino: 
-    factor
-    | termino OP_MUL factor
-    | termino OP_DIV factor
+    factor                      { $$ = $1; }
+    | termino OP_MUL factor     { $$ = crearTerceto3(crearElemStr("*"), crearElemInd($1), crearElemInd($3)); }
+    | termino OP_DIV factor     { $$ = crearTerceto3(crearElemStr("/"), crearElemInd($1), crearElemInd($3)); }
     ;
 
 factor: 
-    P_A expresion P_C
+    P_A expresion P_C   { $$ = $2; }
     
 	| ID
 		{
 			validarIdExistente($1);
+            $$ = crearTerceto1(crearElemStr($1));
 		}
     
 	| REAL		
 		{
 			int ind = insertar_REAL_en_Tabla($1);
-            crearTerceto(getDirTOSPorIndice(ind)->nombre);
+            $$ = crearTerceto1(crearElemStr(getDirTOSPorIndice(ind)->nombre));
 		}
 		
     | ENTERO    
 		{	
 			int ind = insertar_ENTERO_en_Tabla($1);
-            crearTerceto(getDirTOSPorIndice(ind)->nombre);
+            $$ = crearTerceto1(crearElemStr(getDirTOSPorIndice(ind)->nombre));
 		}
     | CADENA
 		{
 			int ind = insertar_STRING_en_Tabla($1);
-            crearTerceto(getDirTOSPorIndice(ind)->nombre);
+            $$ = crearTerceto1(crearElemStr(getDirTOSPorIndice(ind)->nombre));
 		}
     | factorial
     | combinatorio

@@ -3,7 +3,7 @@
 #include <ctype.h> 
 #include <conio.h>
 #include <stdio.h>
-
+#include "util.h"
 
 #define LIM_REAL 2147483647
 #define LIM_INT 32768
@@ -215,11 +215,15 @@ int insertar_REAL_en_Tabla(double valor)
     return TOSaux;
 }
 
-int insertar_STRING_en_Tabla(char* valor)
+int insertar_STRING_en_Tabla(char* str)
 {
     int TOSaux = TOStop;
     int indiceTS;
     char nombreSimbolo[100];
+    char* valor = strdup(str);
+
+    // Para borrar las "" que quedan cuando se inserta una constante string
+    borrarChar(valor, '"');
 
     if(strcmp(nombreToken, "") == 0) {
         strcpy(nombreSimbolo, "_");

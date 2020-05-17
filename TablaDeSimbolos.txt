@@ -26,7 +26,7 @@ _12                                | CONST_INT              | 12                
 _2                                 | CONST_INT              | 2                                 |                      
 _5                                 | CONST_INT              | 5                                 |                      
 _3                                 | CONST_INT              | 3                                 |                      
-_"sarasa"                          | CONST_STRING           | "sarasa"                          | 8                    
+_sarasa                            | CONST_STRING           | sarasa                            | 6                    
 _15                                | CONST_INT              | 15                                |                      
 _0                                 | CONST_INT              | 0                                 |                      
 _1                                 | CONST_INT              | 1                                 |                      
