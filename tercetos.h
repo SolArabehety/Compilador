@@ -30,10 +30,11 @@ typedef struct terceto {
 } terceto;
 
 elemento crearElemStr(char*);
-elemento crearElemInd(int);
+elemento crearElemInt(int);
 elemento crearElemNull();
-int crearTerceto1(elemento);
-int crearTerceto3(elemento, elemento, elemento);
+int crearTerceto(elemento, elemento, elemento);
+int crearTercetoConstante(char*);
+int crearTercetoOperacion(char*, int, int);
 void imprimirTercetos();
 
 /* Índice global para tercetos */
@@ -49,7 +50,7 @@ elemento crearElemStr(char* str) {
     return e;
 }
 
-elemento crearElemInd(int ind) {
+elemento crearElemInt(int ind) {
     elemento e;
     e.valor.ind = ind;
     e.tipo = indice;
@@ -77,8 +78,9 @@ int buscarTerceto(const char* val) {
 }
 
 /*  Crear un terceto con los elementos pasados por parámetro y se Agregamos
-    al array global de tercetos */
-int crearTerceto3(elemento e1, elemento e2, elemento e3) {
+    al array global de tercetos. Esta es una función genérica para insertar
+    un terceto. Las demás funciones son más específicas y llaman a esta. */
+int crearTerceto(elemento e1, elemento e2, elemento e3) {
     terceto t;
     int indice = indTercetos;
 
@@ -95,25 +97,24 @@ int crearTerceto3(elemento e1, elemento e2, elemento e3) {
 }
 
 /*  Crear un terceto, donde el primer elemento es el valor pasado por parámetro.
-    La diferencia con crearTerceto3, es que solo se asigna el primer elemento
-    y el resto se asume que son valores nulos */
-int crearTerceto1(elemento e) {
-    terceto t;
-    int indice = indTercetos;
-
+    La diferencia con crearTerceto, es que solo se asigna el primer elemento
+    y el resto se asume que son valores nulos.
+    Se utiliza para las constantes. */
+int crearTercetoConstante(char* val) {
     /* Antes de crearlo, nos fijamos si ya existe */
-    int idx = buscarTerceto(e.valor.cad);
+    int idx = buscarTerceto(val);
     if (idx != -1)
         return idx;
 
-    t.elementos[0] = e;
-    t.elementos[1] = crearElemNull();
-    t.elementos[2] = crearElemNull();
+    return crearTerceto(crearElemStr(val), crearElemNull(), crearElemNull());
+}
 
-    tercetos[indice] = t;
-    indTercetos++;
-
-    return indice;
+/*  Crear un terceto, donde el primer elemento es una string con el valor
+    de alguna operación (ejemplo, "+") y los otros 2 son valores int que
+    corresponden a los índices de los tercetos sobre los que se realiza
+    la operación. */
+int crearTercetoOperacion(char* op, int ind1, int ind2) {
+    return crearTerceto(crearElemStr(op), crearElemInt(ind1), crearElemInt(ind2));
 }
 
 void imprimirTercetos() {

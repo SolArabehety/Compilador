@@ -83,13 +83,13 @@ lista_declaracion:
 					{  
 						validarIdDeclaracion($3);
                         int ind = insertar_ID_en_Tabla($3, tipo);
-                        crearTerceto1(crearElemStr(getDirTOSPorIndice(ind)->nombre));
+                        crearTercetoConstante(getDirTOSPorIndice(ind)->nombre);
 					}
 				| ID  
 					{  
 						validarIdDeclaracion($1);
 						int ind = insertar_ID_en_Tabla($1, tipo);
-                        crearTerceto1(crearElemStr(getDirTOSPorIndice(ind)->nombre));
+                        crearTercetoConstante(getDirTOSPorIndice(ind)->nombre);
 					};
 
  
@@ -181,15 +181,15 @@ comparacion:
     ;
 
 expresion:
-      expresion OP_SUMA termino     { $$ = crearTerceto3(crearElemStr("+"), crearElemInd($1), crearElemInd($3)); }
-    | expresion OP_RESTA termino    { $$ = crearTerceto3(crearElemStr("-"), crearElemInd($1), crearElemInd($3)); }
+      expresion OP_SUMA termino     { $$ = crearTercetoOperacion("+", $1, $3); }
+    | expresion OP_RESTA termino    { $$ = crearTercetoOperacion("-", $1, $3); }
 	| termino                       { $$ = $1; }
     ;
 
 termino: 
     factor                      { $$ = $1; }
-    | termino OP_MUL factor     { $$ = crearTerceto3(crearElemStr("*"), crearElemInd($1), crearElemInd($3)); }
-    | termino OP_DIV factor     { $$ = crearTerceto3(crearElemStr("/"), crearElemInd($1), crearElemInd($3)); }
+    | termino OP_MUL factor     { $$ = crearTercetoOperacion("*", $1, $3); }
+    | termino OP_DIV factor     { $$ = crearTercetoOperacion("/", $1, $3); }
     ;
 
 factor: 
@@ -198,24 +198,24 @@ factor:
 	| ID
 		{
 			validarIdExistente($1);
-            $$ = crearTerceto1(crearElemStr($1));
+            $$ = crearTercetoConstante($1);
 		}
     
 	| REAL		
 		{
 			int ind = insertar_REAL_en_Tabla($1);
-            $$ = crearTerceto1(crearElemStr(getDirTOSPorIndice(ind)->nombre));
+            $$ = crearTercetoConstante(getDirTOSPorIndice(ind)->nombre);
 		}
 		
     | ENTERO    
 		{	
 			int ind = insertar_ENTERO_en_Tabla($1);
-            $$ = crearTerceto1(crearElemStr(getDirTOSPorIndice(ind)->nombre));
+            $$ = crearTercetoConstante(getDirTOSPorIndice(ind)->nombre);
 		}
     | CADENA
 		{
 			int ind = insertar_STRING_en_Tabla($1);
-            $$ = crearTerceto1(crearElemStr(getDirTOSPorIndice(ind)->nombre));
+            $$ = crearTercetoConstante(getDirTOSPorIndice(ind)->nombre);
 		}
     | factorial
     | combinatorio
