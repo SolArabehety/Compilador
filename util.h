@@ -3,6 +3,14 @@
 #include <conio.h>
 #include <string.h>
 
+/*  Para que sea mas facil de identificar los tipos de
+    las variables que maneja nuestro compilador */
+typedef enum tipoVariable {
+    string,
+    entero,
+    flotante
+} tipoVariable;
+
 void borrarChar(char*, char);
 
 void borrarChar(char* s, char c) { 

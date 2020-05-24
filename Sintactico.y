@@ -5,7 +5,7 @@
 #include <conio.h>
 #include <string.h>
 #include "y.tab.h"
-#include "tabla_simbolos.h"
+/* tercetos.h ya incluye a tabla_simbolos.h */
 #include "tercetos.h"
 #include "pila.h"
 
@@ -22,6 +22,7 @@ int decsIndex = 0;              // Indice de declaraciones
 void validarIdDeclaracion(char*);
 void validarIdExistente(char*);
 int yyerror(char*);
+void inicializarCompilador();
 
 /* Punteros y pilas para expresiones */
 int indExpr, indTerm, indFact;
@@ -273,6 +274,9 @@ void validarIdExistente(char* id) {
     exit(1);
 }
 
+/*  Esta funcion es para cualquier cosa que se necesite hacer antes de iniciar con el parsing.
+    Hay que hacerlo aca porque en el bloque de arriba de todo no se pueden llamar funciones 
+    aparentement. */
 void inicializarCompilador() {
     inicializarPila(&pilaExpr);
     inicializarPila(&pilaTerm);

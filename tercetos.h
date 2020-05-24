@@ -2,6 +2,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdio.h>
+#include "tabla_simbolos.h"
 
 /*  Esta unión significa que elemento podra tener un char*
     o un int (para índices hacio otros tercetos), pero no ambos
@@ -109,12 +110,45 @@ int crearTercetoConstante(char* val) {
     return crearTerceto(crearElemStr(val), crearElemNull(), crearElemNull());
 }
 
+/*  Crear un terceto, donde el primer elemento es el valor pasado por parámetro y
+    el segundo parámetro indicará que tipo tendrá en la tabla de símbolos.
+    Es como crearTercetoConstante, pero la diferencia es que ademas se agrega
+    a la tabla de símbolos. Se usa para las variables auxiliares. */
+int crearTercetoVariable(char* val, int tipo) {
+    /* Antes de crearlo, nos fijamos si ya existe */
+    int idx = buscarTerceto(val);
+    if (idx != -1)
+        return idx;
+    
+    insertar_ID_en_Tabla(val, tipo);
+
+    return crearTerceto(crearElemStr(val), crearElemNull(), crearElemNull());
+}
+
 /*  Crear un terceto, donde el primer elemento es una string con el valor
     de alguna operación (ejemplo, "+") y los otros 2 son valores int que
     corresponden a los índices de los tercetos sobre los que se realiza
     la operación. */
 int crearTercetoOperacion(char* op, int ind1, int ind2) {
     return crearTerceto(crearElemStr(op), crearElemInt(ind1), crearElemInt(ind2));
+}
+
+/*  Crear un terceto, donde el primer elemento es el valor pasado por parámetro.
+    El parámetro debería ser una instrucción de assembler para hacer un salto.
+    El salto no se coloca en esta función ya que al momento de crear el terceto,
+    por lo general todavía no se conoce hacia donde debe saltar, para eso se
+    utiliza la función modificarSaltoTerceto */
+int crearTercetoBranch(char* op) {
+    return crearTerceto(crearElemStr(op), crearElemInt(0), crearElemNull());
+}
+
+/*  Busca al terceto por índice según el primer parámetro de la función,
+    y le cambia su segundo valor al entero pasado como segundo parámetro.
+    Se debería utilizar para modificar los tercetos que tienen instrucciones
+    de Branch */
+void modificarSaltoTerceto(int ind, int salto) {
+    terceto ter = tercetos[ind];
+    ter.elementos[1].valor.ind = salto;
 }
 
 void imprimirTercetos() {
