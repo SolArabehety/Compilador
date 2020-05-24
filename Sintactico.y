@@ -23,7 +23,9 @@ void validarIdDeclaracion(char*);
 void validarIdExistente(char*);
 int yyerror(char*);
 
-
+/* Punteros y pilas para expresiones */
+int indExpr, indTerm, indFact;
+pila pilaExpr, pilaTerm, pilaFact;
 %}
 
 %error-verbose
@@ -48,7 +50,7 @@ int yyerror(char*);
 %%
 
 programa:         
-    {   printf("Inicia COMPILADOR\n"); } 
+    {   printf("Inicia COMPILADOR\n"); inicializarCompilador(); } 
     est_declaracion algoritmo    
     {   guardarTOS();
         imprimirTercetos();
@@ -182,44 +184,44 @@ comparacion:
     ;
 
 expresion:
-      expresion OP_SUMA termino     { $$ = crearTercetoOperacion("+", $1, $3); }
-    | expresion OP_RESTA termino    { $$ = crearTercetoOperacion("-", $1, $3); }
-	| termino                       { $$ = $1; }
+      expresion { apilar(&pilaExpr, indExpr); } OP_SUMA termino  { indExpr = crearTercetoOperacion("+", desapilar(&pilaExpr), indTerm); }
+    | expresion { apilar(&pilaExpr, indExpr); } OP_RESTA termino { indExpr = crearTercetoOperacion("-", desapilar(&pilaExpr), indTerm); }
+	| termino   { indExpr = indTerm; }
     ;
 
 termino: 
-    factor                      { $$ = $1; }
-    | termino OP_MUL factor     { $$ = crearTercetoOperacion("*", $1, $3); }
-    | termino OP_DIV factor     { $$ = crearTercetoOperacion("/", $1, $3); }
+    factor    { indTerm = indFact; }
+    | termino { apilar(&pilaTerm, indTerm); } OP_MUL factor { indTerm = crearTercetoOperacion("*", desapilar(&pilaTerm), indFact); }
+    | termino { apilar(&pilaTerm, indTerm); } OP_DIV factor { indTerm = crearTercetoOperacion("/", desapilar(&pilaTerm), indFact); }
     ;
 
 factor: 
-    P_A expresion P_C   { $$ = $2; }
+    P_A expresion P_C   { indFact = indExpr; }
     
 	| ID
 		{
 			validarIdExistente($1);
-            $$ = crearTercetoConstante($1);
+            indFact = crearTercetoConstante($1);
 		}
     
 	| REAL		
 		{
 			int ind = insertar_REAL_en_Tabla($1);
-            $$ = crearTercetoConstante(getDirTOSPorIndice(ind)->nombre);
+            indFact = crearTercetoConstante(getDirTOSPorIndice(ind)->nombre);
 		}
 		
     | ENTERO    
 		{	
 			int ind = insertar_ENTERO_en_Tabla($1);
-            $$ = crearTercetoConstante(getDirTOSPorIndice(ind)->nombre);
+            indFact = crearTercetoConstante(getDirTOSPorIndice(ind)->nombre);
 		}
     | CADENA
 		{
 			int ind = insertar_STRING_en_Tabla($1);
-            $$ = crearTercetoConstante(getDirTOSPorIndice(ind)->nombre);
+            indFact = crearTercetoConstante(getDirTOSPorIndice(ind)->nombre);
 		}
-    | factorial
-    | combinatorio
+    | factorial         { indFact = -1; }
+    | combinatorio      { indFact = -1; }
     ;
 
 %%
@@ -269,4 +271,10 @@ void validarIdExistente(char* id) {
 
     printf("\nError en la linea %d: El ID '%s' no ha sido declarado.\n", yylineno, id);
     exit(1);
+}
+
+void inicializarCompilador() {
+    inicializarPila(&pilaExpr);
+    inicializarPila(&pilaTerm);
+    inicializarPila(&pilaFact);
 }
