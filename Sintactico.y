@@ -7,6 +7,7 @@
 #include "y.tab.h"
 #include "tabla_simbolos.h"
 #include "tercetos.h"
+#include "pila.h"
 
 int yystopparser=0;
 FILE *yyin;
