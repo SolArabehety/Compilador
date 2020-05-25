@@ -5,11 +5,11 @@
 
 /*  Para que sea mas facil de identificar los tipos de
     las variables que maneja nuestro compilador */
-typedef enum tipoVariable {
+typedef enum tipoVar {
     string,
     entero,
-    flotante
-} tipoVariable;
+    real
+} tipoVar;
 
 void borrarChar(char*, char);
 

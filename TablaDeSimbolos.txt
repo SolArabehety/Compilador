@@ -18,8 +18,11 @@ d                                  | INTEGER                |                   
 e                                  | INTEGER                |                                   |                      
 f                                  | INTEGER                |                                   |                      
 const1                             | CONST_REAL             | 9.460000                          |                      
+_9.460000                          | CONST_REAL             | 9.460000                          |                      
 const2                             | CONST_REAL             | 0.600000                          |                      
+_0.600000                          | CONST_REAL             | 0.600000                          |                      
 const3                             | CONST_REAL             | 6.000000                          |                      
+_6.000000                          | CONST_REAL             | 6.000000                          |                      
 _155                               | CONST_INT              | 155                               |                      
 _4                                 | CONST_INT              | 4                                 |                      
 _12                                | CONST_INT              | 12                                |                      
@@ -28,7 +31,9 @@ _5                                 | CONST_INT              | 5                 
 _3                                 | CONST_INT              | 3                                 |                      
 _sarasa                            | CONST_STRING           | sarasa                            | 6                    
 _15                                | CONST_INT              | 15                                |                      
-_0                                 | CONST_INT              | 0                                 |                      
+@fact                              | STRING                 |                                   |                      
+@fact_aux                          | STRING                 |                                   |                      
 _1                                 | CONST_INT              | 1                                 |                      
+_0                                 | CONST_INT              | 0                                 |                      
 
 --------------------------------------------- TABLA DE  SIMBOLOS ---------------------------------------------

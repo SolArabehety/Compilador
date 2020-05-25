@@ -27,6 +27,9 @@ void inicializarCompilador();
 /* Punteros y pilas para expresiones */
 int indExpr, indTerm, indFact;
 pila pilaExpr, pilaTerm, pilaFact;
+
+/* Punteros y pilas para factorial y combinatorio */
+int indFactorial;
 %}
 
 %error-verbose
@@ -86,14 +89,12 @@ lista_declaracion:
 				lista_declaracion P_Y_C  ID  
 					{  
 						validarIdDeclaracion($3);
-                        int ind = insertar_ID_en_Tabla($3, tipo);
-                        crearTercetoConstante(getDirTOSPorIndice(ind)->nombre);
+                        crearTercetoVariable($3, tipo);
 					}
 				| ID  
 					{  
 						validarIdDeclaracion($1);
-						int ind = insertar_ID_en_Tabla($1, tipo);
-                        crearTercetoConstante(getDirTOSPorIndice(ind)->nombre);
+                        crearTercetoVariable($1, tipo);
 					};
 
  
@@ -148,7 +149,40 @@ ingreso_valor:
     ;
 
 factorial:
-    FACT P_A expresion P_C      { printf("    FACTORIAL\n"); }
+    FACT P_A expresion P_C      
+    { 
+        printf("    FACTORIAL\n");
+        int indFactorial = crearTercetoVariable("@fact", entero);
+        int indFactAux = crearTercetoVariable("@fact_aux", entero);
+        crearTercetoOperacion("=", indFactAux, indExpr);
+
+        /* Si el número es 1 o 0, directamente resolvemos a 1 y saltamos
+           todo el while */
+        int indConst1 = crearTercetoConstanteEntera(1);
+        int indFactCmp = crearTercetoOperacion("CMP", indFactAux, indConst1);
+        int indBranch1 = crearTercetoBranch("BGT", 0);
+        crearTercetoOperacion("=", indFactorial, indConst1);
+        int indBranch2 = crearTercetoBranch("BI", 0);
+
+        /* Inicializamos el factorial en 0 */
+        int indConst0 = crearTercetoConstanteEntera(0);
+        crearTercetoOperacion("=", indFactorial, indConst0);
+        modificarSaltoTerceto(indBranch1, indConst0);
+
+        /* Loop para multiplicar sucesivamente */
+        indFactCmp = crearTercetoOperacion("CMP", indFactAux, indConst1);
+        int indBranch3 = crearTercetoBranch("BLE", 0);
+        int indFactResta = crearTercetoOperacion("-", indFactAux, indConst1);
+        int indFactMult = crearTercetoOperacion("*", indFactAux, indFactResta);
+        int indFactSum = crearTercetoOperacion("+", indFactorial, indFactMult);
+        crearTercetoOperacion("=", indFactAux, indFactResta);
+        crearTercetoOperacion("=", indFactorial, indFactSum);
+        int indFinal = crearTercetoBranch("BI", indFactCmp);
+        printf("indFinal: %d\n", indFinal);
+        /* Seteamos los saltos para los branches que quedaron colgados */
+        modificarSaltoTerceto(indBranch2, indFinal + 1);
+        modificarSaltoTerceto(indBranch3, indFinal + 1);
+    }
     ;
 
 combinatorio:
@@ -202,26 +236,26 @@ factor:
 	| ID
 		{
 			validarIdExistente($1);
-            indFact = crearTercetoConstante($1);
+            indFact = buscarTerceto($1);
 		}
     
 	| REAL		
 		{
 			int ind = insertar_REAL_en_Tabla($1);
-            indFact = crearTercetoConstante(getDirTOSPorIndice(ind)->nombre);
+            indFact = crearTercetoConstanteReal($1);
 		}
 		
     | ENTERO    
 		{	
 			int ind = insertar_ENTERO_en_Tabla($1);
-            indFact = crearTercetoConstante(getDirTOSPorIndice(ind)->nombre);
+            indFact = crearTercetoConstanteEntera($1);
 		}
     | CADENA
 		{
 			int ind = insertar_STRING_en_Tabla($1);
-            indFact = crearTercetoConstante(getDirTOSPorIndice(ind)->nombre);
+            indFact = crearTercetoConstanteString($1);
 		}
-    | factorial         { indFact = -1; }
+    | factorial         { indFact = indFactorial; }
     | combinatorio      { indFact = -1; }
     ;
 

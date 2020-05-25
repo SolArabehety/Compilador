@@ -97,17 +97,42 @@ int crearTerceto(elemento e1, elemento e2, elemento e3) {
     return indice;
 }
 
-/*  Crear un terceto, donde el primer elemento es el valor pasado por parámetro.
+/*  Crear un terceto, donde el primer elemento será el valor pasado por parámetro.
     La diferencia con crearTerceto, es que solo se asigna el primer elemento
     y el resto se asume que son valores nulos.
     Se utiliza para las constantes. */
-int crearTercetoConstante(char* val) {
+int crearTercetoConstanteEntera(int val) {
     /* Antes de crearlo, nos fijamos si ya existe */
-    int idx = buscarTerceto(val);
+    char buffer[900];
+    sprintf(buffer, "_%d", val);
+    int idx = buscarTerceto(buffer);
     if (idx != -1)
         return idx;
 
-    return crearTerceto(crearElemStr(val), crearElemNull(), crearElemNull());
+    insertar_ENTERO_en_Tabla(val);
+    return crearTerceto(crearElemStr(buffer), crearElemNull(), crearElemNull());
+}
+
+int crearTercetoConstanteString(char* val) {
+    char buffer[900];
+    sprintf(buffer, "_%s", val);
+    int idx = buscarTerceto(buffer);
+    if (idx != -1)
+        return idx;
+
+    insertar_STRING_en_Tabla(val);
+    return crearTerceto(crearElemStr(buffer), crearElemNull(), crearElemNull());
+}
+
+int crearTercetoConstanteReal(float val) {
+    char buffer[900];
+    sprintf(buffer, "_%f", val);
+    int idx = buscarTerceto(buffer);
+    if (idx != -1)
+        return idx;
+
+    insertar_REAL_en_Tabla(val);
+    return crearTerceto(crearElemStr(buffer), crearElemNull(), crearElemNull());
 }
 
 /*  Crear un terceto, donde el primer elemento es el valor pasado por parámetro y
@@ -133,13 +158,14 @@ int crearTercetoOperacion(char* op, int ind1, int ind2) {
     return crearTerceto(crearElemStr(op), crearElemInt(ind1), crearElemInt(ind2));
 }
 
-/*  Crear un terceto, donde el primer elemento es el valor pasado por parámetro.
-    El parámetro debería ser una instrucción de assembler para hacer un salto.
-    El salto no se coloca en esta función ya que al momento de crear el terceto,
-    por lo general todavía no se conoce hacia donde debe saltar, para eso se
-    utiliza la función modificarSaltoTerceto */
-int crearTercetoBranch(char* op) {
-    return crearTerceto(crearElemStr(op), crearElemInt(0), crearElemNull());
+/*  Crear un terceto, donde el primer elemento es el primre valor pasado por 
+    parámetro, este debería ser una instrucción de assembler para hacer un 
+    salto. El segundo parámetro es el índice del terceto hacia el cuál va a
+    hacer el salto. En algunos casos no se conoce el salto al momento de crear
+    el branch, en ese caso se debe colocar 0 en el salto y luego se deberá 
+    usar la función modificarSaltoTerceto */
+int crearTercetoBranch(char* op, int salto) {
+    return crearTerceto(crearElemStr(op), crearElemInt(salto), crearElemNull());
 }
 
 /*  Busca al terceto por índice según el primer parámetro de la función,
@@ -147,8 +173,7 @@ int crearTercetoBranch(char* op) {
     Se debería utilizar para modificar los tercetos que tienen instrucciones
     de Branch */
 void modificarSaltoTerceto(int ind, int salto) {
-    terceto ter = tercetos[ind];
-    ter.elementos[1].valor.ind = salto;
+    tercetos[ind].elementos[1].valor.ind = salto;
 }
 
 void imprimirTercetos() {
