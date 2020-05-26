@@ -149,40 +149,7 @@ ingreso_valor:
     ;
 
 factorial:
-    FACT P_A expresion P_C      
-    { 
-        printf("    FACTORIAL\n");
-        int indFactorial = crearTercetoVariable("@fact", entero);
-        int indFactAux = crearTercetoVariable("@fact_aux", entero);
-        crearTercetoOperacion("=", indFactAux, indExpr);
-
-        /* Si el número es 1 o 0, directamente resolvemos a 1 y saltamos
-           todo el while */
-        int indConst1 = crearTercetoConstanteEntera(1);
-        int indFactCmp = crearTercetoOperacion("CMP", indFactAux, indConst1);
-        int indBranch1 = crearTercetoBranch("BGT", 0);
-        crearTercetoOperacion("=", indFactorial, indConst1);
-        int indBranch2 = crearTercetoBranch("BI", 0);
-
-        /* Inicializamos el factorial en 0 */
-        int indConst0 = crearTercetoConstanteEntera(0);
-        crearTercetoOperacion("=", indFactorial, indConst0);
-        modificarSaltoTerceto(indBranch1, indConst0);
-
-        /* Loop para multiplicar sucesivamente */
-        indFactCmp = crearTercetoOperacion("CMP", indFactAux, indConst1);
-        int indBranch3 = crearTercetoBranch("BLE", 0);
-        int indFactResta = crearTercetoOperacion("-", indFactAux, indConst1);
-        int indFactMult = crearTercetoOperacion("*", indFactAux, indFactResta);
-        int indFactSum = crearTercetoOperacion("+", indFactorial, indFactMult);
-        crearTercetoOperacion("=", indFactAux, indFactResta);
-        crearTercetoOperacion("=", indFactorial, indFactSum);
-        int indFinal = crearTercetoBranch("BI", indFactCmp);
-        printf("indFinal: %d\n", indFinal);
-        /* Seteamos los saltos para los branches que quedaron colgados */
-        modificarSaltoTerceto(indBranch2, indFinal + 1);
-        modificarSaltoTerceto(indBranch3, indFinal + 1);
-    }
+    FACT P_A expresion P_C      { printf("    FACTORIAL\n"); generarCodigoFactorial(); }
     ;
 
 combinatorio:
@@ -315,4 +282,37 @@ void inicializarCompilador() {
     inicializarPila(&pilaExpr);
     inicializarPila(&pilaTerm);
     inicializarPila(&pilaFact);
+}
+
+void generarCodigoFactorial() {
+    int indFactorial = crearTercetoVariable("@fact", entero);
+    int indFactAux = crearTercetoVariable("@fact_aux", entero);
+    crearTercetoOperacion("=", indFactAux, indExpr);
+
+    /* Si el número es 1 o 0, directamente resolvemos a 1 y saltamos
+        todo el while */
+    int indConst1 = crearTercetoConstanteEntera(1);
+    int indFactCmp = crearTercetoOperacion("CMP", indFactAux, indConst1);
+    int indBranch1 = crearTercetoBranch("BGT", 0);
+    crearTercetoOperacion("=", indFactorial, indConst1);
+    int indBranch2 = crearTercetoBranch("BI", 0);
+
+    /* Inicializamos el factorial en 0 */
+    int indConst0 = crearTercetoConstanteEntera(0);
+    crearTercetoOperacion("=", indFactorial, indConst0);
+    modificarSaltoTerceto(indBranch1, indConst0);
+
+    /* Loop para multiplicar sucesivamente */
+    indFactCmp = crearTercetoOperacion("CMP", indFactAux, indConst1);
+    int indBranch3 = crearTercetoBranch("BLE", 0);
+    int indFactResta = crearTercetoOperacion("-", indFactAux, indConst1);
+    int indFactMult = crearTercetoOperacion("*", indFactAux, indFactResta);
+    int indFactSum = crearTercetoOperacion("+", indFactorial, indFactMult);
+    crearTercetoOperacion("=", indFactAux, indFactResta);
+    crearTercetoOperacion("=", indFactorial, indFactSum);
+    int indFinal = crearTercetoBranch("BI", indFactCmp);
+    printf("indFinal: %d\n", indFinal);
+    /* Seteamos los saltos para los branches que quedaron colgados */
+    modificarSaltoTerceto(indBranch2, indFinal + 1);
+    modificarSaltoTerceto(indBranch3, indFinal + 1);
 }
