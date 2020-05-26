@@ -30,12 +30,12 @@ typedef struct terceto {
     elemento elementos[3];
 } terceto;
 
-elemento crearElemStr(char*);
+elemento crearElemStr(const char*);
 elemento crearElemInt(int);
 elemento crearElemNull();
 int crearTerceto(elemento, elemento, elemento);
-int crearTercetoConstante(char*);
-int crearTercetoOperacion(char*, int, int);
+int crearTercetoConstante(const char*);
+int crearTercetoOperacion(const char*, int, int);
 void imprimirTercetos();
 
 /* Índice global para tercetos */
@@ -44,7 +44,7 @@ int indTercetos = 0;
 /* Array de Tercetos */
 terceto tercetos[900];
 
-elemento crearElemStr(char* str) {
+elemento crearElemStr(const char* str) {
     elemento e;
     e.valor.cad = strdup(str);
     e.tipo = cadena;
@@ -113,7 +113,7 @@ int crearTercetoConstanteEntera(int val) {
     return crearTerceto(crearElemStr(buffer), crearElemNull(), crearElemNull());
 }
 
-int crearTercetoConstanteString(char* val) {
+int crearTercetoConstanteString(const char* val) {
     char buffer[900];
     sprintf(buffer, "_%s", val);
     int idx = buscarTerceto(buffer);
@@ -139,7 +139,7 @@ int crearTercetoConstanteReal(float val) {
     el segundo parámetro indicará que tipo tendrá en la tabla de símbolos.
     Es como crearTercetoConstante, pero la diferencia es que ademas se agrega
     a la tabla de símbolos. Se usa para las variables auxiliares. */
-int crearTercetoVariable(char* val, int tipo) {
+int crearTercetoVariable(const char* val, int tipo) {
     /* Antes de crearlo, nos fijamos si ya existe */
     int idx = buscarTerceto(val);
     if (idx != -1)
@@ -154,7 +154,7 @@ int crearTercetoVariable(char* val, int tipo) {
     de alguna operación (ejemplo, "+") y los otros 2 son valores int que
     corresponden a los índices de los tercetos sobre los que se realiza
     la operación. */
-int crearTercetoOperacion(char* op, int ind1, int ind2) {
+int crearTercetoOperacion(const char* op, int ind1, int ind2) {
     return crearTerceto(crearElemStr(op), crearElemInt(ind1), crearElemInt(ind2));
 }
 
@@ -164,7 +164,7 @@ int crearTercetoOperacion(char* op, int ind1, int ind2) {
     hacer el salto. En algunos casos no se conoce el salto al momento de crear
     el branch, en ese caso se debe colocar 0 en el salto y luego se deberá 
     usar la función modificarSaltoTerceto */
-int crearTercetoBranch(char* op, int salto) {
+int crearTercetoBranch(const char* op, int salto) {
     return crearTerceto(crearElemStr(op), crearElemInt(salto), crearElemNull());
 }
 

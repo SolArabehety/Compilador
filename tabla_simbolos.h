@@ -24,13 +24,13 @@ int TOStop = 0;
 char nombreToken[100] = "";
 
 void guardarTOS();
-int buscarValorEnTS(char*);
-int buscarNombreEnTS(char*);
+int buscarValorEnTS(const char*);
+int buscarNombreEnTS(const char*);
 
-int insertar_ID_en_Tabla(char*, int);
+int insertar_ID_en_Tabla(const char*, int);
 int insertar_ENTERO_en_Tabla(int);
 int insertar_REAL_en_Tabla(double);
-int insertar_STRING_en_Tabla(char*);
+int insertar_STRING_en_Tabla(const char*);
 
 // Funciones generales de la TS ------------------------------------------------------------------------
 
@@ -67,7 +67,7 @@ void guardarTOS()
     }
 }
 
-int buscarValorEnTS(char* val)
+int buscarValorEnTS(const char* val)
 {
 	int i;
 	for (i=0; i<TOStop; i++)
@@ -81,7 +81,7 @@ int buscarValorEnTS(char* val)
 	return 0;
 }
 
-void getNombreTOS(char* nombre, char*aux)
+void getNombreTOS(const char* nombre, char*aux)
 {
 	int i;
 	for (i=0; i<TOStop; i++)
@@ -105,7 +105,7 @@ tablaDeSimbolos* getDirTOSPorIndice(int indice) {
 	return &TOS[indice];
 }
 
-int buscarNombreEnTS(char* val)
+int buscarNombreEnTS(const char* val)
 {
     int i;
     for (i=0; i<TOStop; i++)
@@ -124,7 +124,7 @@ int buscarNombreEnTS(char* val)
 // tipo = 1 - STRING
 // tiop = 2 - INTEGER
 // tipo = 3 - FLOAT
-int insertar_ID_en_Tabla(char* token, int tipo)
+int insertar_ID_en_Tabla(const char* token, int tipo)
 {
     int TOSaux = TOStop;
     int indiceTS;
@@ -215,7 +215,7 @@ int insertar_REAL_en_Tabla(double valor)
     return TOSaux;
 }
 
-int insertar_STRING_en_Tabla(char* str)
+int insertar_STRING_en_Tabla(const char* str)
 {
     int TOSaux = TOStop;
     int indiceTS;
