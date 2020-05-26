@@ -19,17 +19,20 @@ int tipo;
 char* decs[LIM_SIMBOLOS];       // Declaraciones
 int decsIndex = 0;              // Indice de declaraciones
 
-void validarIdDeclaracion(char*);
-void validarIdExistente(char*);
-int yyerror(char*);
-void inicializarCompilador();
-
 /* Punteros y pilas para expresiones */
 int indExpr, indTerm, indFact;
 pila pilaExpr, pilaTerm, pilaFact;
 
 /* Punteros y pilas para factorial y combinatorio */
 int indFactorial;
+
+void validarIdDeclaracion(char*);
+void validarIdExistente(char*);
+int yyerror(char*);
+void inicializarCompilador();
+void generarCodigoAsignacion(const char*);
+void generarCodigoAsignacionEsp(const char*, const char*);
+void generarCodigoFactorial();
 %}
 
 %error-verbose
@@ -130,11 +133,11 @@ declaracion_constante:
 
 // TEMA ESPECIAL: ASIGNACIONES ESPECIALES 
 asignacion: 
-    ID { validarIdExistente($1); } ASIG expresion           { printf("    ASIGNACION :=\n"); }    
-    | ID { validarIdExistente($1); } ASIG_MAS expresion     { printf("    ASIGNACION +=\n"); }
-    | ID { validarIdExistente($1); } ASIG_MEN expresion     { printf("    ASIGNACION -=\n"); }
-    | ID { validarIdExistente($1); } ASIG_MULT expresion    { printf("    ASIGNACION *=\n"); }
-    | ID { validarIdExistente($1); } ASIG_DIV expresion     { printf("    ASIGNACION /=\n"); }
+    ID { validarIdExistente($1); } ASIG expresion           { printf("    ASIGNACION :=\n"); generarCodigoAsignacion($1); }    
+    | ID { validarIdExistente($1); } ASIG_MAS expresion     { printf("    ASIGNACION +=\n"); generarCodigoAsignacionEsp($1, "+"); }
+    | ID { validarIdExistente($1); } ASIG_MEN expresion     { printf("    ASIGNACION -=\n"); generarCodigoAsignacionEsp($1, "-"); }
+    | ID { validarIdExistente($1); } ASIG_MULT expresion    { printf("    ASIGNACION *=\n"); generarCodigoAsignacionEsp($1, "*"); }
+    | ID { validarIdExistente($1); } ASIG_DIV expresion     { printf("    ASIGNACION /=\n"); generarCodigoAsignacionEsp($1, "/"); }
     ;
 
 salida_pantalla:
@@ -315,4 +318,14 @@ void generarCodigoFactorial() {
     /* Seteamos los saltos para los branches que quedaron colgados */
     modificarSaltoTerceto(indBranch2, indFinal + 1);
     modificarSaltoTerceto(indBranch3, indFinal + 1);
+}
+
+void generarCodigoAsignacion(const char* id) {
+    crearTercetoOperacion("=", buscarTerceto(id), indExpr);
+}
+
+void generarCodigoAsignacionEsp(const char* id, const char* op) {
+    int indTerceto = buscarTerceto(id);
+    int indOp = crearTercetoOperacion(op, indTerceto, indExpr);
+    crearTercetoOperacion("=", indTerceto, indOp);
 }
