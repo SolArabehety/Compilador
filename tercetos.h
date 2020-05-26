@@ -34,8 +34,13 @@ elemento crearElemStr(const char*);
 elemento crearElemInt(int);
 elemento crearElemNull();
 int crearTerceto(elemento, elemento, elemento);
-int crearTercetoConstante(const char*);
+int crearTercetoConstanteEntera(int);
+int crearTercetoConstanteString(const char*);
+int crearTercetoConstanteReal(float);
+int crearTercetoConstanteVariable(const char*, int);
 int crearTercetoOperacion(const char*, int, int);
+int crearTercetoBranch(const char*, int);
+void modificarSaltoTerceto(int, int);
 void imprimirTercetos();
 
 /* Índice global para tercetos */
