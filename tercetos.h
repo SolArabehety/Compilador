@@ -12,22 +12,23 @@ typedef union unionTerceto {
     int ind;
 } unionTerceto;
 
-/*  Un terceto puede tener índices, strings o nada. */
-typedef enum tipoValor {
-    indice,
-    cadena,
-    nulo
-} tipoValor;
-
 /*  Esta struct es necesaria para poder determinar que tipo de 
     valor está siendo almacenado en la unión */
 typedef struct elemento {
+    /* Los tercetos solo deberían poder tener elementos que sean de tipo
+    string, entero (para índices) o nada (indefinido) */
     tipoValor tipo;
     unionTerceto valor;
 } elemento;
 
 typedef struct terceto {
     elemento elementos[3];
+
+    /*  Si es real, entero o cadena.
+        Esto es un rebusque que hice para que fuera más fácil verificar el tipo
+        en expresiones y asignaciones. No aparece en el archivo intermedia.txt y
+        no es necesario que todos los tercetos lo tengan definido. */
+    int tipo_var;
 } terceto;
 
 elemento crearElemStr(const char*);
@@ -52,20 +53,20 @@ terceto tercetos[900];
 elemento crearElemStr(const char* str) {
     elemento e;
     e.valor.cad = strdup(str);
-    e.tipo = cadena;
+    e.tipo = string;
     return e;
 }
 
 elemento crearElemInt(int ind) {
     elemento e;
     e.valor.ind = ind;
-    e.tipo = indice;
+    e.tipo = entero;
     return e;
 }
 
 elemento crearElemNull() {
     elemento e;
-    e.tipo = nulo;
+    e.tipo = indefinido;
     return e;
 }
 
@@ -196,15 +197,20 @@ void imprimirTercetos() {
         for (j = 0; j < 3; j++) {
             elemento e = tercetos[i].elementos[j];
 
-            if (e.tipo == cadena) {
-                fprintf(gci, "%s", e.valor.cad);
-            } else if (e.tipo == indice) {
-                fprintf(gci, "[%d]", e.valor.ind + 1);
-            } else {
-                fprintf(gci, "_");
+            switch (e.tipo) {
+                case string:
+                    fprintf(gci, "%s", e.valor.cad);
+                    break;
+                case entero: /* Si es entero, es un índice y le sumamos 1 al mostrarlo */
+                    fprintf(gci, "[%d]", e.valor.ind + 1);
+                    break;
+                default:
+                    fprintf(gci, "_");
             }
 
-            if (j < 2) fprintf(gci, ", ");
+            if (j < 2) {
+                fprintf(gci, ", ");
+            } 
         }
         fprintf(gci, ")\n");
     }

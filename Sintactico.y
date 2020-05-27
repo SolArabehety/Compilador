@@ -82,9 +82,9 @@ declaracion:
     ;
 
 tipo_variable:
-		STRING		{tipo = 1; } 
-	| 	INTEGER 	{tipo = 2;}
-	|	FLOAT		{tipo = 3;} 
+		STRING		{tipo = string; } 
+	| 	INTEGER 	{tipo = entero; }
+	|	FLOAT		{tipo = real; } 
 
 
 

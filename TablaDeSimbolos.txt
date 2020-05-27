@@ -31,8 +31,8 @@ _5                                 | CONST_INT              | 5                 
 _3                                 | CONST_INT              | 3                                 |                      
 _sarasa                            | CONST_STRING           | sarasa                            | 6                    
 _15                                | CONST_INT              | 15                                |                      
-@fact                              | STRING                 |                                   |                      
-@fact_aux                          | STRING                 |                                   |                      
+@fact                              | INTEGER                |                                   |                      
+@fact_aux                          | INTEGER                |                                   |                      
 _1                                 | CONST_INT              | 1                                 |                      
 _0                                 | CONST_INT              | 0                                 |                      
 

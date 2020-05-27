@@ -120,10 +120,11 @@ int buscarNombreEnTS(const char* val)
 }
 
 // INSERTS ------------------------------------------------------------------------
-
-// tipo = 1 - STRING
-// tiop = 2 - INTEGER
-// tipo = 3 - FLOAT
+/*  Los tipos están definidos en la struct tipoVar en util.h, pero básicamente son:
+    tipo = 0 -> INDEFINIDO
+    tipo = 1 -> STRING
+    tiop = 2 -> ENTERO
+    tipo = 3 -> REAL    */
 int insertar_ID_en_Tabla(const char* token, int tipo)
 {
     int TOSaux = TOStop;
@@ -133,15 +134,15 @@ int insertar_ID_en_Tabla(const char* token, int tipo)
         strcpy(TOS[TOStop].nombre, token);
         
         switch(tipo){
-            case 1:
+            case string:
                 strcpy(TOS[TOStop].tipo, "STRING");
             break;
             
-            case 2:
+            case entero:
                 strcpy(TOS[TOStop].tipo, "INTEGER");
             break;
             
-            case 3:
+            case real:
                 strcpy(TOS[TOStop].tipo, "FLOAT");
             break;
         }
