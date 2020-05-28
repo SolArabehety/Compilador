@@ -28,17 +28,18 @@ typedef struct terceto {
         Esto es un rebusque que hice para que fuera más fácil verificar el tipo
         en expresiones y asignaciones. No aparece en el archivo intermedia.txt y
         no es necesario que todos los tercetos lo tengan definido. */
-    int tipo_var;
+    tipoValor tipoTerceto;
 } terceto;
 
 elemento crearElemStr(const char*);
 elemento crearElemInt(int);
 elemento crearElemNull();
-int crearTerceto(elemento, elemento, elemento);
+int crearTerceto(elemento, elemento, elemento, tipoValor);
 int crearTercetoConstanteEntera(int);
 int crearTercetoConstanteString(const char*);
 int crearTercetoConstanteReal(float);
-int crearTercetoConstanteVariable(const char*, int);
+int crearTercetoVariable(const char*, tipoValor);
+int crearTercetoAsignacion(int, int);
 int crearTercetoOperacion(const char*, int, int);
 int crearTercetoBranch(const char*, int);
 void modificarSaltoTerceto(int, int);
@@ -87,13 +88,14 @@ int buscarTerceto(const char* val) {
 /*  Crear un terceto con los elementos pasados por parámetro y se Agregamos
     al array global de tercetos. Esta es una función genérica para insertar
     un terceto. Las demás funciones son más específicas y llaman a esta. */
-int crearTerceto(elemento e1, elemento e2, elemento e3) {
+int crearTerceto(elemento e1, elemento e2, elemento e3, tipoValor tipo) {
     terceto t;
     int indice = indTercetos;
 
     t.elementos[0] = e1;
     t.elementos[1] = e2;
     t.elementos[2] = e3;
+    t.tipoTerceto = tipo;
 
     /* Agregamos el terceto al array global de tercetos */
     tercetos[indice] = t;
@@ -116,18 +118,19 @@ int crearTercetoConstanteEntera(int val) {
         return idx;
 
     insertar_ENTERO_en_Tabla(val);
-    return crearTerceto(crearElemStr(buffer), crearElemNull(), crearElemNull());
+    return crearTerceto(crearElemStr(buffer), crearElemNull(), crearElemNull(), entero);
 }
 
 int crearTercetoConstanteString(const char* val) {
     char buffer[900];
     sprintf(buffer, "_%s", val);
+    borrarChar(buffer, '"');
     int idx = buscarTerceto(buffer);
     if (idx != -1)
         return idx;
 
     insertar_STRING_en_Tabla(val);
-    return crearTerceto(crearElemStr(buffer), crearElemNull(), crearElemNull());
+    return crearTerceto(crearElemStr(buffer), crearElemNull(), crearElemNull(), string);
 }
 
 int crearTercetoConstanteReal(float val) {
@@ -138,14 +141,14 @@ int crearTercetoConstanteReal(float val) {
         return idx;
 
     insertar_REAL_en_Tabla(val);
-    return crearTerceto(crearElemStr(buffer), crearElemNull(), crearElemNull());
+    return crearTerceto(crearElemStr(buffer), crearElemNull(), crearElemNull(), real);
 }
 
 /*  Crear un terceto, donde el primer elemento es el valor pasado por parámetro y
     el segundo parámetro indicará que tipo tendrá en la tabla de símbolos.
     Es como crearTercetoConstante, pero la diferencia es que ademas se agrega
     a la tabla de símbolos. Se usa para las variables auxiliares. */
-int crearTercetoVariable(const char* val, int tipo) {
+int crearTercetoVariable(const char* val, tipoValor tipo) {
     /* Antes de crearlo, nos fijamos si ya existe */
     int idx = buscarTerceto(val);
     if (idx != -1)
@@ -153,7 +156,24 @@ int crearTercetoVariable(const char* val, int tipo) {
     
     insertar_ID_en_Tabla(val, tipo);
 
-    return crearTerceto(crearElemStr(val), crearElemNull(), crearElemNull());
+    return crearTerceto(crearElemStr(val), crearElemNull(), crearElemNull(), tipo);
+}
+
+/*  Crear un terceto, donde el primer y segundo elementos son indices de 
+    tercetos. Crea una operación de asignación ("=", ind1, ind2) pero antes
+    valida que la asignación pueda realizarse */
+int crearTercetoAsignacion(int ind1, int ind2) {
+    tipoValor tipo1 = tercetos[ind1].tipoTerceto;
+    tipoValor tipo2 = tercetos[ind2].tipoTerceto;
+
+    if (tipo1 == tipo2 || (tipo1 == real && tipo2 == entero)) {
+        return crearTerceto(crearElemStr("="), crearElemInt(ind1), crearElemInt(ind2), tipo1);
+    } else {
+        printf("\nError en la linea %d: Se intento asignar un %s a una variable de tipo %s.", 
+                yylineno, strTipos[tipo2], strTipos[tipo1]);
+        exit(1);
+        return 0;
+    }
 }
 
 /*  Crear un terceto, donde el primer elemento es una string con el valor
@@ -161,7 +181,22 @@ int crearTercetoVariable(const char* val, int tipo) {
     corresponden a los índices de los tercetos sobre los que se realiza
     la operación. */
 int crearTercetoOperacion(const char* op, int ind1, int ind2) {
-    return crearTerceto(crearElemStr(op), crearElemInt(ind1), crearElemInt(ind2));
+    tipoValor tipo1 = tercetos[ind1].tipoTerceto;
+    tipoValor tipo2 = tercetos[ind2].tipoTerceto;
+    tipoValor tipoResultado;
+
+    if (tipo1 == tipo2) {
+        tipoResultado = tipo1;
+    } else if ((tipo1 == real && tipo2 == entero) || (tipo1 == entero && tipo2 == real)) {
+        tipoResultado = real;
+    } else {
+        printf("\nError Error en la linea %d: La operacion %s entre %s y %s no es compatible.", 
+                yylineno, op, strTipos[tipo1], strTipos[tipo2]);
+        exit(1);
+        return 0;
+    }
+    
+    return crearTerceto(crearElemStr(op), crearElemInt(ind1), crearElemInt(ind2), tipoResultado);
 }
 
 /*  Crear un terceto, donde el primer elemento es el primre valor pasado por 
@@ -171,7 +206,7 @@ int crearTercetoOperacion(const char* op, int ind1, int ind2) {
     el branch, en ese caso se debe colocar 0 en el salto y luego se deberá 
     usar la función modificarSaltoTerceto */
 int crearTercetoBranch(const char* op, int salto) {
-    return crearTerceto(crearElemStr(op), crearElemInt(salto), crearElemNull());
+    return crearTerceto(crearElemStr(op), crearElemInt(salto), crearElemNull(), indefinido);
 }
 
 /*  Busca al terceto por índice según el primer parámetro de la función,

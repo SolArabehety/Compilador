@@ -3,6 +3,9 @@
 #include <conio.h>
 #include <string.h>
 
+extern int yylineno;
+
+const char* strTipos[4] = {"indefinido", "string", "entero", "real"};
 /*  Para que sea mas facil de identificar los tipos de
     las variables que maneja nuestro compilador */
 typedef enum tipoValor {

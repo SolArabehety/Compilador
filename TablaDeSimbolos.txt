@@ -30,6 +30,7 @@ _2                                 | CONST_INT              | 2                 
 _5                                 | CONST_INT              | 5                                 |                      
 _3                                 | CONST_INT              | 3                                 |                      
 _sarasa                            | CONST_STRING           | sarasa                            | 6                    
+_999                               | CONST_INT              | 999                               |                      
 _15                                | CONST_INT              | 15                                |                      
 @fact                              | INTEGER                |                                   |                      
 @fact_aux                          | INTEGER                |                                   |                      

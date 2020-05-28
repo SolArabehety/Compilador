@@ -27,7 +27,7 @@ void guardarTOS();
 int buscarValorEnTS(const char*);
 int buscarNombreEnTS(const char*);
 
-int insertar_ID_en_Tabla(const char*, int);
+int insertar_ID_en_Tabla(const char*, tipoValor);
 int insertar_ENTERO_en_Tabla(int);
 int insertar_REAL_en_Tabla(double);
 int insertar_STRING_en_Tabla(const char*);
@@ -125,7 +125,7 @@ int buscarNombreEnTS(const char* val)
     tipo = 1 -> STRING
     tiop = 2 -> ENTERO
     tipo = 3 -> REAL    */
-int insertar_ID_en_Tabla(const char* token, int tipo)
+int insertar_ID_en_Tabla(const char* token, tipoValor tipo)
 {
     int TOSaux = TOStop;
     int indiceTS;

@@ -11,8 +11,6 @@
 
 int yystopparser=0;
 FILE *yyin;
-extern int yylineno;
-
 
 int tipo;
 
@@ -26,8 +24,8 @@ pila pilaExpr, pilaTerm, pilaFact;
 /* Punteros y pilas para factorial y combinatorio */
 int indFactorial;
 
-void validarIdDeclaracion(char*);
-void validarIdExistente(char*);
+void validarIdDeclaracion(const char*);
+void validarIdExistente(const char*);
 int yyerror(char*);
 void inicializarCompilador();
 void generarCodigoAsignacion(const char*);
@@ -133,11 +131,11 @@ declaracion_constante:
 
 // TEMA ESPECIAL: ASIGNACIONES ESPECIALES 
 asignacion: 
-    ID { validarIdExistente($1); } ASIG expresion           { printf("    ASIGNACION :=\n"); generarCodigoAsignacion($1); }    
-    | ID { validarIdExistente($1); } ASIG_MAS expresion     { printf("    ASIGNACION +=\n"); generarCodigoAsignacionEsp($1, "+"); }
-    | ID { validarIdExistente($1); } ASIG_MEN expresion     { printf("    ASIGNACION -=\n"); generarCodigoAsignacionEsp($1, "-"); }
-    | ID { validarIdExistente($1); } ASIG_MULT expresion    { printf("    ASIGNACION *=\n"); generarCodigoAsignacionEsp($1, "*"); }
-    | ID { validarIdExistente($1); } ASIG_DIV expresion     { printf("    ASIGNACION /=\n"); generarCodigoAsignacionEsp($1, "/"); }
+    ID ASIG expresion           { printf("    ASIGNACION :=\n"); generarCodigoAsignacion($1); }    
+    | ID ASIG_MAS expresion     { printf("    ASIGNACION +=\n"); generarCodigoAsignacionEsp($1, "+"); }
+    | ID ASIG_MEN expresion     { printf("    ASIGNACION -=\n"); generarCodigoAsignacionEsp($1, "-"); }
+    | ID ASIG_MULT expresion    { printf("    ASIGNACION *=\n"); generarCodigoAsignacionEsp($1, "*"); }
+    | ID ASIG_DIV expresion     { printf("    ASIGNACION /=\n"); generarCodigoAsignacionEsp($1, "/"); }
     ;
 
 salida_pantalla:
@@ -156,7 +154,7 @@ factorial:
     ;
 
 combinatorio:
-    COMB P_A expresion COMA expresion P_C { printf("    FACTORIAL COMBINATORIO\n"); }    
+    COMB P_A expresion COMA expresion P_C { printf("    COMBINATORIO\n"); }    
     ;
 
 seleccion: 
@@ -226,7 +224,7 @@ factor:
             indFact = crearTercetoConstanteString($1);
 		}
     | factorial         { indFact = indFactorial; }
-    | combinatorio      { indFact = -1; }
+    | combinatorio      { indFact = crearTercetoConstanteEntera(999); }
     ;
 
 %%
@@ -251,7 +249,7 @@ int yyerror(char* mensaje_error) {
     exit (1);
 }
 
-void validarIdDeclaracion(char* id) {
+void validarIdDeclaracion(const char* id) {
     int i;
 
     for(i = 0; i < decsIndex; i++) {
@@ -265,7 +263,7 @@ void validarIdDeclaracion(char* id) {
     decsIndex++;
 }
 
-void validarIdExistente(char* id) {
+void validarIdExistente(const char* id) {
     int i;
 
     for(i = 0; i < decsIndex; i++) {
@@ -288,21 +286,21 @@ void inicializarCompilador() {
 }
 
 void generarCodigoFactorial() {
-    int indFactorial = crearTercetoVariable("@fact", entero);
+    indFactorial = crearTercetoVariable("@fact", entero);
     int indFactAux = crearTercetoVariable("@fact_aux", entero);
-    crearTercetoOperacion("=", indFactAux, indExpr);
+    crearTercetoAsignacion(indFactAux, indExpr);
 
     /* Si el número es 1 o 0, directamente resolvemos a 1 y saltamos
         todo el while */
     int indConst1 = crearTercetoConstanteEntera(1);
     int indFactCmp = crearTercetoOperacion("CMP", indFactAux, indConst1);
     int indBranch1 = crearTercetoBranch("BGT", 0);
-    crearTercetoOperacion("=", indFactorial, indConst1);
+    crearTercetoAsignacion(indFactorial, indConst1);
     int indBranch2 = crearTercetoBranch("BI", 0);
 
     /* Inicializamos el factorial en 0 */
     int indConst0 = crearTercetoConstanteEntera(0);
-    crearTercetoOperacion("=", indFactorial, indConst0);
+    crearTercetoAsignacion(indFactorial, indConst0);
     modificarSaltoTerceto(indBranch1, indConst0);
 
     /* Loop para multiplicar sucesivamente */
@@ -311,21 +309,22 @@ void generarCodigoFactorial() {
     int indFactResta = crearTercetoOperacion("-", indFactAux, indConst1);
     int indFactMult = crearTercetoOperacion("*", indFactAux, indFactResta);
     int indFactSum = crearTercetoOperacion("+", indFactorial, indFactMult);
-    crearTercetoOperacion("=", indFactAux, indFactResta);
-    crearTercetoOperacion("=", indFactorial, indFactSum);
+    crearTercetoAsignacion(indFactAux, indFactResta);
+    crearTercetoAsignacion(indFactorial, indFactSum);
     int indFinal = crearTercetoBranch("BI", indFactCmp);
-    printf("indFinal: %d\n", indFinal);
     /* Seteamos los saltos para los branches que quedaron colgados */
     modificarSaltoTerceto(indBranch2, indFinal + 1);
     modificarSaltoTerceto(indBranch3, indFinal + 1);
 }
 
 void generarCodigoAsignacion(const char* id) {
-    crearTercetoOperacion("=", buscarTerceto(id), indExpr);
+    validarIdExistente(id);
+    crearTercetoAsignacion(buscarTerceto(id), indExpr);
 }
 
 void generarCodigoAsignacionEsp(const char* id, const char* op) {
+    validarIdExistente(id);
     int indTerceto = buscarTerceto(id);
     int indOp = crearTercetoOperacion(op, indTerceto, indExpr);
-    crearTercetoOperacion("=", indTerceto, indOp);
+    crearTercetoAsignacion(indTerceto, indOp);
 }
