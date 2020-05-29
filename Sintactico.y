@@ -276,7 +276,7 @@ void validarIdExistente(const char* id) {
     exit(1);
 }
 
-/*  Esta funcion es para cualquier cosa que se necesite hacer antes de iniciar con el parsing.
+/*  Esta función es para cualquier cosa que se necesite hacer antes de iniciar con el parsing.
     Hay que hacerlo aca porque en el bloque de arriba de todo no se pueden llamar funciones 
     aparentement. */
 void inicializarCompilador() {
@@ -290,31 +290,21 @@ void generarCodigoFactorial() {
     int indFactAux = crearTercetoVariable("@fact_aux", entero);
     crearTercetoAsignacion(indFactAux, indExpr);
 
-    /* Si el número es 1 o 0, directamente resolvemos a 1 y saltamos
-        todo el while */
+    /* Inicializamos el factorial en 1 */
     int indConst1 = crearTercetoConstanteEntera(1);
-    int indFactCmp = crearTercetoOperacion("CMP", indFactAux, indConst1);
-    int indBranch1 = crearTercetoBranch("BGT", 0);
     crearTercetoAsignacion(indFactorial, indConst1);
-    int indBranch2 = crearTercetoBranch("BI", 0);
-
-    /* Inicializamos el factorial en 0 */
-    int indConst0 = crearTercetoConstanteEntera(0);
-    crearTercetoAsignacion(indFactorial, indConst0);
-    modificarSaltoTerceto(indBranch1, indConst0);
 
     /* Loop para multiplicar sucesivamente */
-    indFactCmp = crearTercetoOperacion("CMP", indFactAux, indConst1);
-    int indBranch3 = crearTercetoBranch("BLE", 0);
+    int indFactCmp = crearTercetoOperacion("CMP", indFactAux, indConst1);
+    int indBranch = crearTercetoBranch("BLE", 0);
+    int indFactMult = crearTercetoOperacion("*", indFactorial, indFactAux);
+    crearTercetoAsignacion(indFactorial, indFactMult);
     int indFactResta = crearTercetoOperacion("-", indFactAux, indConst1);
-    int indFactMult = crearTercetoOperacion("*", indFactAux, indFactResta);
-    int indFactSum = crearTercetoOperacion("+", indFactorial, indFactMult);
     crearTercetoAsignacion(indFactAux, indFactResta);
-    crearTercetoAsignacion(indFactorial, indFactSum);
     int indFinal = crearTercetoBranch("BI", indFactCmp);
+    
     /* Seteamos los saltos para los branches que quedaron colgados */
-    modificarSaltoTerceto(indBranch2, indFinal + 1);
-    modificarSaltoTerceto(indBranch3, indFinal + 1);
+    modificarSaltoTerceto(indBranch, indFinal + 1);
 }
 
 void generarCodigoAsignacion(const char* id) {
