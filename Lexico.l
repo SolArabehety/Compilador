@@ -77,10 +77,9 @@ ENTERO              {DIGITO}+
 "FACT"          {return FACT;}
 "CONST"         {return CONST;}
 
-{ID}            {   sprintf(auxS,"%s", yytext);
-                    if(validarLongitud(ID) == 0) 
+{ID}            {   if(validarLongitud(ID) == 0) 
                         mostrarError(yytext);
-                    yylval.str_val=auxS;
+                    yylval.str_val = strdup(yytext);
                     return ID;
                 }
 
