@@ -14,7 +14,7 @@
 
 typedef struct 
 {   char nombre[100];
-    char tipo  [20];
+    tipoValor tipo;
     char valor [100];
     int longitud;
 } tablaDeSimbolos;
@@ -27,11 +27,13 @@ void guardarTOS();
 int buscarValorEnTS(const char*);
 int buscarNombreEnTS(const char*);
 
-int insertar_ID_en_Tabla(const char*, int);
+int insertar_ID_en_Tabla(const char*, tipoValor);
 int insertar_ENTERO_en_Tabla(int);
 int insertar_REAL_en_Tabla(double);
 int insertar_STRING_en_Tabla(const char*);
-
+const char* obtenerNombreSimbolo(int);
+tipoValor obtenerTipoSimbolo(int);
+indice buscarIndiceSimbolo(const char*);
 // Funciones generales de la TS ------------------------------------------------------------------------
 
 void guardarTOS()
@@ -55,7 +57,7 @@ void guardarTOS()
         sprintf(aux, "%d", TOS[i].longitud);
         if(strcmp(aux, "0") == 0)
             aux[0] = '\0';
-        fprintf(tos,"%-33s  | %-21s  | %-32s  | %-20s \n", TOS[i].nombre, TOS[i].tipo, TOS[i].valor, aux);
+        fprintf(tos,"%-33s  | %-21s  | %-32s  | %-20s \n", TOS[i].nombre, nombreTiposTabla[TOS[i].tipo], TOS[i].valor, aux);
     }
 
     fprintf(tos,"\n--------------------------------------------- TABLA DE  SIMBOLOS ---------------------------------------------\n");
@@ -120,31 +122,19 @@ int buscarNombreEnTS(const char* val)
 }
 
 // INSERTS ------------------------------------------------------------------------
-
-// tipo = 1 - STRING
-// tiop = 2 - INTEGER
-// tipo = 3 - FLOAT
-int insertar_ID_en_Tabla(const char* token, int tipo)
+/*  Los tipos están definidos en la struct tipoVar en util.h, pero básicamente son:
+    tipo = 0 -> INDEFINIDO
+    tipo = 1 -> STRING
+    tiop = 2 -> ENTERO
+    tipo = 3 -> REAL    */
+int insertar_ID_en_Tabla(const char* token, tipoValor tipo)
 {
     int TOSaux = TOStop;
     int indiceTS;
     // printf("\nAgregando ID en table: %s, %d\n", token, tipo);
     if((indiceTS = buscarNombreEnTS(token)) == -1) {
         strcpy(TOS[TOStop].nombre, token);
-        
-        switch(tipo){
-            case 1:
-                strcpy(TOS[TOStop].tipo, "STRING");
-            break;
-            
-            case 2:
-                strcpy(TOS[TOStop].tipo, "INTEGER");
-            break;
-            
-            case 3:
-                strcpy(TOS[TOStop].tipo, "FLOAT");
-            break;
-        }
+        TOS[TOStop].tipo = tipo;
         TOStop++;
     } else {
         return indiceTS;
@@ -176,8 +166,8 @@ int insertar_ENTERO_en_Tabla(int valor)
     // printf("\nAgregando ENTERO en table: %s, %d\n", nombreSimbolo, valor);
     if((indiceTS = buscarNombreEnTS(nombreSimbolo)) == -1) {
         strcpy(TOS[TOStop].nombre, nombreSimbolo);
-        strcpy(TOS[TOStop].tipo, "CONST_INT");
         strcpy(TOS[TOStop].valor, valorString);
+        TOS[TOStop].tipo = constEntero;
 
         TOStop++;
     } else {
@@ -205,8 +195,8 @@ int insertar_REAL_en_Tabla(double valor)
     // printf("\nAgregando REAL en table: %s, %f\n", nombreSimbolo, valor);
     if((indiceTS = buscarNombreEnTS(nombreSimbolo)) == -1) {
         strcpy(TOS[TOStop].nombre, nombreSimbolo);
-        strcpy(TOS[TOStop].tipo, "CONST_REAL");
         strcpy(TOS[TOStop].valor, valorString);
+        TOS[TOStop].tipo = constReal;
 
         TOStop++;
     } else {
@@ -236,13 +226,47 @@ int insertar_STRING_en_Tabla(const char* str)
     // printf("\nAgregando STRING en table: %s, %s\n", nombreSimbolo, valor);
     if((indiceTS = buscarNombreEnTS(nombreSimbolo)) == -1) {
         strcpy(TOS[TOStop].nombre, nombreSimbolo);
-        strcpy(TOS[TOStop].tipo, "CONST_STRING");
         strcpy(TOS[TOStop].valor, valor);
         TOS[TOStop].longitud = (strlen(valor));
+        TOS[TOStop].tipo = constString;
 
         TOStop++;
     } else {
         return indiceTS;
     }
     return TOSaux;
+}
+
+/*  Función para obtener el nombre de un símbolo buscándolo en la tabla
+    según su índice. */
+const char* obtenerNombreSimbolo(int ind) {
+    return TOS[ind].nombre;
+} 
+
+/*  Función para obtener el tipo de un símbolo buscándolo en la tabla
+    según su índice. */
+tipoValor obtenerTipoSimbolo(int ind) {
+    tipoValor tipo = TOS[ind].tipo;
+
+    /*  Si son constantes, simplemente devolvemos sus tipos normales.
+        Esto es porque en la parte de CGI no importa si son constantes
+        o no. */
+    if (tipo == constString) {
+        tipo = string;
+    } else if (tipo == constEntero) {
+        tipo = entero;
+    } else if (tipo == constReal) {
+        tipo = real;
+    }
+
+    return tipo;
+}
+
+/*  Función para obtener un indice que apunte a un símbolo determinado. */
+indice buscarIndiceSimbolo(const char* nombre) {
+    indice ind;
+    ind.num = buscarNombreEnTS(nombre);
+    ind.tipo = esSimbolo;
+
+    return ind;
 }

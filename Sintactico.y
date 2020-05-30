@@ -4,15 +4,12 @@
 #include <stdlib.h>
 #include <conio.h>
 #include <string.h>
+#include "tercetos.h"
 #include "y.tab.h"
 /* tercetos.h ya incluye a tabla_simbolos.h */
-#include "tercetos.h"
-#include "pila.h"
 
 int yystopparser=0;
 FILE *yyin;
-extern int yylineno;
-
 
 int tipo;
 
@@ -20,14 +17,14 @@ char* decs[LIM_SIMBOLOS];       // Declaraciones
 int decsIndex = 0;              // Indice de declaraciones
 
 /* Punteros y pilas para expresiones */
-int indExpr, indTerm, indFact;
+indice indExpr, indTerm, indFact;
 pila pilaExpr, pilaTerm, pilaFact;
 
 /* Punteros y pilas para factorial y combinatorio */
-int indFactorial;
+indice indFactorial;
 
-void validarIdDeclaracion(char*);
-void validarIdExistente(char*);
+void validarIdDeclaracion(const char*);
+void validarIdExistente(const char*);
 int yyerror(char*);
 void inicializarCompilador();
 void generarCodigoAsignacion(const char*);
@@ -51,9 +48,6 @@ void generarCodigoFactorial();
 %type <str_val> ID CADENA
 %type <int_val> ENTERO
 %type <float_val> REAL
-%type <int_val> expresion
-%type <int_val> termino
-%type <int_val> factor
 %%
 
 programa:         
@@ -82,9 +76,9 @@ declaracion:
     ;
 
 tipo_variable:
-		STRING		{tipo = 1; } 
-	| 	INTEGER 	{tipo = 2;}
-	|	FLOAT		{tipo = 3;} 
+		STRING		{ tipo = string; } 
+	| 	INTEGER 	{ tipo = entero; }
+	|	FLOAT		{ tipo = real; } 
 
 
 
@@ -92,12 +86,12 @@ lista_declaracion:
 				lista_declaracion P_Y_C  ID  
 					{  
 						validarIdDeclaracion($3);
-                        crearTercetoVariable($3, tipo);
+                        cargarVariable($3, tipo);
 					}
 				| ID  
 					{  
 						validarIdDeclaracion($1);
-                        crearTercetoVariable($1, tipo);
+                        cargarVariable($1, tipo);
 					};
 
  
@@ -133,11 +127,11 @@ declaracion_constante:
 
 // TEMA ESPECIAL: ASIGNACIONES ESPECIALES 
 asignacion: 
-    ID { validarIdExistente($1); } ASIG expresion           { printf("    ASIGNACION :=\n"); generarCodigoAsignacion($1); }    
-    | ID { validarIdExistente($1); } ASIG_MAS expresion     { printf("    ASIGNACION +=\n"); generarCodigoAsignacionEsp($1, "+"); }
-    | ID { validarIdExistente($1); } ASIG_MEN expresion     { printf("    ASIGNACION -=\n"); generarCodigoAsignacionEsp($1, "-"); }
-    | ID { validarIdExistente($1); } ASIG_MULT expresion    { printf("    ASIGNACION *=\n"); generarCodigoAsignacionEsp($1, "*"); }
-    | ID { validarIdExistente($1); } ASIG_DIV expresion     { printf("    ASIGNACION /=\n"); generarCodigoAsignacionEsp($1, "/"); }
+    ID ASIG expresion           { printf("    ASIGNACION :=\n"); generarCodigoAsignacion($1); }    
+    | ID ASIG_MAS expresion     { printf("    ASIGNACION +=\n"); generarCodigoAsignacionEsp($1, "+"); }
+    | ID ASIG_MEN expresion     { printf("    ASIGNACION -=\n"); generarCodigoAsignacionEsp($1, "-"); }
+    | ID ASIG_MULT expresion    { printf("    ASIGNACION *=\n"); generarCodigoAsignacionEsp($1, "*"); }
+    | ID ASIG_DIV expresion     { printf("    ASIGNACION /=\n"); generarCodigoAsignacionEsp($1, "/"); }
     ;
 
 salida_pantalla:
@@ -156,7 +150,7 @@ factorial:
     ;
 
 combinatorio:
-    COMB P_A expresion COMA expresion P_C { printf("    FACTORIAL COMBINATORIO\n"); }    
+    COMB P_A expresion COMA expresion P_C { printf("    COMBINATORIO\n"); }    
     ;
 
 seleccion: 
@@ -206,27 +200,18 @@ factor:
 	| ID
 		{
 			validarIdExistente($1);
-            indFact = buscarTerceto($1);
+            /* La variable ya va a estar cargada en la tabla, esto va a devolver su índice. */
+            indFact = buscarIndiceSimbolo($1);
 		}
-    
-	| REAL		
-		{
-			int ind = insertar_REAL_en_Tabla($1);
-            indFact = crearTercetoConstanteReal($1);
-		}
-		
-    | ENTERO    
-		{	
-			int ind = insertar_ENTERO_en_Tabla($1);
-            indFact = crearTercetoConstanteEntera($1);
-		}
-    | CADENA
-		{
-			int ind = insertar_STRING_en_Tabla($1);
-            indFact = crearTercetoConstanteString($1);
-		}
+	| REAL	    { indFact = cargarConstanteReal($1); }	
+    | ENTERO    { indFact = cargarConstanteEntera($1); }
+    | CADENA    { indFact = cargarConstanteString($1); }
     | factorial         { indFact = indFactorial; }
-    | combinatorio      { indFact = -1; }
+    | combinatorio      { 
+            /*  Esto acá es cualquier cosa simplemente porque combinatorio no está 
+                implementado todavía */
+            indFact = cargarConstanteEntera(999); 
+        }
     ;
 
 %%
@@ -251,7 +236,7 @@ int yyerror(char* mensaje_error) {
     exit (1);
 }
 
-void validarIdDeclaracion(char* id) {
+void validarIdDeclaracion(const char* id) {
     int i;
 
     for(i = 0; i < decsIndex; i++) {
@@ -265,7 +250,7 @@ void validarIdDeclaracion(char* id) {
     decsIndex++;
 }
 
-void validarIdExistente(char* id) {
+void validarIdExistente(const char* id) {
     int i;
 
     for(i = 0; i < decsIndex; i++) {
@@ -278,7 +263,7 @@ void validarIdExistente(char* id) {
     exit(1);
 }
 
-/*  Esta funcion es para cualquier cosa que se necesite hacer antes de iniciar con el parsing.
+/*  Esta función es para cualquier cosa que se necesite hacer antes de iniciar con el parsing.
     Hay que hacerlo aca porque en el bloque de arriba de todo no se pueden llamar funciones 
     aparentement. */
 void inicializarCompilador() {
@@ -288,44 +273,35 @@ void inicializarCompilador() {
 }
 
 void generarCodigoFactorial() {
-    int indFactorial = crearTercetoVariable("@fact", entero);
-    int indFactAux = crearTercetoVariable("@fact_aux", entero);
-    crearTercetoOperacion("=", indFactAux, indExpr);
+    indFactorial = cargarVariable("@fact", entero);
+    indice indFactAux = cargarVariable("@factAux", entero);
+    crearTercetoAsignacion(indFactAux, indExpr);
 
-    /* Si el número es 1 o 0, directamente resolvemos a 1 y saltamos
-        todo el while */
-    int indConst1 = crearTercetoConstanteEntera(1);
-    int indFactCmp = crearTercetoOperacion("CMP", indFactAux, indConst1);
-    int indBranch1 = crearTercetoBranch("BGT", 0);
-    crearTercetoOperacion("=", indFactorial, indConst1);
-    int indBranch2 = crearTercetoBranch("BI", 0);
-
-    /* Inicializamos el factorial en 0 */
-    int indConst0 = crearTercetoConstanteEntera(0);
-    crearTercetoOperacion("=", indFactorial, indConst0);
-    modificarSaltoTerceto(indBranch1, indConst0);
+    /* Inicializamos el factorial en 1 */
+    indice indConst1 = cargarConstanteEntera(1);
+    crearTercetoAsignacion(indFactorial, indConst1);
 
     /* Loop para multiplicar sucesivamente */
-    indFactCmp = crearTercetoOperacion("CMP", indFactAux, indConst1);
-    int indBranch3 = crearTercetoBranch("BLE", 0);
-    int indFactResta = crearTercetoOperacion("-", indFactAux, indConst1);
-    int indFactMult = crearTercetoOperacion("*", indFactAux, indFactResta);
-    int indFactSum = crearTercetoOperacion("+", indFactorial, indFactMult);
-    crearTercetoOperacion("=", indFactAux, indFactResta);
-    crearTercetoOperacion("=", indFactorial, indFactSum);
-    int indFinal = crearTercetoBranch("BI", indFactCmp);
-    printf("indFinal: %d\n", indFinal);
+    indice indFactCmp = crearTercetoOperacion("CMP", indFactAux, indConst1);
+    indice indBranch = crearTercetoBranch("BLE", 0);
+    indice indFactMult = crearTercetoOperacion("*", indFactorial, indFactAux);
+    crearTercetoAsignacion(indFactorial, indFactMult);
+    indice indFactResta = crearTercetoOperacion("-", indFactAux, indConst1);
+    crearTercetoAsignacion(indFactAux, indFactResta);
+    indice indFinal = crearTercetoBranch("BI", indFactCmp.num);
+
     /* Seteamos los saltos para los branches que quedaron colgados */
-    modificarSaltoTerceto(indBranch2, indFinal + 1);
-    modificarSaltoTerceto(indBranch3, indFinal + 1);
+    modificarSaltoTerceto(indBranch, indFinal.num + 1);
 }
 
 void generarCodigoAsignacion(const char* id) {
-    crearTercetoOperacion("=", buscarTerceto(id), indExpr);
+    validarIdExistente(id);
+    crearTercetoAsignacion(buscarIndiceSimbolo(id), indExpr);
 }
 
 void generarCodigoAsignacionEsp(const char* id, const char* op) {
-    int indTerceto = buscarTerceto(id);
-    int indOp = crearTercetoOperacion(op, indTerceto, indExpr);
-    crearTercetoOperacion("=", indTerceto, indOp);
+    validarIdExistente(id);
+    indice indSimbolo = buscarIndiceSimbolo(id);
+    indice indOp = crearTercetoOperacion(op, indSimbolo, indExpr);
+    crearTercetoAsignacion(indSimbolo, indOp);
 }

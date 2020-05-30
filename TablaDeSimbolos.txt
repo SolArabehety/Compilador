@@ -17,12 +17,9 @@ b                                  | INTEGER                |                   
 d                                  | INTEGER                |                                   |                      
 e                                  | INTEGER                |                                   |                      
 f                                  | INTEGER                |                                   |                      
-const1                             | CONST_REAL             | 9.460000                          |                      
-_9.460000                          | CONST_REAL             | 9.460000                          |                      
-const2                             | CONST_REAL             | 0.600000                          |                      
-_0.600000                          | CONST_REAL             | 0.600000                          |                      
-const3                             | CONST_REAL             | 6.000000                          |                      
-_6.000000                          | CONST_REAL             | 6.000000                          |                      
+const1                             | CONST_FLOAT            | 9.460000                          |                      
+const2                             | CONST_FLOAT            | 0.600000                          |                      
+const3                             | CONST_FLOAT            | 6.000000                          |                      
 _155                               | CONST_INT              | 155                               |                      
 _4                                 | CONST_INT              | 4                                 |                      
 _12                                | CONST_INT              | 12                                |                      
@@ -30,9 +27,10 @@ _2                                 | CONST_INT              | 2                 
 _5                                 | CONST_INT              | 5                                 |                      
 _3                                 | CONST_INT              | 3                                 |                      
 _sarasa                            | CONST_STRING           | sarasa                            | 6                    
+_999                               | CONST_INT              | 999                               |                      
 _15                                | CONST_INT              | 15                                |                      
-@fact                              | STRING                 |                                   |                      
-@fact_aux                          | STRING                 |                                   |                      
+@fact                              | INTEGER                |                                   |                      
+@factAux                           | INTEGER                |                                   |                      
 _1                                 | CONST_INT              | 1                                 |                      
 _0                                 | CONST_INT              | 0                                 |                      
 
