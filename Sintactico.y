@@ -17,11 +17,15 @@ char* decs[LIM_SIMBOLOS];       // Declaraciones
 int decsIndex = 0;              // Indice de declaraciones
 
 /* Punteros y pilas para expresiones */
-indice indExpr, indTerm, indFact;
-pila pilaExpr, pilaTerm, pilaFact;
+indice indExpr, indTerm, indFact, indComp, indIf;
+pila pilaExpr, pilaTerm, pilaFact, pilaCond;
 
 /* Punteros y pilas para factorial y combinatorio */
 indice indFactorial;
+
+/* Punteros auxiliares */
+indice indExprAux; 
+
 
 void validarIdDeclaracion(const char*);
 void validarIdExistente(const char*);
@@ -59,37 +63,37 @@ programa:
     };
 
 est_declaracion:
-    DEFVAR  { printf("        DECLARACIONES\n"); } declaraciones ENDDEF { printf("    Fin de las Declaraciones\n"); }
+    DEFVAR  { printf("        DECLARACIONES\n"); } declaraciones ENDDEF { printf("    Fin de las Declaraciones\n"); printf("Regla 1\n");}
     ;
 
         
 declaraciones:   
 
-				declaraciones declaracion
-			 |	declaracion
+				declaraciones declaracion {printf("Regla 2\n");}		
+			 |	declaracion {printf("Regla 3\n");}	
 			;
 	
 
 
 declaracion:
-    tipo_variable DOSPUNTOS lista_declaracion  {printf("    DECLARACION\n");}
+    tipo_variable DOSPUNTOS lista_declaracion   {printf("    DECLARACION\n"); printf("Regla 4\n");		}
     ;
 
 tipo_variable:
-		STRING		{ tipo = string; } 
-	| 	INTEGER 	{ tipo = entero; }
-	|	FLOAT		{ tipo = real; } 
+		STRING		{ tipo = string;  printf("Regla 5\n");} 
+	| 	INTEGER 	{ tipo = entero;  printf("Regla 6\n");}
+	|	FLOAT		{ tipo = real;  printf("Regla 7\n");} 
 
 
 
 lista_declaracion:  
 				lista_declaracion P_Y_C  ID  
-					{  
+					{   printf("Regla 8\n");
 						validarIdDeclaracion($3);
                         cargarVariable($3, tipo);
 					}
 				| ID  
-					{  
+					{   printf("Regla 9\n");
 						validarIdDeclaracion($1);
                         cargarVariable($1, tipo);
 					};
@@ -97,117 +101,125 @@ lista_declaracion:
  
  
 algoritmo: 
-    { printf("      COMIENZO de BLOQUES\n"); } bloque
+    { printf("      COMIENZO de BLOQUES\n"); } bloque{ printf("Regla 10\n");}
     ;
 
 bloque:  
-	bloque sentencia
-    | sentencia
+	bloque sentencia{ printf("Regla 11\n");}
+    | sentencia{ printf("Regla 12\n");}
     ;
 
 sentencia:
-    ciclo
-    | declaracion_constante
-    | seleccion  
-    | asignacion
-    | salida_pantalla
-    | ingreso_valor      
-    | factorial
-    | combinatorio
+    ciclo					{ printf("Regla 13\n");}
+    | declaracion_constante	{ printf("Regla 14\n");}
+    | seleccion  			{ printf("Regla 15\n");}
+    | asignacion			{ printf("Regla 16\n");}
+    | salida_pantalla		{ printf("Regla 17\n");}
+    | ingreso_valor     	{ printf("Regla 18\n");}
+    | factorial				{ printf("Regla 19\n");}
+    | combinatorio			{ printf("Regla 20\n");}
     ;
 
 ciclo:
-    WHILE P_A condicion P_C         { printf("     WHILE\n"); } LL_A bloque LL_C
-    | WHILE P_A condicion P_C THEN  { printf("     WHILE THEN ENDWHILE\n"); } bloque ENDWHILE
+    WHILE P_A condicion P_C         { printf("     WHILE\n"); } LL_A bloque LL_C{ printf("Regla 21\n");}
+    | WHILE P_A condicion P_C THEN  { printf("     WHILE THEN ENDWHILE\n"); } bloque ENDWHILE{ printf("Regla 22\n");}
     ;
 
 declaracion_constante:
-    CONST ID { validarIdDeclaracion($2); strcpy(nombreToken, $2); } ASIG expresion
+    CONST ID { validarIdDeclaracion($2); strcpy(nombreToken, $2); } ASIG expresion{ printf("Regla 23\n");}
     ;
 
 // TEMA ESPECIAL: ASIGNACIONES ESPECIALES 
 asignacion: 
-    ID ASIG expresion           { printf("    ASIGNACION :=\n"); generarCodigoAsignacion($1); }    
-    | ID ASIG_MAS expresion     { printf("    ASIGNACION +=\n"); generarCodigoAsignacionEsp($1, "+"); }
-    | ID ASIG_MEN expresion     { printf("    ASIGNACION -=\n"); generarCodigoAsignacionEsp($1, "-"); }
-    | ID ASIG_MULT expresion    { printf("    ASIGNACION *=\n"); generarCodigoAsignacionEsp($1, "*"); }
-    | ID ASIG_DIV expresion     { printf("    ASIGNACION /=\n"); generarCodigoAsignacionEsp($1, "/"); }
+    ID ASIG expresion           { printf("    ASIGNACION :=\n"); generarCodigoAsignacion($1); 		printf("Regla 24\n");}    
+    | ID ASIG_MAS expresion     { printf("    ASIGNACION +=\n"); generarCodigoAsignacionEsp($1, "+"); printf("Regla 25\n");}
+    | ID ASIG_MEN expresion     { printf("    ASIGNACION -=\n"); generarCodigoAsignacionEsp($1, "-"); printf("Regla 26\n");}
+    | ID ASIG_MULT expresion    { printf("    ASIGNACION *=\n"); generarCodigoAsignacionEsp($1, "*"); printf("Regla 27\n");}
+    | ID ASIG_DIV expresion     { printf("    ASIGNACION /=\n"); generarCodigoAsignacionEsp($1, "/"); printf("Regla 28\n");}
     ;
 
 salida_pantalla:
     DISPLAY expresion             
 		{ 
-			printf("    SALIDA_PANTALLA\n"); 
+			printf("    SALIDA_PANTALLA\n"); printf("Regla 29\n"); 
 		}
     ;
 
 ingreso_valor:
-    GET factor                 { printf("    INGRESO_VALOR_GET\n"); }
+    GET factor                 { printf("    INGRESO_VALOR_GET\n"); printf("Regla 30\n");}
     ;
 
 factorial:
-    FACT P_A expresion P_C      { printf("    FACTORIAL\n"); generarCodigoFactorial(); }
+    FACT P_A expresion P_C      { printf("Regla 31\n"); printf("    FACTORIAL\n"); generarCodigoFactorial(); }
     ;
 
 combinatorio:
-    COMB P_A expresion COMA expresion P_C { printf("    COMBINATORIO\n"); }    
+    COMB P_A expresion COMA expresion P_C { printf("    COMBINATORIO\n");; printf("Regla 32\n");}       
     ;
 
 seleccion: 
-    IF  P_A condicion P_C LL_A bloque LL_C                          { printf("     IF\n"); }
-    | IF P_A condicion P_C THEN bloque ENDIF                        { printf("     IF THEN END IF\n"); }
-    | IF P_A condicion P_C LL_A bloque LL_C ELSE LL_A bloque LL_C   { printf("     IF con ELSE\n"); }     
+    IF  P_A condicion P_C LL_A bloque LL_C                          { printf("     IF\n");printf("Regla 33\n"); }
+    | IF P_A condicion P_C{
+			apilar(&pilaCond, crearTercetoBranch("JNAE",0) );
+	} THEN bloque ENDIF  {	printf("  	IF THEN ENDIF\n");
+							printf("Regla 34\n");
+							modificarSaltoTerceto(desapilar(&pilaCond), indTercetos);
+						}
+    | IF P_A condicion P_C LL_A bloque LL_C ELSE LL_A bloque LL_C   { printf("     IF con ELSE\n"); printf("Regla 35\n");}     
     ;
 
 condicion:
-    comparacion
-	| comparacion_doble
-	| comparacion_negada
+    comparacion 			{printf("Regla 36\n");}
+	| comparacion_doble 	{printf("Regla 37\n");}
+	| comparacion_negada	{printf("Regla 38\n");}
     ;
 	
 comparacion_negada:
-	NOT P_A comparacion P_C 	{ printf("    NOT\n"); }
-	| NOT P_A comparacion_doble P_C 	{ printf("    NOT\n"); }
+	NOT P_A comparacion P_C 	{ printf("    NOT\n");  printf("Regla 39\n");}
+	| NOT P_A comparacion_doble P_C 	{ printf("    NOT\n");  printf("Regla 40\n");}
 
 comparacion_doble:
-	P_A comparacion P_C AND P_A comparacion P_C 	{ printf("    AND\n"); }
-	| P_A comparacion P_C OR P_A comparacion P_C 	{ printf("    OR\n"); }
+	P_A comparacion P_C AND P_A comparacion P_C 	{ printf("    AND\n");	printf("Regla 41\n");}
+	| P_A comparacion P_C OR P_A comparacion P_C 	{ printf("    OR\n"); 	printf("Regla 42\n");}
 	;
 
 comparacion:
-    expresion OP_MAY_IG expresion		
-    | expresion OP_MEN_IG expresion		
-    | expresion OP_MEN expresion			
-    | expresion OP_MAY expresion		
-    | expresion OP_DISTINTO expresion
+    expresion OP_MAY_IG expresion		{printf("Regla 43\n");}
+    | expresion OP_MEN_IG expresion		{printf("Regla 44\n");}
+    | expresion OP_MEN expresion		{printf("Regla 45\n");}		
+    | expresion { indExprAux = indExpr; }  OP_MAY expresion		{  
+											printf("Regla 46\n");
+											indComp =  crearTercetoOperacion(">", indExprAux, indExpr);
+										}	
+    | expresion OP_DISTINTO expresion	{printf("Regla 47\n");}
     ;
 
 expresion:
-      expresion { apilar(&pilaExpr, indExpr); } OP_SUMA termino  { indExpr = crearTercetoOperacion("+", desapilar(&pilaExpr), indTerm); }
-    | expresion { apilar(&pilaExpr, indExpr); } OP_RESTA termino { indExpr = crearTercetoOperacion("-", desapilar(&pilaExpr), indTerm); }
-	| termino   { indExpr = indTerm; }
+      expresion { apilar(&pilaExpr, indExpr); } OP_SUMA termino  { indExpr = crearTercetoOperacion("+", desapilar(&pilaExpr), indTerm);  printf("Regla 48\n");}
+    | expresion { apilar(&pilaExpr, indExpr); } OP_RESTA termino { indExpr = crearTercetoOperacion("-", desapilar(&pilaExpr), indTerm);  printf("Regla 49\n");}
+	| termino   { indExpr = indTerm;  printf("Regla 50\n"); }
     ;
 
 termino: 
-    factor    { indTerm = indFact; }
-    | termino { apilar(&pilaTerm, indTerm); } OP_MUL factor { indTerm = crearTercetoOperacion("*", desapilar(&pilaTerm), indFact); }
-    | termino { apilar(&pilaTerm, indTerm); } OP_DIV factor { indTerm = crearTercetoOperacion("/", desapilar(&pilaTerm), indFact); }
+    factor    { indTerm = indFact; printf("Regla 51\n");}
+    | termino { apilar(&pilaTerm, indTerm); } OP_MUL factor { indTerm = crearTercetoOperacion("*", desapilar(&pilaTerm), indFact); printf("Regla 52\n");}
+    | termino { apilar(&pilaTerm, indTerm); } OP_DIV factor { indTerm = crearTercetoOperacion("/", desapilar(&pilaTerm), indFact); printf("Regla 53\n");}
     ;
 
 factor: 
-    P_A expresion P_C   { indFact = indExpr; }
+    P_A expresion P_C   { indFact = indExpr; printf("Regla 54\n");}
     
 	| ID
-		{
+		{	printf("Regla 55\n");
 			validarIdExistente($1);
             /* La variable ya va a estar cargada en la tabla, esto va a devolver su índice. */
             indFact = buscarIndiceSimbolo($1);
 		}
-	| REAL	    { indFact = cargarConstanteReal($1); }	
-    | ENTERO    { indFact = cargarConstanteEntera($1); }
-    | CADENA    { indFact = cargarConstanteString($1); }
-    | factorial         { indFact = indFactorial; }
-    | combinatorio      { 
+	| REAL	    { indFact = cargarConstanteReal($1); 	printf("Regla 56\n");}	
+    | ENTERO    { indFact = cargarConstanteEntera($1); 	printf("Regla 57\n");}
+    | CADENA    { indFact = cargarConstanteString($1); 	printf("Regla 58\n");}
+    | factorial         { indFact = indFactorial;		printf("Regla 59\n"); }
+    | combinatorio      { printf("Regla 60\n");
             /*  Esto acá es cualquier cosa simplemente porque combinatorio no está 
                 implementado todavía */
             indFact = cargarConstanteEntera(999); 
@@ -270,6 +282,7 @@ void inicializarCompilador() {
     inicializarPila(&pilaExpr);
     inicializarPila(&pilaTerm);
     inicializarPila(&pilaFact);
+	inicializarPila(&pilaCond);
 }
 
 void generarCodigoFactorial() {
