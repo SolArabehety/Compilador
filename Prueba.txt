@@ -1,113 +1,57 @@
 DEFVAR
-
     FLOAT : a1; b1; test_expr
-
     STRING: variable1; g; h
-
     FLOAT : p1; p2; p3
-
     INT:a;b;d;e;f
-
 ENDDEF
-
-
 
 ***/ Comentario de prueba /***
 
-
-
 CONST const1 := 9.46
-
 CONST const2 := .6
-
 CONST const3 := 6.
 
-
-
 a1 := b
-
 a := a+b
-
 e += b
-
 d -= 155
-
 a *= 4
-
 b /= 12
-
 d := a+b
-
 d := e*f
-
 test_expr := (2 + 5) * 3
-
-
 
 ***/ Comentario ***/ anidado /*** /***
 
-
-
 IF(a>b)
-
 THEN
-
 g := "sarasa"
-
 ENDIF
-
-
 
 IF(NOT((a>=b) AND (d>=e)))
-
 THEN
-
 h := "sarasa"
-
 ENDIF
-
-
 
 IF((a>=b) OR (d>=e))
-
 THEN
-
 h := "sarasa"
-
 ENDIF
 
-
-
 a := COMB(5,2)
-
 b := 15 * (12 + FACT(5 + 5))
 
-
-
 b := 0
-
 WHILE(a>2)
-
 THEN
-
 	WHILE(b<3)
-
 		THEN
-
 		b := b+1
-
 		ENDWHILE
 
-
-
 d := d * 2
-
 ENDWHILE
 
-
-
 DISPLAY "sarasa"
-
 GET g
-
 DISPLAY g
