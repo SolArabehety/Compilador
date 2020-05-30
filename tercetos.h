@@ -34,15 +34,15 @@ typedef struct terceto {
 elemento crearElemStr(const char*);
 elemento crearElemInt(int);
 elemento crearElemNull();
-int crearTerceto(elemento, elemento, elemento, tipoValor);
-int crearTercetoConstanteEntera(int);
-int crearTercetoConstanteString(const char*);
-int crearTercetoConstanteReal(float);
-int crearTercetoVariable(const char*, tipoValor);
-int crearTercetoAsignacion(int, int);
-int crearTercetoOperacion(const char*, int, int);
-int crearTercetoBranch(const char*, int);
-void modificarSaltoTerceto(int, int);
+indice crearTerceto(elemento, elemento, elemento, tipoValor);
+indice cargarConstanteEntera(int);
+indice cargarConstanteString(const char*);
+indice cargarConstanteReal(float);
+indice cargarVariable(const char*, tipoValor);
+indice crearTercetoAsignacion(indice, indice);
+indice crearTercetoOperacion(const char*, indice, indice);
+indice crearTercetoBranch(const char*, int);
+void modificarSaltoTerceto(indice, int);
 void imprimirTercetos();
 
 /* Índice global para tercetos */
@@ -88,9 +88,9 @@ int buscarTerceto(const char* val) {
 /*  Crear un terceto con los elementos pasados por parámetro y se Agregamos
     al array global de tercetos. Esta es una función genérica para insertar
     un terceto. Las demás funciones son más específicas y llaman a esta. */
-int crearTerceto(elemento e1, elemento e2, elemento e3, tipoValor tipo) {
+indice crearTerceto(elemento e1, elemento e2, elemento e3, tipoValor tipo) {
     terceto t;
-    int indice = indTercetos;
+    indice ind;
 
     t.elementos[0] = e1;
     t.elementos[1] = e2;
@@ -98,105 +98,144 @@ int crearTerceto(elemento e1, elemento e2, elemento e3, tipoValor tipo) {
     t.tipoTerceto = tipo;
 
     /* Agregamos el terceto al array global de tercetos */
-    tercetos[indice] = t;
+    tercetos[indTercetos] = t;
+    ind.tipo = esTerceto;
+    ind.num = indTercetos;
     indTercetos++;
 
     /* Devolvemos el índice que apunta al terceto creado */
-    return indice;
+    return ind;
 }
 
-/*  Crear un terceto, donde el primer elemento será el valor pasado por parámetro.
-    La diferencia con crearTerceto, es que solo se asigna el primer elemento
-    y el resto se asume que son valores nulos.
-    Se utiliza para las constantes. */
-int crearTercetoConstanteEntera(int val) {
-    /* Antes de crearlo, nos fijamos si ya existe */
+/*  Carga una constante entera en la tabla de símbolos, y devuelve una struct
+    índice con el valor de la posición en la tabla e indicando que el tipo de
+    índice es un símbolo. */
+indice cargarConstanteEntera(int val) {
     char buffer[900];
+    indice ind;
+
     sprintf(buffer, "_%d", val);
-    int idx = buscarTerceto(buffer);
-    if (idx != -1)
-        return idx;
+    borrarChar(buffer, '"');
 
-    insertar_ENTERO_en_Tabla(val);
-    return crearTerceto(crearElemStr(buffer), crearElemNull(), crearElemNull(), entero);
+    ind.tipo = esSimbolo;
+    /*  Recordar que, los métodos para insertar en la tabla de símbolos, si el
+        símbolo ya está cargado en la tabla, devuelven el índice donde está, por
+        lo que no va a crear duplicados */
+    ind.num = insertar_ENTERO_en_Tabla(val);
+
+    return ind;
 }
 
-int crearTercetoConstanteString(const char* val) {
+indice cargarConstanteString(const char* val) {
     char buffer[900];
+    indice ind;
+
     sprintf(buffer, "_%s", val);
     borrarChar(buffer, '"');
-    int idx = buscarTerceto(buffer);
-    if (idx != -1)
-        return idx;
 
-    insertar_STRING_en_Tabla(val);
-    return crearTerceto(crearElemStr(buffer), crearElemNull(), crearElemNull(), string);
+    ind.tipo = esSimbolo;
+    ind.num = insertar_STRING_en_Tabla(val);
+
+    return ind;
 }
 
-int crearTercetoConstanteReal(float val) {
+indice cargarConstanteReal(float val) {
     char buffer[900];
+    indice ind;
+
     sprintf(buffer, "_%f", val);
-    int idx = buscarTerceto(buffer);
-    if (idx != -1)
-        return idx;
+    ind.tipo = esSimbolo;
+    ind.num = insertar_REAL_en_Tabla(val);
 
-    insertar_REAL_en_Tabla(val);
-    return crearTerceto(crearElemStr(buffer), crearElemNull(), crearElemNull(), real);
+    return ind;
 }
 
-/*  Crear un terceto, donde el primer elemento es el valor pasado por parámetro y
-    el segundo parámetro indicará que tipo tendrá en la tabla de símbolos.
-    Es como crearTercetoConstante, pero la diferencia es que ademas se agrega
-    a la tabla de símbolos. Se usa para las variables auxiliares. */
-int crearTercetoVariable(const char* val, tipoValor tipo) {
-    /* Antes de crearlo, nos fijamos si ya existe */
-    int idx = buscarTerceto(val);
-    if (idx != -1)
-        return idx;
-    
-    insertar_ID_en_Tabla(val, tipo);
+/*  Lo mismo que las funciones para cargar constantes, pero esta es para cargar
+    las variables, donde además se debe indicar de que tipo será la variable
+    (si es real, entera o string). Se puede usar también para cargar las variables
+    de trabajo (las que empiezan con @). */
+indice cargarVariable(const char* val, tipoValor tipo) {
+    char buffer[900];
+    indice ind;
 
-    return crearTerceto(crearElemStr(val), crearElemNull(), crearElemNull(), tipo);
-}
+    sprintf(buffer, "_%f", val);
+    ind.tipo = esSimbolo;
+    ind.num = insertar_ID_en_Tabla(val, tipo);
 
-/*  Crear un terceto, donde el primer y segundo elementos son indices de 
-    tercetos. Crea una operación de asignación ("=", ind1, ind2) pero antes
-    valida que la asignación pueda realizarse */
-int crearTercetoAsignacion(int ind1, int ind2) {
-    tipoValor tipo1 = tercetos[ind1].tipoTerceto;
-    tipoValor tipo2 = tercetos[ind2].tipoTerceto;
-
-    if (tipo1 == tipo2 || (tipo1 == real && tipo2 == entero)) {
-        return crearTerceto(crearElemStr("="), crearElemInt(ind1), crearElemInt(ind2), tipo1);
-    } else {
-        printf("\nError en la linea %d: Se intento asignar un %s a una variable de tipo %s.", 
-                yylineno, strTipos[tipo2], strTipos[tipo1]);
-        exit(1);
-        return 0;
-    }
+    return ind;
 }
 
 /*  Crear un terceto, donde el primer elemento es una string con el valor
     de alguna operación (ejemplo, "+") y los otros 2 son valores int que
     corresponden a los índices de los tercetos sobre los que se realiza
     la operación. */
-int crearTercetoOperacion(const char* op, int ind1, int ind2) {
-    tipoValor tipo1 = tercetos[ind1].tipoTerceto;
-    tipoValor tipo2 = tercetos[ind2].tipoTerceto;
-    tipoValor tipoResultado;
+indice crearTercetoOperacion(const char* op, indice ind1, indice ind2) {
+    elemento elem1, elem2;
+    tipoValor tipo1, tipo2, tipoResultado;
 
+    if (ind1.tipo == esTerceto) {
+        elem1 = crearElemInt(ind1.num);
+        tipo1 = tercetos[ind1.num].tipoTerceto;
+    } else { /* El índice es de un símbolo */
+        elem1 = crearElemStr(obtenerNombreSimbolo(ind1.num));
+        tipo1 = obtenerTipoSimbolo(ind1.num);
+    }
+
+    if (ind2.tipo == esTerceto) {
+        elem2 = crearElemInt(ind2.num);
+        tipo2 = tercetos[ind2.num].tipoTerceto;
+    } else { /* El índice es de un símbolo */
+        elem2 = crearElemStr(obtenerNombreSimbolo(ind2.num));
+        tipo2 = obtenerTipoSimbolo(ind2.num);
+    }
+
+    /* Validamos que los tipos de la expresión sean compatibles */
     if (tipo1 == tipo2) {
         tipoResultado = tipo1;
     } else if ((tipo1 == real && tipo2 == entero) || (tipo1 == entero && tipo2 == real)) {
         tipoResultado = real;
     } else {
         printf("\nError Error en la linea %d: La operacion %s entre %s y %s no es compatible.", 
-                yylineno, op, strTipos[tipo1], strTipos[tipo2]);
+                yylineno, op, nombreTipos[tipo1], nombreTipos[tipo2]);
         exit(1);
-        return 0;
     }
     
-    return crearTerceto(crearElemStr(op), crearElemInt(ind1), crearElemInt(ind2), tipoResultado);
+    return crearTerceto(crearElemStr(op), elem1, elem2, tipoResultado);
+}
+
+/*  Crear un terceto, donde el primer y segundo elementos son indices de 
+    tercetos. Crea una operación de asignación ("=", ind1, ind2) pero antes
+    valida que la asignación pueda realizarse */
+indice crearTercetoAsignacion(indice ind1, indice ind2) {
+    elemento elem1, elem2;
+    tipoValor tipo1, tipo2;
+
+    if (ind1.tipo == esTerceto) {
+        elem1 = crearElemInt(ind1.num);
+        tipo1 = tercetos[ind1.num].tipoTerceto;
+    } else { /* El índice es de un símbolo */
+        elem1 = crearElemStr(obtenerNombreSimbolo(ind1.num));
+        tipo1 = obtenerTipoSimbolo(ind1.num);
+    }
+
+    if (ind2.tipo == esTerceto) {
+        elem2 = crearElemInt(ind2.num);
+        tipo2 = tercetos[ind2.num].tipoTerceto;
+    } else { /* El índice es de un símbolo */
+        elem2 = crearElemStr(obtenerNombreSimbolo(ind2.num));
+        tipo2 = obtenerTipoSimbolo(ind2.num);
+    }
+
+    /*  La razón por la cuál se necesitó hacer una función aparte solo para las
+        asignaciones es porque la validación de tipo es diferente a la que se hace 
+        en crearTercetoOperación. */
+    if (tipo1 == tipo2 || (tipo1 == real && tipo2 == entero)) {
+        return crearTerceto(crearElemStr("="), elem1, elem2, tipo1);
+    } else {
+        printf("\nError en la linea %d: Se intento asignar un %s a una variable de tipo %s.", 
+                yylineno, nombreTipos[tipo2], nombreTipos[tipo1]);
+        exit(1);
+    }
 }
 
 /*  Crear un terceto, donde el primer elemento es el primre valor pasado por 
@@ -205,16 +244,17 @@ int crearTercetoOperacion(const char* op, int ind1, int ind2) {
     hacer el salto. En algunos casos no se conoce el salto al momento de crear
     el branch, en ese caso se debe colocar 0 en el salto y luego se deberá 
     usar la función modificarSaltoTerceto */
-int crearTercetoBranch(const char* op, int salto) {
+indice crearTercetoBranch(const char* op, int salto) {
     return crearTerceto(crearElemStr(op), crearElemInt(salto), crearElemNull(), indefinido);
 }
 
 /*  Busca al terceto por índice según el primer parámetro de la función,
     y le cambia su segundo valor al entero pasado como segundo parámetro.
     Se debería utilizar para modificar los tercetos que tienen instrucciones
-    de Branch */
-void modificarSaltoTerceto(int ind, int salto) {
-    tercetos[ind].elementos[1].valor.ind = salto;
+    de Branch. Ojo que si se llama esta función para un índice que apunta a 
+    otra cosa que no sea un terceto de branch, puede llegar armar quilombo. */
+void modificarSaltoTerceto(indice ind, int salto) {
+    tercetos[ind.num].elementos[1].valor.ind = salto;
 }
 
 void imprimirTercetos() {
