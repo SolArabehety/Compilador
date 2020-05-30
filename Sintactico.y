@@ -184,14 +184,11 @@ comparacion_doble:
 	;
 
 comparacion:
-    expresion OP_MAY_IG expresion		{printf("Regla 43\n");}
-    | expresion OP_MEN_IG expresion		{printf("Regla 44\n");}
-    | expresion OP_MEN expresion		{printf("Regla 45\n");}		
-    | expresion { indExprAux = indExpr; }  OP_MAY expresion		{  
-											printf("Regla 46\n");
-											indComp =  crearTercetoOperacion(">", indExprAux, indExpr);
-										}	
-    | expresion OP_DISTINTO expresion	{printf("Regla 47\n");}
+    expresion	{ indExprAux = indExpr; } OP_MAY_IG expresion	{printf("Regla 43\n");	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr);}	
+    | expresion	{ indExprAux = indExpr; } OP_MEN_IG expresion	{printf("Regla 44\n");	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr);}	
+    | expresion	{ indExprAux = indExpr; } OP_MEN expresion		{printf("Regla 45\n");	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr);}	
+    | expresion { indExprAux = indExpr; } OP_MAY expresion		{printf("Regla 46\n");	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr);}	
+    | expresion	{ indExprAux = indExpr; } OP_DISTINTO expresion	{printf("Regla 47\n");	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr);}	
     ;
 
 expresion:
