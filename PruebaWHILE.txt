@@ -1,0 +1,16 @@
+DEFVAR
+   INT:a;b;c
+ENDDEF
+
+a := 5
+b := 0
+
+WHILE(a>2)
+THEN
+	WHILE(b<3)
+		THEN
+		c := 0
+		ENDWHILE
+
+c := 1
+ENDWHILE

@@ -1,0 +1,11 @@
+DEFVAR
+   INT:a;b;c
+ENDDEF
+
+a := 1
+b := 0
+
+IF(NOT(a < b))
+{
+	c := 0
+}
