@@ -51,5 +51,8 @@
 48: (=, b, [47])
 49: (*, d, _2)
 50: (=, d, [49])
+51: (show, _sarasa, _)
+52: (GET, g, _)
+53: (show, _g, _)
 
 --- LISTA DE TERCETOS ---
