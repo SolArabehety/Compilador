@@ -223,11 +223,7 @@ factor:
     | ENTERO    { indFact = cargarConstanteEntera($1); 	printf("Regla 57\n");}
     | CADENA    { indFact = cargarConstanteString($1); 	printf("Regla 58\n");}
     | factorial         { indFact = indFactorial;		printf("Regla 59\n"); }
-    | combinatorio      { printf("Regla 60\n");
-            /*  Esto acá es cualquier cosa simplemente porque combinatorio no está 
-                implementado todavía */
-            indFact = indCombinatorio; 
-        }
+    | combinatorio      { printf("Regla 60\n"); indFact = indCombinatorio; }
     ;
 
 %%
