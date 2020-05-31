@@ -43,6 +43,7 @@ indice crearTercetoAsignacion(indice, indice);
 indice crearTercetoOperacion(const char*, indice, indice);
 indice crearTercetoBranch(const char*, int);
 void modificarSaltoTerceto(indice, int);
+char* devolverSaltoCondicional(char*);
 void imprimirTercetos();
 void negarTerceto(int);
 /* Índice global para tercetos */
@@ -277,6 +278,26 @@ void negarTerceto(int numeroTerceto){
 	 else if(strcmp(tercetos[numeroTerceto].elementos[0].valor.cad, "JE") == 0) // ==
 		 tercetos[numeroTerceto].elementos[0].valor.cad = "JNE";
 
+}
+
+/**	
+	Retorna la instruccion assembler correspondiente al caracter recibido
+**/
+char* devolverSaltoCondicional(char* comparacion){
+	if(strcmp(comparacion, ">=") == 0)
+		return "JNB";
+	if(strcmp(comparacion, ">") == 0)
+		return "JNBE";
+	if(strcmp(comparacion, "<=") == 0)
+		return "JNA";
+	if(strcmp(comparacion, "<") == 0)
+		return "JNAE"; 
+	if(strcmp(comparacion, "!=") == 0)
+		return "JNE";
+	if(strcmp(comparacion, "==") == 0)
+		return "JE";
+	
+	return NULL;
 }
 
 void imprimirTercetos() {

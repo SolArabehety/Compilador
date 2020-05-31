@@ -17,8 +17,8 @@ char* decs[LIM_SIMBOLOS];       // Declaraciones
 int decsIndex = 0;              // Indice de declaraciones
 
 /* Punteros y pilas para expresiones */
-indice indExpr, indTerm, indFact, indComp, indIf;
-pila pilaExpr, pilaTerm, pilaFact, pilaCond;
+indice indExpr, indTerm, indFact, indComp;
+pila pilaExpr, pilaTerm, pilaFact, pilaCond, pilaWhile;
 
 /* Punteros y pilas para factorial y combinatorio */
 indice indFactorial;
@@ -26,7 +26,7 @@ indice indFactorial;
 /* Punteros auxiliares */
 indice indExprAux; 
 
-char* devolverSaltoCondicional(char*);
+
 void validarIdDeclaracion(const char*);
 void validarIdExistente(const char*);
 int yyerror(char*);
@@ -121,8 +121,19 @@ sentencia:
     ;
 
 ciclo:
-    WHILE P_A condicion P_C         { printf("     WHILE\n"); } LL_A bloque LL_C{ printf("Regla 21\n");}
-    | WHILE P_A condicion P_C THEN  { printf("     WHILE THEN ENDWHILE\n"); } bloque ENDWHILE{ printf("Regla 22\n");}
+		WHILE {	apilar(&pilaWhile,crearTercetoBranch("TAG",0));	} 
+			P_A condicion P_C { printf("     WHILE\n"); } 
+			LL_A bloque LL_C { printf("Regla 21\n");
+									modificarSaltoTerceto(desapilar(&pilaCond), indTercetos+1); // modifico el salto condicional para poner este fin de condicion
+									crearTercetoBranch("JMP", desapilar(&pilaWhile).num); // agrego un terceto con un salto al comienzo del while
+							}
+    
+	| 	WHILE {	apilar(&pilaWhile,crearTercetoBranch("TAG",0));	} 
+			P_A condicion P_C 
+			THEN  { printf("     WHILE THEN ENDWHILE\n"); } bloque ENDWHILE { 	printf("Regla 22\n");
+																				modificarSaltoTerceto(desapilar(&pilaCond), indTercetos+1); // modifico el salto condicional para poner este fin de condicion
+																				crearTercetoBranch("JMP", desapilar(&pilaWhile).num); // agrego un terceto con un salto al comienzo del while
+																			}
     ;
 
 declaracion_constante:
@@ -159,9 +170,9 @@ combinatorio:
 
 seleccion: 
     IF  P_A condicion P_C
-		LL_A bloque LL_C  { printf("     IF\n");printf("Regla 33\n"); 
-							modificarSaltoTerceto(desapilar(&pilaCond), indTercetos);
-						}
+		LL_A bloque LL_C	{	printf("     IF\n");printf("Regla 33\n"); 
+								modificarSaltoTerceto(desapilar(&pilaCond), indTercetos);
+							}
     
 	| IF P_A condicion P_C 
 		THEN bloque ENDIF  {	
@@ -172,7 +183,7 @@ seleccion:
     | IF P_A condicion P_C	
 		LL_A bloque LL_C  	{	
 								modificarSaltoTerceto(desapilar(&pilaCond), indTercetos+1);
-								apilar(&pilaCond, crearTercetoBranch("JMP",0) );
+								apilar(&pilaCond, crearTercetoBranch("JMP",0));
 							}
 		ELSE LL_A bloque LL_C  { 
 								printf("     IF con ELSE\n"); printf("Regla 35\n");
@@ -189,7 +200,6 @@ condicion:
 comparacion_negada:
 	NOT P_A comparacion P_C 	{	printf("    NOT\n");  printf("Regla 39\n"); 
 									negarTerceto(indTercetos-1);
-									//apilar(&pilaCond, negarTerceto(desapilar(&pilaExpr))); 
 								}
 	| NOT P_A comparacion_doble P_C 	{ printf("    NOT\n");  printf("Regla 40\n");}
 
@@ -314,6 +324,7 @@ void inicializarCompilador() {
     inicializarPila(&pilaTerm);
     inicializarPila(&pilaFact);
 	inicializarPila(&pilaCond);
+	inicializarPila(&pilaWhile);
 }
 
 void generarCodigoFactorial() {
@@ -351,23 +362,4 @@ void generarCodigoAsignacionEsp(const char* id, const char* op) {
 }
 
 
-/**	
-	Retorna la instruccion assembler correspondiente al caracter recibido
-	-> Cuando empecemos a trabajar con assembler, hay que mover esta funcion a la clase correspondiente.
-**/
-char* devolverSaltoCondicional(char* comparacion){
-	if(strcmp(comparacion, ">=") == 0)
-		return "JNB";
-	if(strcmp(comparacion, ">") == 0)
-		return "JNBE";
-	if(strcmp(comparacion, "<=") == 0)
-		return "JNA";
-	if(strcmp(comparacion, "<") == 0)
-		return "JNAE"; 
-	if(strcmp(comparacion, "!=") == 0)
-		return "JNE";
-	if(strcmp(comparacion, "==") == 0)
-		return "JE";
-	
-	return NULL;
-}
+

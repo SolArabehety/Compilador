@@ -2,10 +2,10 @@ DEFVAR
    INT:a;b;c
 ENDDEF
 
-a := 1
+a := 5
 b := 0
 
-IF(NOT(a < b))
+WHILE(a>2)
 {
 	c := 0
 }
