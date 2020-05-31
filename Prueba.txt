@@ -1,4 +1,5 @@
 DEFVAR
+
     FLOAT : a1; b1; test_expr
     STRING: variable1; g; h
     FLOAT : p1; p2; p3
@@ -11,10 +12,9 @@ CONST const1 := 9.46
 CONST const2 := .6
 CONST const3 := 6.
 
-a1 := b
 a := a+b
-e += b
-d -= 155
+a += b
+b -= 155
 a *= 4
 b /= 12
 d := a+b

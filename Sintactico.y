@@ -17,8 +17,8 @@ char* decs[LIM_SIMBOLOS];       // Declaraciones
 int decsIndex = 0;              // Indice de declaraciones
 
 /* Punteros y pilas para expresiones */
-indice indExpr, indTerm, indFact, indComp, indIf;
-pila pilaExpr, pilaTerm, pilaFact, pilaCond;
+indice indExpr, indTerm, indFact, indComp;
+pila pilaExpr, pilaTerm, pilaFact, pilaCond, pilaWhile;
 
 /* Punteros y pilas para factorial y combinatorio */
 indice indFactorial;
@@ -120,9 +120,12 @@ sentencia:
     | combinatorio			{ printf("Regla 20\n");}
     ;
 
-ciclo:
-    WHILE P_A condicion P_C         { printf("     WHILE\n"); } LL_A bloque LL_C{ printf("Regla 21\n");}
-    | WHILE P_A condicion P_C THEN  { printf("     WHILE THEN ENDWHILE\n"); } bloque ENDWHILE{ printf("Regla 22\n");}
+ciclo:	WHILE {	apilar(&pilaWhile, crearTercetoTag());	} 
+			P_A condicion P_C 
+			THEN  { printf("     WHILE THEN ENDWHILE\n"); } bloque ENDWHILE { 	printf("Regla 22\n");
+																				modificarSaltoTerceto(desapilar(&pilaCond), indTercetos+1); // modifico el salto condicional para poner este fin de condicion
+																				crearTercetoBranch("JMP", desapilar(&pilaWhile).num); // agrego un terceto con un salto al comienzo del while
+																			}
     ;
 
 declaracion_constante:
@@ -158,14 +161,26 @@ combinatorio:
     ;
 
 seleccion: 
-    IF  P_A condicion P_C LL_A bloque LL_C                          { printf("     IF\n");printf("Regla 36\n"); }
-    | IF P_A condicion P_C{
-			apilar(&pilaCond, crearTercetoBranch("JNAE",0) );
-	} THEN bloque ENDIF  {	printf("  	IF THEN ENDIF\n");
-							printf("Regla 37\n");
+    IF  P_A condicion P_C
+		LL_A bloque LL_C	{	printf("     IF\n");printf("Regla 33\n"); 
+								modificarSaltoTerceto(desapilar(&pilaCond), indTercetos);
+							}
+    
+	| IF P_A condicion P_C 
+		THEN bloque ENDIF  {	
+							printf("  	IF THEN ENDIF\n");	printf("Regla 34\n");
 							modificarSaltoTerceto(desapilar(&pilaCond), indTercetos);
 						}
-    | IF P_A condicion P_C LL_A bloque LL_C ELSE LL_A bloque LL_C   { printf("     IF con ELSE\n"); printf("Regla 38\n");}     
+						
+    | IF P_A condicion P_C	
+		LL_A bloque LL_C  	{	
+								modificarSaltoTerceto(desapilar(&pilaCond), indTercetos+1);
+								apilar(&pilaCond, crearTercetoBranch("JMP",0));
+							}
+		ELSE LL_A bloque LL_C  { 
+								printf("     IF con ELSE\n"); printf("Regla 35\n");
+								modificarSaltoTerceto(desapilar(&pilaCond), indTercetos);
+			}     
     ;
 
 condicion:
@@ -175,20 +190,42 @@ condicion:
     ;
 	
 comparacion_negada:
-	NOT P_A comparacion P_C 	{ printf("    NOT\n");  printf("Regla 42\n");}
-	| NOT P_A comparacion_doble P_C 	{ printf("    NOT\n");  printf("Regla 43\n");}
+
+	NOT P_A comparacion P_C 	{	printf("    NOT\n");  printf("Regla 39\n"); 
+									negarTerceto(indTercetos-1);
+								}
+	| NOT P_A comparacion_doble P_C 	{ printf("    NOT\n");  printf("Regla 40\n");}
 
 comparacion_doble:
-	P_A comparacion P_C AND P_A comparacion P_C 	{ printf("    AND\n");	printf("Regla 44\n");}
-	| P_A comparacion P_C OR P_A comparacion P_C 	{ printf("    OR\n"); 	printf("Regla 45\n");}
+	P_A comparacion P_C AND P_A comparacion P_C 	{ printf("    AND\n");	printf("Regla 41\n"); }
+	| P_A comparacion P_C OR P_A comparacion P_C 	{ printf("    OR\n"); 	printf("Regla 42\n"); }
 	;
 
 comparacion:
-    expresion	{ indExprAux = indExpr; } OP_MAY_IG expresion	{printf("Regla 46\n");	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr);}	
-    | expresion	{ indExprAux = indExpr; } OP_MEN_IG expresion	{printf("Regla 47\n");	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr);}	
-    | expresion	{ indExprAux = indExpr; } OP_MEN expresion		{printf("Regla 48\n");	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr);}	
-    | expresion { indExprAux = indExpr; } OP_MAY expresion		{printf("Regla 49\n");	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr);}	
-    | expresion	{ indExprAux = indExpr; } OP_DISTINTO expresion	{printf("Regla 50\n");	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr);}	
+    expresion	{ indExprAux = indExpr; } OP_MAY_IG expresion	{	printf("Regla 43\n");	
+																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
+																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional(">="),0) );
+																}	
+    | expresion	{ indExprAux = indExpr; } OP_MEN_IG expresion	{	printf("Regla 44\n");
+																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
+																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional("<="),0) );
+																}	
+    | expresion	{ indExprAux = indExpr; } OP_MEN expresion		{	printf("Regla 45\n");	
+																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
+																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional("<"),0) );
+																}	
+    | expresion { indExprAux = indExpr; } OP_MAY expresion		{	printf("Regla 46\n");	
+																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
+																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional(">"),0) );
+																}	
+    | expresion	{ indExprAux = indExpr; } OP_DISTINTO expresion	{	printf("Regla 47a\n");	
+																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
+																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional("!="),0) );
+																}	
+	| expresion	{ indExprAux = indExpr; } OP_IGUAL expresion	{	printf("Regla 47b\n");	
+																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
+																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional("=="),0) );
+																}	
     ;
 
 expresion:
@@ -280,6 +317,7 @@ void inicializarCompilador() {
     inicializarPila(&pilaTerm);
     inicializarPila(&pilaFact);
 	inicializarPila(&pilaCond);
+	inicializarPila(&pilaWhile);
 }
 
 void generarCodigoFactorial() {
@@ -315,3 +353,6 @@ void generarCodigoAsignacionEsp(const char* id, const char* op) {
     indice indOp = crearTercetoOperacion(op, indSimbolo, indExpr);
     crearTercetoAsignacion(indSimbolo, indOp);
 }
+
+
+
