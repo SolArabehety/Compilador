@@ -302,7 +302,7 @@ void generarCodigoFactorial(indice indNum) {
     crearTercetoAsignacion(indFactorial, indFactMult);
     indice indFactResta = crearTercetoOperacion("-", indFactAux, indConst1);
     crearTercetoAsignacion(indFactAux, indFactResta);
-    indice indFinal = crearTercetoBranch("BI", indFactCmp.num);
+    indice indFinal = crearTercetoBranch("JMP", indFactCmp.num);
 
     /* Seteamos los saltos para los branches que quedaron colgados */
     modificarSaltoTerceto(indBranch, indFinal.num + 1);
