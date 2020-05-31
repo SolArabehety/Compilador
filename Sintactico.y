@@ -26,7 +26,7 @@ indice indFactorial;
 /* Punteros auxiliares */
 indice indExprAux; 
 
-
+char* getComparacionAssembler(char*);
 void validarIdDeclaracion(const char*);
 void validarIdExistente(const char*);
 int yyerror(char*);
@@ -158,14 +158,26 @@ combinatorio:
     ;
 
 seleccion: 
-    IF  P_A condicion P_C LL_A bloque LL_C                          { printf("     IF\n");printf("Regla 33\n"); }
-    | IF P_A condicion P_C{
-			apilar(&pilaCond, crearTercetoBranch("JNAE",0) );
-	} THEN bloque ENDIF  {	printf("  	IF THEN ENDIF\n");
-							printf("Regla 34\n");
+    IF  P_A condicion P_C
+		LL_A bloque LL_C  { printf("     IF\n");printf("Regla 33\n"); 
+							
+						}
+    
+	| IF P_A condicion P_C 
+		THEN bloque ENDIF  {	
+							printf("  	IF THEN ENDIF\n");	printf("Regla 34\n");
 							modificarSaltoTerceto(desapilar(&pilaCond), indTercetos);
 						}
-    | IF P_A condicion P_C LL_A bloque LL_C ELSE LL_A bloque LL_C   { printf("     IF con ELSE\n"); printf("Regla 35\n");}     
+						
+    | IF P_A condicion P_C	
+		LL_A bloque LL_C  	{	
+								modificarSaltoTerceto(desapilar(&pilaCond), indTercetos+1);
+								apilar(&pilaCond, crearTercetoBranch("JMP",0) );
+							}
+		ELSE LL_A bloque LL_C  { 
+								printf("     IF con ELSE\n"); printf("Regla 35\n");
+								modificarSaltoTerceto(desapilar(&pilaCond), indTercetos);
+			}     
     ;
 
 condicion:
@@ -184,11 +196,30 @@ comparacion_doble:
 	;
 
 comparacion:
-    expresion	{ indExprAux = indExpr; } OP_MAY_IG expresion	{printf("Regla 43\n");	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr);}	
-    | expresion	{ indExprAux = indExpr; } OP_MEN_IG expresion	{printf("Regla 44\n");	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr);}	
-    | expresion	{ indExprAux = indExpr; } OP_MEN expresion		{printf("Regla 45\n");	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr);}	
-    | expresion { indExprAux = indExpr; } OP_MAY expresion		{printf("Regla 46\n");	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr);}	
-    | expresion	{ indExprAux = indExpr; } OP_DISTINTO expresion	{printf("Regla 47\n");	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr);}	
+    expresion	{ indExprAux = indExpr; } OP_MAY_IG expresion	{	printf("Regla 43\n");	
+																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
+																	apilar(&pilaCond, crearTercetoBranch(getComparacionAssembler(">="),0) );
+																}	
+    | expresion	{ indExprAux = indExpr; } OP_MEN_IG expresion	{	printf("Regla 44\n");
+																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
+																	apilar(&pilaCond, crearTercetoBranch(getComparacionAssembler("<="),0) );
+																}	
+    | expresion	{ indExprAux = indExpr; } OP_MEN expresion		{	printf("Regla 45\n");	
+																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
+																	apilar(&pilaCond, crearTercetoBranch(getComparacionAssembler("<"),0) );
+																}	
+    | expresion { indExprAux = indExpr; } OP_MAY expresion		{	printf("Regla 46\n");	
+																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
+																	apilar(&pilaCond, crearTercetoBranch(getComparacionAssembler(">"),0) );
+																}	
+    | expresion	{ indExprAux = indExpr; } OP_DISTINTO expresion	{	printf("Regla 47a\n");	
+																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
+																	apilar(&pilaCond, crearTercetoBranch(getComparacionAssembler("!="),0) );
+																}	
+	| expresion	{ indExprAux = indExpr; } OP_IGUAL expresion	{	printf("Regla 47b\n");	
+																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
+																	apilar(&pilaCond, crearTercetoBranch(getComparacionAssembler("=="),0) );
+																}	
     ;
 
 expresion:
@@ -314,4 +345,26 @@ void generarCodigoAsignacionEsp(const char* id, const char* op) {
     indice indSimbolo = buscarIndiceSimbolo(id);
     indice indOp = crearTercetoOperacion(op, indSimbolo, indExpr);
     crearTercetoAsignacion(indSimbolo, indOp);
+}
+
+
+/**	
+	Retorna la instruccion assembler correspondiente al caracter recibido
+	-> Cuando empecemos a trabajar con assembler, hay que mover esta funcion a la clase correspondiente.
+**/
+char* getComparacionAssembler(char* comparacion){
+	if(strcmp(comparacion, ">=") == 0)
+		return "BLT";
+	if(strcmp(comparacion, ">") == 0)
+		return "BLE";
+	if(strcmp(comparacion, "<=") == 0)
+		return "BGT";
+	if(strcmp(comparacion, "<") == 0)
+		return "BGE";
+	if(strcmp(comparacion, "<>") == 0)
+		return "BEQ";
+	if(strcmp(comparacion, "==") == 0)
+		return "BNE";
+	
+	return NULL;
 }
