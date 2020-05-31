@@ -204,6 +204,40 @@ indice crearTercetoOperacion(const char* op, indice ind1, indice ind2) {
     return crearTerceto(crearElemStr(op), elem1, elem2, tipoResultado);
 }
 
+/*
+Se coloca la intruccion de leer el dato de la entrada y guardarla en la variable indicada
+*/
+
+indice crearTercetoGetValue(const char* val) {
+    char buffer[900];
+    sprintf(buffer, "%s", val);
+    return crearTerceto(crearElemStr("GET"), crearElemStr(buffer), crearElemNull(), indefinido);
+}
+
+indice crearTercetoDisplayId(const char* val) {
+    char buffer[900];
+    sprintf(buffer, "_%s", val);
+    return crearTerceto(crearElemStr("show"), crearElemStr(buffer), crearElemNull(), indefinido);
+}
+
+indice crearTercetoDisplayCadena(const char* val) {
+    char buffer[900];
+    sprintf(buffer, "_%s", val);
+    borrarChar(buffer, '"');
+    return crearTerceto(crearElemStr("show"), crearElemStr(buffer), crearElemNull(), indefinido);
+}
+
+indice crearTercetoDisplayReal(float val) {
+    char buffer[900];
+    sprintf(buffer, "_%f", val);
+    return crearTerceto(crearElemStr("show"), crearElemStr(buffer), crearElemNull(), indefinido);
+}
+
+indice crearTercetoDisplayEntero(int val) {
+    char buffer[900];
+    sprintf(buffer, "_%d", val);
+    return crearTerceto(crearElemStr("show"), crearElemStr(buffer), crearElemNull(), indefinido);
+}
 /*  Crear un terceto, donde el primer y segundo elementos son indices de 
     tercetos. Crea una operación de asignación ("=", ind1, ind2) pero antes
     valida que la asignación pueda realizarse */

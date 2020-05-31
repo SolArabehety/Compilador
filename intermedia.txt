@@ -58,5 +58,8 @@
 55: (*, d, _2)
 56: (=, d, [55])
 57: (JMP, [46], _)
+58: (show, _sarasa, _)
+59: (GET, g, _)
+60: (show, _g, _)
 
 --- LISTA DE TERCETOS ---

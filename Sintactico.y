@@ -142,22 +142,22 @@ asignacion:
     ;
 
 salida_pantalla:
-    DISPLAY expresion             
-		{ 
-			printf("    SALIDA_PANTALLA\n"); printf("Regla 29\n"); 
-		}
+    DISPLAY ID { crearTercetoDisplayId($2); printf("    SALIDA_PANTALLA ID\n"); printf("Regla 29\n"); } |
+    DISPLAY CADENA { crearTercetoDisplayCadena($2); printf("    SALIDA_PANTALLA CADENA\n"); printf("Regla 30\n"); } |
+    DISPLAY REAL { crearTercetoDisplayReal($2); printf("    SALIDA_PANTALLA REAL\n"); printf("Regla 31\n"); } |
+    DISPLAY ENTERO { crearTercetoDisplayEntero($2);	printf("    SALIDA_PANTALLA ENTERO\n"); printf("Regla 32\n"); }
     ;
 
 ingreso_valor:
-    GET factor                 { printf("    INGRESO_VALOR_GET\n"); printf("Regla 30\n");}
+    GET ID  { printf("    INGRESO_VALOR_GET\n");  crearTercetoGetValue($2); printf("Regla 33\n");}
     ;
 
 factorial:
-    FACT P_A expresion P_C      { printf("Regla 31\n"); printf("    FACTORIAL\n"); generarCodigoFactorial(); }
+    FACT P_A expresion P_C      { printf("Regla 31\n"); printf("    FACTORIAL\n"); generarCodigoFactorial(); printf("Regla 34\n");}
     ;
 
 combinatorio:
-    COMB P_A expresion COMA expresion P_C { printf("    COMBINATORIO\n");; printf("Regla 32\n");}       
+    COMB P_A expresion COMA expresion P_C { printf("    COMBINATORIO\n");; printf("Regla 35\n");}       
     ;
 
 seleccion: 
@@ -184,12 +184,13 @@ seleccion:
     ;
 
 condicion:
-    comparacion 			{printf("Regla 36\n");}
-	| comparacion_doble 	{printf("Regla 37\n");}
-	| comparacion_negada	{printf("Regla 38\n");}
+    comparacion 			{printf("Regla 39\n");}
+	| comparacion_doble 	{printf("Regla 40\n");}
+	| comparacion_negada	{printf("Regla 41\n");}
     ;
 	
 comparacion_negada:
+
 	NOT P_A comparacion P_C 	{	printf("    NOT\n");  printf("Regla 39\n"); 
 									negarTerceto(indTercetos-1);
 								}
@@ -228,31 +229,31 @@ comparacion:
     ;
 
 expresion:
-      expresion { apilar(&pilaExpr, indExpr); } OP_SUMA termino  { indExpr = crearTercetoOperacion("+", desapilar(&pilaExpr), indTerm);  printf("Regla 48\n");}
-    | expresion { apilar(&pilaExpr, indExpr); } OP_RESTA termino { indExpr = crearTercetoOperacion("-", desapilar(&pilaExpr), indTerm);  printf("Regla 49\n");}
-	| termino   { indExpr = indTerm;  printf("Regla 50\n"); }
+      expresion { apilar(&pilaExpr, indExpr); } OP_SUMA termino  { indExpr = crearTercetoOperacion("+", desapilar(&pilaExpr), indTerm);  printf("Regla 51\n");}
+    | expresion { apilar(&pilaExpr, indExpr); } OP_RESTA termino { indExpr = crearTercetoOperacion("-", desapilar(&pilaExpr), indTerm);  printf("Regla 52\n");}
+	| termino   { indExpr = indTerm;  printf("Regla 53\n"); }
     ;
 
 termino: 
-    factor    { indTerm = indFact; printf("Regla 51\n");}
-    | termino { apilar(&pilaTerm, indTerm); } OP_MUL factor { indTerm = crearTercetoOperacion("*", desapilar(&pilaTerm), indFact); printf("Regla 52\n");}
-    | termino { apilar(&pilaTerm, indTerm); } OP_DIV factor { indTerm = crearTercetoOperacion("/", desapilar(&pilaTerm), indFact); printf("Regla 53\n");}
+    factor    { indTerm = indFact; printf("Regla 54\n");}
+    | termino { apilar(&pilaTerm, indTerm); } OP_MUL factor { indTerm = crearTercetoOperacion("*", desapilar(&pilaTerm), indFact); printf("Regla 55\n");}
+    | termino { apilar(&pilaTerm, indTerm); } OP_DIV factor { indTerm = crearTercetoOperacion("/", desapilar(&pilaTerm), indFact); printf("Regla 56\n");}
     ;
 
 factor: 
-    P_A expresion P_C   { indFact = indExpr; printf("Regla 54\n");}
+    P_A expresion P_C   { indFact = indExpr; printf("Regla 57\n");}
     
 	| ID
-		{	printf("Regla 55\n");
+		{	printf("Regla 58\n");
 			validarIdExistente($1);
             /* La variable ya va a estar cargada en la tabla, esto va a devolver su índice. */
             indFact = buscarIndiceSimbolo($1);
 		}
-	| REAL	    { indFact = cargarConstanteReal($1); 	printf("Regla 56\n");}	
-    | ENTERO    { indFact = cargarConstanteEntera($1); 	printf("Regla 57\n");}
-    | CADENA    { indFact = cargarConstanteString($1); 	printf("Regla 58\n");}
-    | factorial         { indFact = indFactorial;		printf("Regla 59\n"); }
-    | combinatorio      { printf("Regla 60\n");
+	| REAL	    { indFact = cargarConstanteReal($1); 	printf("Regla 59\n");}	
+    | ENTERO    { indFact = cargarConstanteEntera($1); 	printf("Regla 60\n");}
+    | CADENA    { indFact = cargarConstanteString($1); 	printf("Regla 61\n");}
+    | factorial         { indFact = indFactorial;		printf("Regla 62\n"); }
+    | combinatorio      { printf("Regla 63\n");
             /*  Esto acá es cualquier cosa simplemente porque combinatorio no está 
                 implementado todavía */
             indFact = cargarConstanteEntera(999); 
