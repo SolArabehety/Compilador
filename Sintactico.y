@@ -301,7 +301,7 @@ void generarCodigoFactorial(indice indNum) {
 
     /* Loop para multiplicar sucesivamente */
     indice indFactCmp = crearTercetoOperacion("CMP", indFactAux, indConst1);
-    indice indBranch = crearTercetoBranch("BLE", 0);
+    indice indBranch = crearTercetoBranch("JNA", 0);
     indice indFactMult = crearTercetoOperacion("*", indFactorial, indFactAux);
     crearTercetoAsignacion(indFactorial, indFactMult);
     indice indFactResta = crearTercetoOperacion("-", indFactAux, indConst1);
