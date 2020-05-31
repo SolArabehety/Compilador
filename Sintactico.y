@@ -21,8 +21,8 @@ indice indExpr, indTerm, indFact, indComp, indIf;
 pila pilaExpr, pilaTerm, pilaFact, pilaCond;
 
 /* Punteros y pilas para factorial y combinatorio */
-indice indFactorial;
-
+indice indFactorial, indCombinatorio;
+pila pilaCombExpr;
 /* Punteros auxiliares */
 indice indExprAux; 
 
@@ -33,7 +33,8 @@ int yyerror(char*);
 void inicializarCompilador();
 void generarCodigoAsignacion(const char*);
 void generarCodigoAsignacionEsp(const char*, const char*);
-void generarCodigoFactorial();
+void generarCodigoFactorial(indice);
+void generarCodigoCombinatorio(indice, indice);
 %}
 
 %error-verbose
@@ -150,11 +151,17 @@ ingreso_valor:
     ;
 
 factorial:
-    FACT P_A expresion P_C      { printf("Regla 31\n"); printf("    FACTORIAL\n"); generarCodigoFactorial(); }
+    FACT P_A expresion P_C      { printf("Regla 31\n"); printf("    FACTORIAL\n"); generarCodigoFactorial(indExpr); }
     ;
 
 combinatorio:
-    COMB P_A expresion COMA expresion P_C { printf("    COMBINATORIO\n");; printf("Regla 32\n");}       
+    COMB P_A expresion { apilar(&pilaCombExpr, indExpr); } 
+    COMA expresion P_C { 
+            printf("    COMBINATORIO\n"); 
+            printf("Regla 32\n");
+            /* La pila es por si hay combinatorios anidados */
+            generarCodigoCombinatorio(desapilar(&pilaCombExpr), indExpr);
+        }       
     ;
 
 seleccion: 
@@ -219,7 +226,7 @@ factor:
     | combinatorio      { printf("Regla 60\n");
             /*  Esto acá es cualquier cosa simplemente porque combinatorio no está 
                 implementado todavía */
-            indFact = cargarConstanteEntera(999); 
+            indFact = indCombinatorio; 
         }
     ;
 
@@ -280,12 +287,13 @@ void inicializarCompilador() {
     inicializarPila(&pilaTerm);
     inicializarPila(&pilaFact);
 	inicializarPila(&pilaCond);
+    inicializarPila(&pilaCombExpr);
 }
 
-void generarCodigoFactorial() {
+void generarCodigoFactorial(indice indNum) {
     indFactorial = cargarVariable("@fact", entero);
     indice indFactAux = cargarVariable("@factAux", entero);
-    crearTercetoAsignacion(indFactAux, indExpr);
+    crearTercetoAsignacion(indFactAux, indNum);
 
     /* Inicializamos el factorial en 1 */
     indice indConst1 = cargarConstanteEntera(1);
@@ -314,4 +322,26 @@ void generarCodigoAsignacionEsp(const char* id, const char* op) {
     indice indSimbolo = buscarIndiceSimbolo(id);
     indice indOp = crearTercetoOperacion(op, indSimbolo, indExpr);
     crearTercetoAsignacion(indSimbolo, indOp);
+}
+
+void generarCodigoCombinatorio(indice indN, indice indK) {
+    /*  La fórmula para número combinatorio (dado (N, K)) es N!/(K!*(N - K)!) */
+    indCombinatorio = cargarVariable("@comb", entero);
+    indice indFactN = cargarVariable("@combN", entero);
+    indice indFactK = cargarVariable("@combK", entero);
+
+    /* Factorial de N */
+    generarCodigoFactorial(indN);
+    crearTercetoAsignacion(indFactN, indFactorial);
+    /* Factorial de K */
+    generarCodigoFactorial(indK);
+    crearTercetoAsignacion(indFactK, indFactorial);
+    /* Resta N - K */
+    indice indCombResta = crearTercetoOperacion("-", indN, indK);
+    /* Factorial de (N - K) */
+    generarCodigoFactorial(indCombResta);
+    /* Cálculo del número combinatorio */
+    /* indFactorial apunto al último factorial calculado, es decir (N - K)! */
+    indice indCombMult = crearTercetoOperacion("-", indFactK, indFactorial);
+    indCombinatorio = crearTercetoOperacion("/", indFactN, indCombMult);
 }
