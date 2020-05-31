@@ -160,7 +160,7 @@ combinatorio:
 seleccion: 
     IF  P_A condicion P_C
 		LL_A bloque LL_C  { printf("     IF\n");printf("Regla 33\n"); 
-							
+							modificarSaltoTerceto(desapilar(&pilaCond), indTercetos);
 						}
     
 	| IF P_A condicion P_C 
@@ -354,17 +354,17 @@ void generarCodigoAsignacionEsp(const char* id, const char* op) {
 **/
 char* getComparacionAssembler(char* comparacion){
 	if(strcmp(comparacion, ">=") == 0)
-		return "BLT";
+		return "JNB";
 	if(strcmp(comparacion, ">") == 0)
-		return "BLE";
+		return "JNBE";
 	if(strcmp(comparacion, "<=") == 0)
-		return "BGT";
+		return "JNG";
 	if(strcmp(comparacion, "<") == 0)
-		return "BGE";
-	if(strcmp(comparacion, "<>") == 0)
-		return "BEQ";
+		return "JNGE"; 
+	if(strcmp(comparacion, "!=") == 0)
+		return "JNE";
 	if(strcmp(comparacion, "==") == 0)
-		return "BNE";
+		return "JE";
 	
 	return NULL;
 }
