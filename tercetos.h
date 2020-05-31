@@ -72,20 +72,6 @@ elemento crearElemNull() {
     return e;
 }
 
-/*  Busca un terceto por el nombre de una constante en el primer elemento y
-    devuelve su índice, de no encontrarlo (no existe) devuelve -1. */
-int buscarTerceto(const char* val) {
-    int i;
-
-    for (i = 0; i < indTercetos; i++) {
-        if (strcmp(val, tercetos[i].elementos[0].valor.cad) == 0)
-            return i;
-    }
-
-    /* Si no se encontró el terceto, se devuelve -1 */
-    return -1;
-}
-
 /*  Crear un terceto con los elementos pasados por parámetro y se Agregamos
     al array global de tercetos. Esta es una función genérica para insertar
     un terceto. Las demás funciones son más específicas y llaman a esta. */
