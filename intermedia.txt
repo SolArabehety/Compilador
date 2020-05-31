@@ -41,5 +41,8 @@
 38: (=, b, [37])
 39: (*, d, _2)
 40: (=, d, [39])
+41: (show, _sarasa, _)
+42: (GET, g, _)
+43: (show, _g, _)
 
 --- LISTA DE TERCETOS ---

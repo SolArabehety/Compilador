@@ -135,14 +135,14 @@ asignacion:
     ;
 
 salida_pantalla:
-    DISPLAY expresion             
-		{ 
-			printf("    SALIDA_PANTALLA\n"); 
-		}
+    DISPLAY ID { crearTercetoDisplayId($2); printf("    SALIDA_PANTALLA ID\n");} |
+    DISPLAY CADENA { crearTercetoDisplayCadena($2); printf("    SALIDA_PANTALLA CADENA\n");} |
+    DISPLAY REAL { crearTercetoDisplayReal($2); printf("    SALIDA_PANTALLA REAL\n");} |
+    DISPLAY ENTERO { crearTercetoDisplayEntero($2);	printf("    SALIDA_PANTALLA ENTERO\n");}
     ;
 
 ingreso_valor:
-    GET factor                 { printf("    INGRESO_VALOR_GET\n"); }
+    GET ID  { printf("    INGRESO_VALOR_GET\n");  crearTercetoGetValue($2);}
     ;
 
 factorial:
