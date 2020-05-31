@@ -258,7 +258,11 @@ void modificarSaltoTerceto(indice ind, int salto) {
     tercetos[ind.num].elementos[1].valor.ind = salto;
 }
 
-//Niega la la condicion de un terceto
+indice crearTercetoTag() {
+    return crearTerceto(crearElemStr("TAG"), crearElemNull(), crearElemNull(), indefinido);
+}
+
+/* Niega la la condicion de un terceto */
 void negarTerceto(int numeroTerceto){
 	if(strcmp(tercetos[numeroTerceto].elementos[0].valor.cad, "JNB") == 0) // >=
 		 tercetos[numeroTerceto].elementos[0].valor.cad = "JNAE";

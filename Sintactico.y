@@ -120,15 +120,7 @@ sentencia:
     | combinatorio			{ printf("Regla 20\n");}
     ;
 
-ciclo:
-		WHILE {	apilar(&pilaWhile,crearTercetoBranch("TAG",0));	} 
-			P_A condicion P_C { printf("     WHILE\n"); } 
-			LL_A bloque LL_C { printf("Regla 21\n");
-									modificarSaltoTerceto(desapilar(&pilaCond), indTercetos+1); // modifico el salto condicional para poner este fin de condicion
-									crearTercetoBranch("JMP", desapilar(&pilaWhile).num); // agrego un terceto con un salto al comienzo del while
-							}
-    
-	| 	WHILE {	apilar(&pilaWhile,crearTercetoBranch("TAG",0));	} 
+ciclo:	WHILE {	apilar(&pilaWhile, crearTercetoTag());	} 
 			P_A condicion P_C 
 			THEN  { printf("     WHILE THEN ENDWHILE\n"); } bloque ENDWHILE { 	printf("Regla 22\n");
 																				modificarSaltoTerceto(desapilar(&pilaCond), indTercetos+1); // modifico el salto condicional para poner este fin de condicion

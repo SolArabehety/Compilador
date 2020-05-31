@@ -3,11 +3,35 @@
 
 Nombre:                              Tipo:                    Valor:                              Longitud:            
 ______________________________________________________________________________________________________________
+a1                                 | FLOAT                  |                                   |                      
+b1                                 | FLOAT                  |                                   |                      
+test_expr                          | FLOAT                  |                                   |                      
+variable1                          | STRING                 |                                   |                      
+g                                  | STRING                 |                                   |                      
+h                                  | STRING                 |                                   |                      
+p1                                 | FLOAT                  |                                   |                      
+p2                                 | FLOAT                  |                                   |                      
+p3                                 | FLOAT                  |                                   |                      
 a                                  | INTEGER                |                                   |                      
 b                                  | INTEGER                |                                   |                      
-c                                  | INTEGER                |                                   |                      
-_5                                 | CONST_INT              | 5                                 |                      
-_0                                 | CONST_INT              | 0                                 |                      
+d                                  | INTEGER                |                                   |                      
+e                                  | INTEGER                |                                   |                      
+f                                  | INTEGER                |                                   |                      
+const1                             | CONST_FLOAT            | 9.460000                          |                      
+const2                             | CONST_FLOAT            | 0.600000                          |                      
+const3                             | CONST_FLOAT            | 6.000000                          |                      
+_155                               | CONST_INT              | 155                               |                      
+_4                                 | CONST_INT              | 4                                 |                      
+_12                                | CONST_INT              | 12                                |                      
 _2                                 | CONST_INT              | 2                                 |                      
+_5                                 | CONST_INT              | 5                                 |                      
+_3                                 | CONST_INT              | 3                                 |                      
+_sarasa                            | CONST_STRING           | sarasa                            | 6                    
+_999                               | CONST_INT              | 999                               |                      
+_15                                | CONST_INT              | 15                                |                      
+@fact                              | INTEGER                |                                   |                      
+@factAux                           | INTEGER                |                                   |                      
+_1                                 | CONST_INT              | 1                                 |                      
+_0                                 | CONST_INT              | 0                                 |                      
 
 --------------------------------------------- TABLA DE  SIMBOLOS ---------------------------------------------
