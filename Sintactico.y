@@ -187,7 +187,10 @@ condicion:
     ;
 	
 comparacion_negada:
-	NOT P_A comparacion P_C 	{ printf("    NOT\n");  printf("Regla 39\n");}
+	NOT P_A comparacion P_C 	{	printf("    NOT\n");  printf("Regla 39\n"); 
+									negarTerceto(indTercetos-1);
+									//apilar(&pilaCond, negarTerceto(desapilar(&pilaExpr))); 
+								}
 	| NOT P_A comparacion_doble P_C 	{ printf("    NOT\n");  printf("Regla 40\n");}
 
 comparacion_doble:

@@ -44,7 +44,7 @@ indice crearTercetoOperacion(const char*, indice, indice);
 indice crearTercetoBranch(const char*, int);
 void modificarSaltoTerceto(indice, int);
 void imprimirTercetos();
-
+void negarTerceto(int);
 /* Índice global para tercetos */
 int indTercetos = 0;
 
@@ -255,6 +255,28 @@ indice crearTercetoBranch(const char* op, int salto) {
     otra cosa que no sea un terceto de branch, puede llegar armar quilombo. */
 void modificarSaltoTerceto(indice ind, int salto) {
     tercetos[ind.num].elementos[1].valor.ind = salto;
+}
+
+//Niega la la condicion de un terceto
+void negarTerceto(int numeroTerceto){
+	if(strcmp(tercetos[numeroTerceto].elementos[0].valor.cad, "JNB") == 0) // >=
+		 tercetos[numeroTerceto].elementos[0].valor.cad = "JNAE";
+	 
+	 else if(strcmp(tercetos[numeroTerceto].elementos[0].valor.cad, "JNBE") == 0) // >
+		 tercetos[numeroTerceto].elementos[0].valor.cad = "JNA";
+	 
+	 else if(strcmp(tercetos[numeroTerceto].elementos[0].valor.cad, "JNA") == 0) // <=
+		 tercetos[numeroTerceto].elementos[0].valor.cad = "JNBE";
+	 
+	 else if(strcmp(tercetos[numeroTerceto].elementos[0].valor.cad, "JNAE") == 0) // <
+		 tercetos[numeroTerceto].elementos[0].valor.cad = "JNB";
+	 
+	 else if(strcmp(tercetos[numeroTerceto].elementos[0].valor.cad, "JNE") == 0) // !=
+		 tercetos[numeroTerceto].elementos[0].valor.cad = "JE";
+	 
+	 else if(strcmp(tercetos[numeroTerceto].elementos[0].valor.cad, "JE") == 0) // ==
+		 tercetos[numeroTerceto].elementos[0].valor.cad = "JNE";
+
 }
 
 void imprimirTercetos() {
