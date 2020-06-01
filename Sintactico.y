@@ -213,27 +213,27 @@ comparacion_doble:
 comparacion:
     expresion	{ indExprAux = indExpr; } OP_MAY_IG expresion	{	printf("Regla 45\n");	
 																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
-																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional(">="),0) );
+																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional("<"),0) );
 																}	
     | expresion	{ indExprAux = indExpr; } OP_MEN_IG expresion	{	printf("Regla 46\n");
 																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
-																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional("<="),0) );
+																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional(">"),0) );
 																}	
     | expresion	{ indExprAux = indExpr; } OP_MEN expresion		{	printf("Regla 47\n");	
 																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
-																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional("<"),0) );
+																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional(">="),0) );
 																}	
     | expresion { indExprAux = indExpr; } OP_MAY expresion		{	printf("Regla 48\n");	
 																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
-																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional(">"),0) );
+																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional("<="),0) );
 																}	
     | expresion	{ indExprAux = indExpr; } OP_DISTINTO expresion	{	printf("Regla 49a\n");	
 																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
-																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional("!="),0) );
+																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional("=="),0) );
 																}	
 	| expresion	{ indExprAux = indExpr; } OP_IGUAL expresion	{	printf("Regla 49b\n");	
 																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
-																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional("=="),0) );
+																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional("!="),0) );
 																}	
     ;
 
