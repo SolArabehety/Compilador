@@ -1,0 +1,22 @@
+DEFVAR
+   INT: a; b; c
+ENDDEF
+
+a := 1
+b := 0
+
+IF ((a == b) OR (a == c))
+THEN
+    c := 111
+ENDIF
+
+
+IF ((c > a) AND (c < b))
+THEN
+    c := 222
+        IF (a == b)
+        THEN
+            c := 333
+        ENDIF
+    c := 444
+ENDIF

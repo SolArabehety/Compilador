@@ -28,14 +28,14 @@ THEN
 g := "sarasa"
 ENDIF
 
-IF(NOT((a>=b) AND (d>=e)))
+IF((a>=b) OR (d>=e))
 THEN
 h := "sarasa"
 ENDIF
 
-IF((a>=b) OR (d>=e))
+IF((d == e) AND (a!=f))
 THEN
-h := "sarasa"
+h := "zaraza"
 ENDIF
 
 a := COMB(5,2)

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <conio.h>
 #include <string.h>
+#include "pila_int.h"
 #include "tercetos.h"
 #include "y.tab.h"
 /* tercetos.h ya incluye a tabla_simbolos.h */
@@ -18,11 +19,16 @@ int decsIndex = 0;              // Indice de declaraciones
 
 /* Punteros y pilas para expresiones */
 indice indExpr, indTerm, indFact, indComp;
-pila pilaExpr, pilaTerm, pilaFact, pilaCond, pilaWhile;
+pila pilaExpr, pilaTerm, pilaFact;
 
 /* Punteros y pilas para factorial y combinatorio */
 indice indFactorial, indCombinatorio;
 pila pilaCombExpr;
+
+/* Punteros y pilas para comparaciones */
+pila pilaCond, pilaWhile;
+pilaInt pilaTipoComp;
+
 /* Punteros auxiliares */
 indice indExprAux; 
 
@@ -35,6 +41,7 @@ void generarCodigoAsignacion(const char*);
 void generarCodigoAsignacionEsp(const char*, const char*);
 void generarCodigoFactorial(indice);
 void generarCodigoCombinatorio(indice, indice);
+void generarCodigoIf();
 %}
 
 %error-verbose
@@ -169,20 +176,15 @@ combinatorio:
 
 seleccion: 
     IF  P_A condicion P_C
-		LL_A bloque LL_C	{	printf("     IF\n");printf("Regla 33\n"); 
-								modificarSaltoTerceto(desapilar(&pilaCond), indTercetos);
-							}
+		LL_A bloque LL_C	{	printf("     IF\n");printf("Regla 33\n"); generarCodigoIf(); }
     
 	| IF P_A condicion P_C 
-		THEN bloque ENDIF  {	
-							printf("  	IF THEN ENDIF\n");	printf("Regla 34\n");
-							modificarSaltoTerceto(desapilar(&pilaCond), indTercetos);
-						}
+		THEN bloque ENDIF   {	printf("  	IF THEN ENDIF\n");	printf("Regla 34\n"); generarCodigoIf(); }
 						
     | IF P_A condicion P_C	
-		LL_A bloque LL_C  	{	
-								modificarSaltoTerceto(desapilar(&pilaCond), indTercetos+1);
-								apilar(&pilaCond, crearTercetoBranch("JMP",0));
+		LL_A bloque LL_C  	{	indice indJmpAux = crearTercetoBranch("JMP", 0);
+								generarCodigoIf();
+								apilar(&pilaCond, indJmpAux);
 							}
 		ELSE LL_A bloque LL_C  { 
 								printf("     IF con ELSE\n"); printf("Regla 35\n");
@@ -191,45 +193,45 @@ seleccion:
     ;
 
 condicion:
-    comparacion 			{printf("Regla 39\n");}
-	| comparacion_doble 	{printf("Regla 40\n");}
-	| comparacion_negada	{printf("Regla 41\n");}
+    comparacion 			{ printf("Regla 39\n"); apilarInt(&pilaTipoComp, comparacionSimple); }
+	| comparacion_doble 	{ printf("Regla 40\n"); }
+	| comparacion_negada	{ printf("Regla 41\n"); }
     ;
 	
 comparacion_negada:
-
-	NOT P_A comparacion P_C 	{	printf("    NOT\n");  printf("Regla 39\n"); 
+	NOT P_A comparacion P_C 	{	printf("    NOT\n");  printf("Regla 42\n"); 
 									negarTerceto(indTercetos-1);
+                                    apilarInt(&pilaTipoComp, comparacionSimple);
 								}
-	| NOT P_A comparacion_doble P_C 	{ printf("    NOT\n");  printf("Regla 40\n");}
+    ;
 
 comparacion_doble:
-	P_A comparacion P_C AND P_A comparacion P_C 	{ printf("    AND\n");	printf("Regla 41\n"); }
-	| P_A comparacion P_C OR P_A comparacion P_C 	{ printf("    OR\n"); 	printf("Regla 42\n"); }
+	P_A comparacion P_C AND P_A comparacion P_C 	{ printf("    AND\n");	printf("Regla 43\n"); apilarInt(&pilaTipoComp, comparacionDobleAND); }
+	| P_A comparacion P_C OR P_A comparacion P_C 	{ printf("    OR\n"); 	printf("Regla 44\n"); apilarInt(&pilaTipoComp, comparacionDobleOR); }
 	;
 
 comparacion:
-    expresion	{ indExprAux = indExpr; } OP_MAY_IG expresion	{	printf("Regla 43\n");	
+    expresion	{ indExprAux = indExpr; } OP_MAY_IG expresion	{	printf("Regla 45\n");	
 																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
 																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional(">="),0) );
 																}	
-    | expresion	{ indExprAux = indExpr; } OP_MEN_IG expresion	{	printf("Regla 44\n");
+    | expresion	{ indExprAux = indExpr; } OP_MEN_IG expresion	{	printf("Regla 46\n");
 																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
 																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional("<="),0) );
 																}	
-    | expresion	{ indExprAux = indExpr; } OP_MEN expresion		{	printf("Regla 45\n");	
+    | expresion	{ indExprAux = indExpr; } OP_MEN expresion		{	printf("Regla 47\n");	
 																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
 																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional("<"),0) );
 																}	
-    | expresion { indExprAux = indExpr; } OP_MAY expresion		{	printf("Regla 46\n");	
+    | expresion { indExprAux = indExpr; } OP_MAY expresion		{	printf("Regla 48\n");	
 																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
 																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional(">"),0) );
 																}	
-    | expresion	{ indExprAux = indExpr; } OP_DISTINTO expresion	{	printf("Regla 47a\n");	
+    | expresion	{ indExprAux = indExpr; } OP_DISTINTO expresion	{	printf("Regla 49a\n");	
 																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
 																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional("!="),0) );
 																}	
-	| expresion	{ indExprAux = indExpr; } OP_IGUAL expresion	{	printf("Regla 47b\n");	
+	| expresion	{ indExprAux = indExpr; } OP_IGUAL expresion	{	printf("Regla 49b\n");	
 																	indComp =  crearTercetoOperacion("CMP", indExprAux, indExpr); 
 																	apilar(&pilaCond, crearTercetoBranch(devolverSaltoCondicional("=="),0) );
 																}	
@@ -322,6 +324,7 @@ void inicializarCompilador() {
     inicializarPila(&pilaCombExpr);
 	inicializarPila(&pilaCond);
     inicializarPila(&pilaWhile);
+    inicializarPilaInt(&pilaTipoComp);
 }
 
 void generarCodigoFactorial(indice indNum) {
@@ -378,4 +381,23 @@ void generarCodigoCombinatorio(indice indN, indice indK) {
     /* indFactorial apunto al último factorial calculado, es decir (N - K)! */
     indice indCombMult = crearTercetoOperacion("-", indFactK, indFactorial);
     indCombinatorio = crearTercetoOperacion("/", indFactN, indCombMult);
+}
+
+void generarCodigoIf() {
+    tipoComparacion tipoComp = desapilarInt(&pilaTipoComp);
+    
+    if (tipoComp == comparacionSimple) {
+        modificarSaltoTerceto(desapilar(&pilaCond), indTercetos);
+    } else if (tipoComp == comparacionDobleOR) {
+        indice indJump2 = desapilar(&pilaCond);
+        indice indJump1 = desapilar(&pilaCond);
+        negarTerceto(indJump1.num);
+        modificarSaltoTerceto(indJump1, indJump1.num + 3);
+        modificarSaltoTerceto(indJump2, indTercetos);
+    } else { /* Es una comparación doble con AND */
+        indice indJump2 = desapilar(&pilaCond);
+        indice indJump1 = desapilar(&pilaCond);
+        modificarSaltoTerceto(indJump1, indTercetos);
+        modificarSaltoTerceto(indJump2, indTercetos);
+    }
 }
