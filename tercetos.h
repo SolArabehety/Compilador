@@ -278,8 +278,17 @@ void modificarSaltoTerceto(indice ind, int salto) {
     tercetos[ind.num].elementos[1].valor.ind = salto;
 }
 
+/*  Crea un terceto de etiqueta. La etiqueta va a tener pegada el número de
+    terceto asociado. No sé si esto realmente es necesario hacerlo acá ya que
+    se podría diferenciar en la generación de assembler por más que diga solo
+    TAG, pero en la clase de Mara mostraba que en CGI tenían los números de 
+    terceto pegados así que para que quede igual lo modifiqué.
+*/
 indice crearTercetoTag() {
-    return crearTerceto(crearElemStr("TAG"), crearElemNull(), crearElemNull(), indefinido);
+    char tag[10];
+
+    sprintf(tag, "TAG%d", indTercetos + 1);
+    return crearTerceto(crearElemStr(tag), crearElemNull(), crearElemNull(), indefinido);
 }
 
 /* Niega la la condicion de un terceto */
