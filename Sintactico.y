@@ -138,7 +138,9 @@ ciclo:	WHILE {	apilar(&pilaWhile, crearTercetoTag());	}
     ;
 
 declaracion_constante:
-    CONST ID { validarIdDeclaracion($2); strcpy(nombreToken, $2); } ASIG expresion{ printf("Regla 23\n");}
+    CONST ID ASIG CADENA    { printf("Regla 23a\n"); validarIdDeclaracion($2); strcpy(nombreToken, $2); cargarConstanteString($4);    }
+    | CONST ID ASIG REAL    { printf("Regla 23b\n"); validarIdDeclaracion($2); strcpy(nombreToken, $2); cargarConstanteReal($4);      }
+    | CONST ID ASIG ENTERO  { printf("Regla 23c\n"); validarIdDeclaracion($2); strcpy(nombreToken, $2); cargarConstanteEntera($4);    }
     ;
 
 // TEMA ESPECIAL: ASIGNACIONES ESPECIALES 
