@@ -106,6 +106,6 @@
 103: (TAG103, _, _)
 104: (DISPLAY, _sarasa, _)
 105: (GET, g, _)
-106: (DISPLAY, _g, _)
+106: (DISPLAY, g, _)
 
 --- LISTA DE TERCETOS ---

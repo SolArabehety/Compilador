@@ -290,9 +290,7 @@ indice crearTercetoGetValue(const char* val) {
 }
 
 indice crearTercetoDisplayId(const char* val) {
-    char buffer[900];
-    sprintf(buffer, "_%s", val);
-    return crearTerceto(crearElemStr("DISPLAY"), crearElemStr(buffer), crearElemNull(), indefinido, esDisplay);
+    return crearTerceto(crearElemStr("DISPLAY"), crearElemStr(val), crearElemNull(), indefinido, esDisplay);
 }
 
 indice crearTercetoDisplayCadena(const char* val) {
