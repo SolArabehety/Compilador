@@ -292,26 +292,26 @@ indice crearTercetoGetValue(const char* val) {
 indice crearTercetoDisplayId(const char* val) {
     char buffer[900];
     sprintf(buffer, "_%s", val);
-    return crearTerceto(crearElemStr("show"), crearElemStr(buffer), crearElemNull(), indefinido, esDisplay);
+    return crearTerceto(crearElemStr("DISPLAY"), crearElemStr(buffer), crearElemNull(), indefinido, esDisplay);
 }
 
 indice crearTercetoDisplayCadena(const char* val) {
     char buffer[900];
     sprintf(buffer, "_%s", val);
     borrarChar(buffer, '"');
-    return crearTerceto(crearElemStr("show"), crearElemStr(buffer), crearElemNull(), indefinido, esDisplay);
+    return crearTerceto(crearElemStr("DISPLAY"), crearElemStr(buffer), crearElemNull(), indefinido, esDisplay);
 }
 
 indice crearTercetoDisplayReal(float val) {
     char buffer[900];
     sprintf(buffer, "_%f", val);
-    return crearTerceto(crearElemStr("show"), crearElemStr(buffer), crearElemNull(), indefinido, esDisplay);
+    return crearTerceto(crearElemStr("DISPLAY"), crearElemStr(buffer), crearElemNull(), indefinido, esDisplay);
 }
 
 indice crearTercetoDisplayEntero(int val) {
     char buffer[900];
     sprintf(buffer, "_%d", val);
-    return crearTerceto(crearElemStr("show"), crearElemStr(buffer), crearElemNull(), indefinido, esDisplay);
+    return crearTerceto(crearElemStr("DISPLAY"), crearElemStr(buffer), crearElemNull(), indefinido, esDisplay);
 }
 /*  Crear un terceto, donde el primer y segundo elementos son indices de 
     tercetos. Crea una operación de asignación ("=", ind1, ind2) pero antes

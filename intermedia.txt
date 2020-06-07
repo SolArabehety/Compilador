@@ -104,8 +104,8 @@
 101: (=, d, [100])
 102: (JMP, [90], _)
 103: (TAG103, _, _)
-104: (show, _sarasa, _)
+104: (DISPLAY, _sarasa, _)
 105: (GET, g, _)
-106: (show, _g, _)
+106: (DISPLAY, _g, _)
 
 --- LISTA DE TERCETOS ---
