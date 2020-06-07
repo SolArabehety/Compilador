@@ -394,8 +394,8 @@ void generarCodigoIf() {
     tipoComparacion tipoComp = desapilarInt(&pilaTipoComp);
     
     if (tipoComp == comparacionSimple) {
-        modificarSaltoTerceto(desapilar(&pilaCond), indTercetos);
-        crearTercetoTag();
+        indice indTag = crearTercetoTag();
+        modificarSaltoTerceto(desapilar(&pilaCond), indTag.num);
     } else if (tipoComp == comparacionDobleOR) {
         indice indJump2 = desapilar(&pilaCond);
         indice indJump1 = desapilar(&pilaCond);
