@@ -10,13 +10,15 @@ THEN
     c := 111
 ENDIF
 
-
 IF ((c > a) AND (c < b))
 THEN
     c := 222
-        IF (a == b)
+        IF ((c == a) AND (c == b))
         THEN
             c := 333
+            IF (c == b)
+            THEN
+                c := 444
+            ENDIF
         ENDIF
-    c := 444
 ENDIF

@@ -38,8 +38,8 @@ THEN
 h := "zaraza"
 ENDIF
 
-a := COMB(5,2)
 b := 15 * (12 + FACT(5 + 5))
+a := COMB(5,2)
 
 b := 0
 WHILE(a>2)
