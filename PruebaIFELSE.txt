@@ -1,0 +1,13 @@
+DEFVAR
+   INT:a;b;c
+ENDDEF
+
+a := 1
+b := 0
+
+IF (a < b) {
+	c := 1
+    b := 2
+} ELSE {
+    c := 2
+}

@@ -4,6 +4,29 @@
 #include <stdio.h>
 #include "tabla_simbolos.h"
 
+/* Poner esta constante en 1 para que hayan mensajes de debug en la CGI */
+#define DEBUG 0
+
+/*  Todos los tercetos estan tipificados. Esto va a ser útil para la
+    generación de Assembler */
+const char* nombreTiposTercetos[11] = { "asignacion", "suma", "resta", "multiplicacion",
+                     "division", "comparacion", "salto", "etiqueta", "get", "display", 
+                     "desconocido" };
+
+typedef enum tipoTerceto {
+    esAsignacion,
+    esSuma,
+    esResta,
+    esMultiplicacion,
+    esDivision,
+    esComparacion,
+    esSalto,
+    esEtiqueta,
+    esGet,
+    esDisplay,
+    esDesconocido
+} tipoTerceto;
+
 /*  Esta unión significa que elemento podra tener un char*
     o un int (para índices hacio otros tercetos), pero no ambos
     al mismo tiempo */
@@ -28,27 +51,36 @@ typedef struct terceto {
         Esto es un rebusque que hice para que fuera más fácil verificar el tipo
         en expresiones y asignaciones. No aparece en el archivo intermedia.txt y
         no es necesario que todos los tercetos lo tengan definido. */
-    tipoValor tipoTerceto;
+    tipoValor tipoVal;
+
+    tipoTerceto tipoTerc;
 } terceto;
 
 elemento crearElemStr(const char*);
 elemento crearElemInt(int);
 elemento crearElemNull();
-indice crearTerceto(elemento, elemento, elemento, tipoValor);
+indice crearTerceto(elemento, elemento, elemento, tipoValor, tipoTerceto);
 indice cargarConstanteEntera(int);
 indice cargarConstanteString(const char*);
 indice cargarConstanteReal(float);
 indice cargarVariable(const char*, tipoValor);
 indice crearTercetoAsignacion(indice, indice);
 indice crearTercetoOperacion(const char*, indice, indice);
+indice crearTercetoComparacion(indice, indice);
 indice crearTercetoBranch(const char*, int);
+indice crearTercetoTag();
+indice crearTercetoGetValue(const char*);
+indice crearTercetoDisplayId(const char*);
+indice crearTercetoDisplayCadena(const char*);
+indice crearTercetoDisplayReal(float);
+indice crearTercetoDisplayEntero(int);
 void modificarSaltoTerceto(indice, int);
 char* devolverSaltoCondicional(char*);
 void imprimirTercetos();
 void negarTerceto(int);
+
 /* Índice global para tercetos */
 int indTercetos = 0;
-
 /* Array de Tercetos */
 terceto tercetos[900];
 
@@ -72,31 +104,18 @@ elemento crearElemNull() {
     return e;
 }
 
-/*  Busca un terceto por el nombre de una constante en el primer elemento y
-    devuelve su índice, de no encontrarlo (no existe) devuelve -1. */
-int buscarTerceto(const char* val) {
-    int i;
-
-    for (i = 0; i < indTercetos; i++) {
-        if (strcmp(val, tercetos[i].elementos[0].valor.cad) == 0)
-            return i;
-    }
-
-    /* Si no se encontró el terceto, se devuelve -1 */
-    return -1;
-}
-
 /*  Crear un terceto con los elementos pasados por parámetro y se Agregamos
     al array global de tercetos. Esta es una función genérica para insertar
     un terceto. Las demás funciones son más específicas y llaman a esta. */
-indice crearTerceto(elemento e1, elemento e2, elemento e3, tipoValor tipo) {
+indice crearTerceto(elemento e1, elemento e2, elemento e3, tipoValor tipoV, tipoTerceto tipoT) {
     terceto t;
     indice ind;
 
     t.elementos[0] = e1;
     t.elementos[1] = e2;
     t.elementos[2] = e3;
-    t.tipoTerceto = tipo;
+    t.tipoVal = tipoV;
+    t.tipoTerc = tipoT;
 
     /* Agregamos el terceto al array global de tercetos */
     tercetos[indTercetos] = t;
@@ -173,10 +192,11 @@ indice cargarVariable(const char* val, tipoValor tipo) {
 indice crearTercetoOperacion(const char* op, indice ind1, indice ind2) {
     elemento elem1, elem2;
     tipoValor tipo1, tipo2, tipoResultado;
+    tipoTerceto tipoT;
 
     if (ind1.tipo == esTerceto) {
         elem1 = crearElemInt(ind1.num);
-        tipo1 = tercetos[ind1.num].tipoTerceto;
+        tipo1 = tercetos[ind1.num].tipoVal;
     } else { /* El índice es de un símbolo */
         elem1 = crearElemStr(obtenerNombreSimbolo(ind1.num));
         tipo1 = obtenerTipoSimbolo(ind1.num);
@@ -184,8 +204,8 @@ indice crearTercetoOperacion(const char* op, indice ind1, indice ind2) {
 
     if (ind2.tipo == esTerceto) {
         elem2 = crearElemInt(ind2.num);
-        tipo2 = tercetos[ind2.num].tipoTerceto;
-    } else { /* El índice es de un símbolo */
+        tipo2 = tercetos[ind2.num].tipoVal;
+    } else {
         elem2 = crearElemStr(obtenerNombreSimbolo(ind2.num));
         tipo2 = obtenerTipoSimbolo(ind2.num);
     }
@@ -197,11 +217,66 @@ indice crearTercetoOperacion(const char* op, indice ind1, indice ind2) {
         tipoResultado = real;
     } else {
         printf("\nError Error en la linea %d: La operacion %s entre %s y %s no es compatible.", 
-                yylineno, op, nombreTipos[tipo1], nombreTipos[tipo2]);
+                yylineno, op, nombreTiposVal[tipo1], nombreTiposVal[tipo2]);
         exit(1);
     }
     
-    return crearTerceto(crearElemStr(op), elem1, elem2, tipoResultado);
+    /* Seteamos el tipo de operación */
+    switch (op[0]) {
+        case '+':
+            tipoT = esSuma;
+            break;
+        case '-':
+            tipoT = esResta;
+            break;
+        case '*':
+            tipoT = esMultiplicacion;
+            break;
+        case '/':
+            tipoT = esDivision;
+            break;
+        default:
+            tipoT = esDesconocido;
+            break;
+    }
+
+    return crearTerceto(crearElemStr(op), elem1, elem2, tipoResultado, tipoT);
+}
+
+/*  Similar a crearTercetoOperacion pero con CMP */
+indice crearTercetoComparacion(indice ind1, indice ind2) {
+    elemento elem1, elem2;
+    tipoValor tipo1, tipo2, tipoResultado;
+    tipoTerceto tipoT;
+
+    if (ind1.tipo == esTerceto) {
+        elem1 = crearElemInt(ind1.num);
+        tipo1 = tercetos[ind1.num].tipoVal;
+    } else {
+        elem1 = crearElemStr(obtenerNombreSimbolo(ind1.num));
+        tipo1 = obtenerTipoSimbolo(ind1.num);
+    }
+
+    if (ind2.tipo == esTerceto) {
+        elem2 = crearElemInt(ind2.num);
+        tipo2 = tercetos[ind2.num].tipoVal;
+    } else {
+        elem2 = crearElemStr(obtenerNombreSimbolo(ind2.num));
+        tipo2 = obtenerTipoSimbolo(ind2.num);
+    }
+
+    /* Validamos que los tipos de la comparación sean compatibles */
+    if (tipo1 == tipo2) {
+        tipoResultado = tipo1;
+    } else if ((tipo1 == real && tipo2 == entero) || (tipo1 == entero && tipo2 == real)) {
+        tipoResultado = real;
+    } else {
+        printf("\nError Error en la linea %d: La comparacion entre %s y %s no es compatible.", 
+                yylineno, nombreTiposVal[tipo1], nombreTiposVal[tipo2]);
+        exit(1);
+    }
+
+    return crearTerceto(crearElemStr("CMP"), elem1, elem2, tipoResultado, esComparacion);
 }
 
 /*
@@ -211,32 +286,30 @@ Se coloca la intruccion de leer el dato de la entrada y guardarla en la variable
 indice crearTercetoGetValue(const char* val) {
     char buffer[900];
     sprintf(buffer, "%s", val);
-    return crearTerceto(crearElemStr("GET"), crearElemStr(buffer), crearElemNull(), indefinido);
+    return crearTerceto(crearElemStr("GET"), crearElemStr(buffer), crearElemNull(), indefinido, esGet);
 }
 
 indice crearTercetoDisplayId(const char* val) {
-    char buffer[900];
-    sprintf(buffer, "_%s", val);
-    return crearTerceto(crearElemStr("show"), crearElemStr(buffer), crearElemNull(), indefinido);
+    return crearTerceto(crearElemStr("DISPLAY"), crearElemStr(val), crearElemNull(), indefinido, esDisplay);
 }
 
 indice crearTercetoDisplayCadena(const char* val) {
     char buffer[900];
     sprintf(buffer, "_%s", val);
     borrarChar(buffer, '"');
-    return crearTerceto(crearElemStr("show"), crearElemStr(buffer), crearElemNull(), indefinido);
+    return crearTerceto(crearElemStr("DISPLAY"), crearElemStr(buffer), crearElemNull(), indefinido, esDisplay);
 }
 
 indice crearTercetoDisplayReal(float val) {
     char buffer[900];
     sprintf(buffer, "_%f", val);
-    return crearTerceto(crearElemStr("show"), crearElemStr(buffer), crearElemNull(), indefinido);
+    return crearTerceto(crearElemStr("DISPLAY"), crearElemStr(buffer), crearElemNull(), indefinido, esDisplay);
 }
 
 indice crearTercetoDisplayEntero(int val) {
     char buffer[900];
     sprintf(buffer, "_%d", val);
-    return crearTerceto(crearElemStr("show"), crearElemStr(buffer), crearElemNull(), indefinido);
+    return crearTerceto(crearElemStr("DISPLAY"), crearElemStr(buffer), crearElemNull(), indefinido, esDisplay);
 }
 /*  Crear un terceto, donde el primer y segundo elementos son indices de 
     tercetos. Crea una operación de asignación ("=", ind1, ind2) pero antes
@@ -247,7 +320,7 @@ indice crearTercetoAsignacion(indice ind1, indice ind2) {
 
     if (ind1.tipo == esTerceto) {
         elem1 = crearElemInt(ind1.num);
-        tipo1 = tercetos[ind1.num].tipoTerceto;
+        tipo1 = tercetos[ind1.num].tipoVal;
     } else { /* El índice es de un símbolo */
         elem1 = crearElemStr(obtenerNombreSimbolo(ind1.num));
         tipo1 = obtenerTipoSimbolo(ind1.num);
@@ -255,7 +328,7 @@ indice crearTercetoAsignacion(indice ind1, indice ind2) {
 
     if (ind2.tipo == esTerceto) {
         elem2 = crearElemInt(ind2.num);
-        tipo2 = tercetos[ind2.num].tipoTerceto;
+        tipo2 = tercetos[ind2.num].tipoVal;
     } else { /* El índice es de un símbolo */
         elem2 = crearElemStr(obtenerNombreSimbolo(ind2.num));
         tipo2 = obtenerTipoSimbolo(ind2.num);
@@ -265,10 +338,10 @@ indice crearTercetoAsignacion(indice ind1, indice ind2) {
         asignaciones es porque la validación de tipo es diferente a la que se hace 
         en crearTercetoOperación. */
     if (tipo1 == tipo2 || (tipo1 == real && tipo2 == entero)) {
-        return crearTerceto(crearElemStr("="), elem1, elem2, tipo1);
+        return crearTerceto(crearElemStr("="), elem1, elem2, tipo1, esAsignacion);
     } else {
         printf("\nError en la linea %d: Se intento asignar un %s a una variable de tipo %s.", 
-                yylineno, nombreTipos[tipo2], nombreTipos[tipo1]);
+                yylineno, nombreTiposVal[tipo2], nombreTiposVal[tipo1]);
         exit(1);
     }
 }
@@ -280,7 +353,7 @@ indice crearTercetoAsignacion(indice ind1, indice ind2) {
     el branch, en ese caso se debe colocar 0 en el salto y luego se deberá 
     usar la función modificarSaltoTerceto */
 indice crearTercetoBranch(const char* op, int salto) {
-    return crearTerceto(crearElemStr(op), crearElemInt(salto), crearElemNull(), indefinido);
+    return crearTerceto(crearElemStr(op), crearElemInt(salto), crearElemNull(), indefinido, esSalto);
 }
 
 /*  Busca al terceto por índice según el primer parámetro de la función,
@@ -292,12 +365,31 @@ void modificarSaltoTerceto(indice ind, int salto) {
     tercetos[ind.num].elementos[1].valor.ind = salto;
 }
 
+/*  Crea un terceto de etiqueta. La etiqueta va a tener pegada el número de
+    terceto asociado. No sé si esto realmente es necesario hacerlo acá ya que
+    se podría diferenciar en la generación de assembler por más que diga solo
+    TAG, pero en la clase de Mara mostraba que en CGI tenían los números de 
+    terceto pegados así que para que quede igual lo modifiqué.
+*/
 indice crearTercetoTag() {
-    return crearTerceto(crearElemStr("TAG"), crearElemNull(), crearElemNull(), indefinido);
+    char tag[10];
+
+    /*  Nos fijamos si el último terceto creado también es un tag, de ser así
+        directamente devolvemos un indice que apunte a tal tag. Esto puede
+        pasar cuando hay ifs anidados por ejemplo*/
+    if(tercetos[indTercetos - 1].tipoTerc == esEtiqueta) {
+        indice ind;
+        ind.num = indTercetos - 1;
+        ind.tipo = esTerceto;
+        return ind;
+    }
+
+    sprintf(tag, "TAG%d", indTercetos + 1);
+    return crearTerceto(crearElemStr(tag), crearElemNull(), crearElemNull(), indefinido, esEtiqueta);
 }
 
 /* Niega la la condicion de un terceto */
-void negarTerceto(int numeroTerceto){
+void negarTerceto(int numeroTerceto) {
 	if(strcmp(tercetos[numeroTerceto].elementos[0].valor.cad, "JNB") == 0) // >=
 		 tercetos[numeroTerceto].elementos[0].valor.cad = "JNAE";
 	 
@@ -339,6 +431,7 @@ char* devolverSaltoCondicional(char* comparacion){
 }
 
 void imprimirTercetos() {
+    if (DEBUG) printf("Generando archivo intermedia.txt...\n");
     FILE *gci;
     int i, j;
 
@@ -349,9 +442,11 @@ void imprimirTercetos() {
 
     fprintf(gci, "\n--- LISTA DE TERCETOS ---\n\n");
     for (i = 0; i < indTercetos; i++) {
+        terceto t = tercetos[i];
         fprintf(gci, "%d: (", i + 1);
+
         for (j = 0; j < 3; j++) {
-            elemento e = tercetos[i].elementos[j];
+            elemento e = t.elementos[j];
 
             switch (e.tipo) {
                 case string:
@@ -368,7 +463,9 @@ void imprimirTercetos() {
                 fprintf(gci, ", ");
             } 
         }
-        fprintf(gci, ")\n");
+        fprintf(gci, ")");
+        if (DEBUG) fprintf(gci, "   %s   %s", nombreTiposTercetos[t.tipoTerc], nombreTiposVal[t.tipoVal]);
+        fprintf(gci, "\n");
     }
     fprintf(gci,"\n--- LISTA DE TERCETOS ---\n");
     

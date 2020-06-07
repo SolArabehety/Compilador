@@ -6,11 +6,11 @@
 extern int yylineno;
 
 /*  Son los nombres de cada tipo */
-const char* nombreTipos[7] = {"indefinido", "string", "entero", "real", "const string", "const entero", "const real"};
+const char* nombreTiposVal[7] = {"indefinido", "string", "entero", "real", "const string", "const entero", "const real"};
 
 /*  Lo mismo que arriba, pero estos son los que se muestran en la tabla de símbolos. 
     El tipo UNDEFINED no debería aparecer nunca en la tabla igual. */
-const char* nombreTiposTabla[7] = {"UNDEFINED", "STRING", "INTEGER", "FLOAT", "CONST_STRING", "CONST_INT", "CONST_FLOAT"};
+const char* nombreTiposValTabla[7] = {"UNDEFINED", "STRING", "INTEGER", "FLOAT", "CONST_STRING", "CONST_INT", "CONST_FLOAT"};
 
 /*  Para que sea mas facil de identificar los tipos de las variables que maneja 
     nuestro compilador. Los últimos 3 (los consts) no sun usados internamente, 

@@ -57,7 +57,7 @@ void guardarTOS()
         sprintf(aux, "%d", TOS[i].longitud);
         if(strcmp(aux, "0") == 0)
             aux[0] = '\0';
-        fprintf(tos,"%-33s  | %-21s  | %-32s  | %-20s \n", TOS[i].nombre, nombreTiposTabla[TOS[i].tipo], TOS[i].valor, aux);
+        fprintf(tos,"%-33s  | %-21s  | %-32s  | %-20s \n", TOS[i].nombre, nombreTiposValTabla[TOS[i].tipo], TOS[i].valor, aux);
     }
 
     fprintf(tos,"\n--------------------------------------------- TABLA DE  SIMBOLOS ---------------------------------------------\n");
