@@ -5,9 +5,9 @@
 #include <conio.h>
 #include <string.h>
 #include "pila_int.h"
-#include "tercetos.h"
+#include "assembler.h"
 #include "y.tab.h"
-/* tercetos.h ya incluye a tabla_simbolos.h */
+/* tercetos.h y tabla_simbolos.h están incluidos en assembler.h */
 
 int yystopparser=0;
 FILE *yyin;
@@ -68,6 +68,7 @@ programa:
     {   guardarTOS();
         imprimirTercetos();
         printf("Fin COMPILADOR ok\n");
+        generaAssembler();
     };
 
 est_declaracion:
