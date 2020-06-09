@@ -12,7 +12,6 @@ void generaFinal(FILE*);
 
 void generaAssembler() {
     FILE *f;
-    int i, j;
 
     if ((f = fopen("final.asm", "w")) == NULL) {
         printf("No se puede crear el archivo final.asm.");
@@ -23,35 +22,6 @@ void generaAssembler() {
     generaTOS(f);
     generaCuerpo(f);
     generaFinal(f);
-
-    /*fprintf(gci, "\n--- LISTA DE TERCETOS ---\n\n");
-    for (i = 0; i < indTercetos; i++) {
-        terceto t = tercetos[i];
-        fprintf(gci, "%d: (", i + 1);
-
-        for (j = 0; j < 3; j++) {
-            elemento e = t.elementos[j];
-
-            switch (e.tipo) {
-                case string:
-                    fprintf(gci, "%s", e.valor.cad);
-                    break;
-                case entero:
-                    fprintf(gci, "[%d]", e.valor.ind + 1);
-                    break;
-                default:
-                    fprintf(gci, "_");
-            }
-
-            if (j < 2) {
-                fprintf(gci, ", ");
-            } 
-        }
-        fprintf(gci, ")");
-        if (DEBUG) fprintf(gci, "   %s   %s", nombreTiposTercetos[t.tipoTerc], nombreTiposVal[t.tipoVal]);
-        fprintf(gci, "\n");
-    }
-    fprintf(gci,"\n--- LISTA DE TERCETOS ---\n");*/
     
     if (fclose(f) != 0) {
         printf("No se puede CERRAR el archivo final.asm.");
@@ -68,8 +38,43 @@ void generaCabecera(FILE* f) {
 }
 
 void generaTOS(FILE* f) {
+    int i;
     fprintf(f, ".DATA\n");
     fprintf(f, ";Tabla de simbolos\n\n");
+
+    for (i = 0; i< TOStop; i++)
+    {
+        float val;
+        /* Imprime nombre */
+        fprintf(f, "%s ", TOS[i].nombre);
+        
+        /* Lo siguiente depende del tipo de símbolo */
+        switch(TOS[i].tipo) {
+            case string:
+                fprintf(f, "db %d dup (?),\"$\"", LIM_STR);
+                break;
+            case entero:
+                fprintf(f, "dd ?");
+                break;
+            case real:
+                fprintf(f, "dd ?");
+                break;
+            case constString:
+                fprintf(f, "db \"%s\", \"$\", %d dup (?)", TOS[i].valor, LIM_STR);
+                break;
+            case constEntero:
+                /* Hay que convertirlo a float */
+                val = atof(TOS[i].valor);
+                fprintf(f, "dd %f", val);
+                break;
+            case constReal:
+                val = atof(TOS[i].valor);
+                fprintf(f, "dd %f", val);
+                break;
+        }
+        fprintf(f, "\n");
+    }
+
     fprintf(f, "\n");
 }
 
