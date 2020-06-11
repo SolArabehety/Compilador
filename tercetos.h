@@ -4,9 +4,6 @@
 #include <stdio.h>
 #include "tabla_simbolos.h"
 
-/* Poner esta constante en 1 para que hayan mensajes de debug en la CGI */
-#define DEBUG 0
-
 /*  Todos los tercetos estan tipificados. Esto va a ser útil para la
     generación de Assembler */
 const char* nombreTiposTercetos[11] = { "asignacion", "suma", "resta", "multiplicacion",

@@ -5,6 +5,9 @@
 
 extern int yylineno;
 
+/* Poner esta constante en 1 para que hayan mensajes de debug en la CGI y assembler */
+#define DEBUG 0
+
 /*  Son los nombres de cada tipo */
 const char* nombreTiposVal[7] = {"indefinido", "string", "entero", "real", "const string", "const entero", "const real"};
 
