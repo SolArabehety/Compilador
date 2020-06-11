@@ -99,11 +99,13 @@ void generaPrograma (FILE* f) {
     for (i = 0; i < indTercetos; i++) {
         char buffer[100];
         terceto t = tercetos[i];
-        if (DEBUG) fprintf(f, ";Terceto %d\n", i + 1);
+        if (DEBUG) fprintf(f, "\n;Terceto %d\n", i + 1);
         
         switch(t.tipoTerc) {
             case esAsignacion:
-                /* A implementar */
+                fprintf(f, "FLD %s \nFSTP %s",
+                 resolverElemento(t.elementos[2]), resolverElemento(t.elementos[1]));
+                /* No genera etiqueta aux la asignacion */
                 break;
             case esSuma:
                 sprintf(buffer, "@aux%d", i + 1);
@@ -158,7 +160,7 @@ const char* resolverElemento (elemento e) {
     char buffer[100];
 
     if (e.tipo == entero) {
-        sprintf(buffer, "@aux%d", e.valor.ind);
+        sprintf(buffer, "@aux%d", e.valor.ind + 1);
     } else if (e.tipo == string) { /* Es un símbolo */
         sprintf(buffer, "%s", e.valor.cad);
     } else {
