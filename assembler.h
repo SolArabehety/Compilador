@@ -99,46 +99,57 @@ void generaPrograma (FILE* f) {
     for (i = 0; i < indTercetos; i++) {
         char buffer[100];
         terceto t = tercetos[i];
+        char* salto;
+        int indEtiqueta;
+        char* etiqueta;
         if (DEBUG) fprintf(f, "\n;Terceto %d\n", i + 1);
         
         switch(t.tipoTerc) {
             case esAsignacion:
-                fprintf(f, "FLD %s \nFSTP %s",
-                 resolverElemento(t.elementos[2]), resolverElemento(t.elementos[1]));
+                fprintf(f, "\tFLD %s \n\tFSTP %s",
+                    resolverElemento(t.elementos[2]), resolverElemento(t.elementos[1]));
                 /* No genera etiqueta aux la asignacion */
                 break;
             case esSuma:
                 sprintf(buffer, "@aux%d", i + 1);
-                fprintf(f, "FLD %s \nFLD %s \nFADD \nFSTP %s",
-                 resolverElemento(t.elementos[1]), resolverElemento(t.elementos[2]), buffer);
+                fprintf(f, "\tFLD %s \n\tFLD %s \n\tFADD \n\tFSTP %s",
+                    resolverElemento(t.elementos[1]), resolverElemento(t.elementos[2]), buffer);
                 cargarVariable(buffer, real);
                 break;
             case esResta:
                 sprintf(buffer, "@aux%d", i + 1);
-                fprintf(f, "FLD %s \nFLD %s \nFSUB \nFSTP %s",
-                 resolverElemento(t.elementos[1]), resolverElemento(t.elementos[2]), buffer);
+                fprintf(f, "\tFLD %s \n\tFLD %s \n\tFSUB \n\tFSTP %s",
+                    resolverElemento(t.elementos[1]), resolverElemento(t.elementos[2]), buffer);
                 cargarVariable(buffer, real);
                 break;
             case esMultiplicacion:
                 sprintf(buffer, "@aux%d", i + 1);
-                fprintf(f, "FLD %s \nFLD %s \nFMULT \nFSTP %s",
-                 resolverElemento(t.elementos[1]), resolverElemento(t.elementos[2]), buffer);
+                fprintf(f, "\tFLD %s \n\tFLD %s \n\tFMULT \n\tFSTP %s",
+                    resolverElemento(t.elementos[1]), resolverElemento(t.elementos[2]), buffer);
                 cargarVariable(buffer, real);
                 break;
             case esDivision:
                 sprintf(buffer, "@aux%d", i + 1);
-                fprintf(f, "FLD %s \nFLD %s \nFDIV \nFSTP %s",
-                 resolverElemento(t.elementos[1]), resolverElemento(t.elementos[2]), buffer);
+                fprintf(f, "\tFLD %s \n\tFLD %s \n\tFDIV \n\tFSTP %s",
+                    resolverElemento(t.elementos[1]), resolverElemento(t.elementos[2]), buffer);
                 cargarVariable(buffer, real);
                 break;
             case esComparacion:
-                /* A implementar */
+                fprintf(f, "\tFLD %s \n\tFCOMP %s \n\tFSTSW AX \n\tSAHF",
+                    resolverElemento(t.elementos[1]), resolverElemento(t.elementos[2]));
                 break;
             case esSalto:
-                /* A implementar */
+                /*  Acá no hay que usar resolverElemento porque nos devolvería un aux en lugar
+                    de la etiqueta. Hay que generarla a mano */
+                salto = t.elementos[0].valor.cad;
+                indEtiqueta = t.elementos[1].valor.ind;
+                etiqueta = tercetos[indEtiqueta].elementos[0].valor.cad;
+                fprintf(f, "\t%s %s", salto, etiqueta);
                 break;
             case esEtiqueta:
-                /* A implementar */
+                /*  Simplemente hay que poner el nombre del tag (el primer elemento del terceto)
+                    en forma de etiqueta */
+                fprintf(f, "\n%s:", t.elementos[0].valor.cad);
                 break;
             case esGet:
                 /* A implementar */
@@ -153,9 +164,11 @@ void generaPrograma (FILE* f) {
     }
 }
 
-/*  Esta función toma un índice y:
-    - Si es un terceto, devuelve su etiqueta aux correspondiente.
-    - Si es un símbolo, devuelve su nombre en la tabla. */
+/*  Esta función toma un elemento de terceto y:
+    - Si es un entero, es un índice a terceto por lo que
+    devuelve su etiqueta aux correspondiente.
+    - Si es una string, es un símbolo y devuelve la
+    cadena tal como es. */
 const char* resolverElemento (elemento e) {
     char buffer[100];
 
