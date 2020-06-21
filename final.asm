@@ -228,7 +228,7 @@ TAG77:
 TAG85:
 	FLD @combK 
 	FLD @fact 
-	FSUB 
+	FMULT 
 	FSTP @aux86
 	FLD @combN 
 	FLD @aux86 

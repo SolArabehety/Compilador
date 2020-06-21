@@ -387,7 +387,7 @@ void generarCodigoCombinatorio(indice indN, indice indK) {
     generarCodigoFactorial(indCombResta);
     /* Cálculo del número combinatorio */
     /* indFactorial apunto al último factorial calculado, es decir (N - K)! */
-    indice indCombMult = crearTercetoOperacion("-", indFactK, indFactorial);
+    indice indCombMult = crearTercetoOperacion("*", indFactK, indFactorial);
     indCombinatorio = crearTercetoOperacion("/", indFactN, indCombMult);
 }
 
