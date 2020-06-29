@@ -31,6 +31,8 @@ void generaAssembler() {
 }
 
 void generaCabecera(FILE* f) {
+    fprintf(f, "include macros2.asm\n");
+    fprintf(f, "include number.asm\n");
     fprintf(f, ".MODEL LARGE\n");
     fprintf(f, ".386\n");
     fprintf(f, ".STACK 200h\n");
@@ -102,6 +104,7 @@ void generaPrograma (FILE* f) {
         char* salto;
         int indEtiqueta;
         char* etiqueta;
+        char *str;
         if (DEBUG) fprintf(f, "\n;Terceto %d\n", i + 1);
         
         switch(t.tipoTerc) {
@@ -152,10 +155,36 @@ void generaPrograma (FILE* f) {
                 fprintf(f, "\n%s:", t.elementos[0].valor.cad);
                 break;
             case esGet:
-                /* A implementar */
+                switch(t.elementos[1].tipo) {
+                    case string:
+                        fprintf(f, "\tgetString %s\n", resolverElemento(t.elementos[1]));
+                        break;
+                    case entero:
+                        fprintf(f, "\tGetInteger %d\n", resolverElemento(t.elementos[1]));
+                        break;
+                    case real:
+                        fprintf(f, "\tGetFloat %f\n", resolverElemento(t.elementos[1]));
+                        break;
+                }
                 break;
             case esDisplay:
-                /* A implementar */
+                str = (char *)malloc(100);
+                strcpy(str, (char *)resolverElemento(t.elementos[1]));
+                if(strncmp(str, "_", 1) == 0) {
+                    str ++;
+                    fprintf(f, "\tdisplayString %s\n", str);
+                    free(str);
+                } else {
+                    switch(t.elementos[1].tipo) {
+                        case string:
+                            fprintf(f, "\tdisplayString %s\n", resolverElemento(t.elementos[1]));
+                            break;
+                        case entero:
+                            fprintf(f, "\tDisplayInteger %d\n", resolverElemento(t.elementos[1]));
+                        case real:
+                            fprintf(f, "\tDisplayInteger %d\n", resolverElemento(t.elementos[1]));
+                    }
+                }
                 break;
             default:
                 break;

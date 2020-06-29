@@ -1,3 +1,5 @@
+include macros2.asm
+include number.asm
 .MODEL LARGE
 .386
 .STACK 200h
@@ -270,8 +272,11 @@ TAG99:
 	JMP TAG90
 
 TAG103:
+	displayString sarasa
 
+	getString g
 
+	displayString g
 
 MOVE EAX, 4C00h
 INT 21h
