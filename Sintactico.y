@@ -154,10 +154,29 @@ asignacion:
     ;
 
 salida_pantalla:
-    DISPLAY ID { crearTercetoDisplayId($2); printf("    SALIDA_PANTALLA ID\n"); printf("Regla 29\n"); } |
-    DISPLAY CADENA { crearTercetoDisplayCadena($2); printf("    SALIDA_PANTALLA CADENA\n"); printf("Regla 30\n"); } |
-    DISPLAY REAL { crearTercetoDisplayReal($2); printf("    SALIDA_PANTALLA REAL\n"); printf("Regla 31\n"); } |
-    DISPLAY ENTERO { crearTercetoDisplayEntero($2);	printf("    SALIDA_PANTALLA ENTERO\n"); printf("Regla 32\n"); }
+    DISPLAY ID { 
+        crearTercetoDisplayId($2); 
+        printf("    SALIDA_PANTALLA ID\n"); 
+        printf("Regla 29\n"); 
+        }
+    | DISPLAY CADENA {
+        cargarConstanteString($2);
+        crearTercetoDisplayCadena($2); 
+        printf("    SALIDA_PANTALLA CADENA\n"); 
+        printf("Regla 30\n"); 
+        }
+    | DISPLAY REAL { 
+        cargarConstanteReal($2);
+        crearTercetoDisplayReal($2); 
+        printf("    SALIDA_PANTALLA REAL\n");
+        printf("Regla 31\n");
+        } 
+    | DISPLAY ENTERO { 
+        cargarConstanteEntera($2);
+        crearTercetoDisplayEntero($2);	
+        printf("    SALIDA_PANTALLA ENTERO\n"); 
+        printf("Regla 32\n");
+        }
     ;
 
 ingreso_valor:

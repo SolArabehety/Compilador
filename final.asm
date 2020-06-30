@@ -272,11 +272,18 @@ TAG99:
 	JMP TAG90
 
 TAG103:
-	displayString sarasa
-
-	getString g
-
-	displayString g
+	DisplayString _sarasa
+	DisplayString h
+	GetString g
+	DisplayString g
+	DisplayFloat _1.400000
+	DisplayFloat test_expr
+	GetFloat a1
+	DisplayFloat a1
+	DisplayFloat _77
+	DisplayFloat a
+	GetFloat d
+	DisplayFloat d
 
 MOVE EAX, 4C00h
 INT 21h
@@ -318,6 +325,8 @@ _1 dd 1.000000
 @combN dd ?
 @combK dd ?
 _0 dd 0.000000
+_1.400000 dd 1.400000
+_77 dd 77.000000
 @aux1 dd ?
 @aux3 dd ?
 @aux5 dd ?

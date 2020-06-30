@@ -48,6 +48,7 @@ void generaCuerpo(FILE* f) {
     fprintf(f, ";Seccion de codigo\n");
     generaPrograma(f);
 
+    fprintf(f, "\n");
     fprintf(f, "MOVE EAX, 4C00h\n");
     fprintf(f, "INT 21h\n\n");
     fprintf(f, "\n");
@@ -101,10 +102,9 @@ void generaPrograma (FILE* f) {
     for (i = 0; i < indTercetos; i++) {
         char buffer[100];
         terceto t = tercetos[i];
-        char* salto;
-        int indEtiqueta;
-        char* etiqueta;
-        char *str;
+        char* salto, *etiqueta, *str, *strSimbolo;
+        int indEtiqueta, indSimbolo;
+        tipoValor tipoSimbolo;
         if (DEBUG) fprintf(f, "\n;Terceto %d\n", i + 1);
         
         switch(t.tipoTerc) {
@@ -113,34 +113,40 @@ void generaPrograma (FILE* f) {
                     resolverElemento(t.elementos[2]), resolverElemento(t.elementos[1]));
                 /* No genera etiqueta aux la asignacion */
                 break;
+
             case esSuma:
                 sprintf(buffer, "@aux%d", i + 1);
                 fprintf(f, "\tFLD %s \n\tFLD %s \n\tFADD \n\tFSTP %s",
                     resolverElemento(t.elementos[1]), resolverElemento(t.elementos[2]), buffer);
                 cargarVariable(buffer, real);
                 break;
+
             case esResta:
                 sprintf(buffer, "@aux%d", i + 1);
                 fprintf(f, "\tFLD %s \n\tFLD %s \n\tFSUB \n\tFSTP %s",
                     resolverElemento(t.elementos[1]), resolverElemento(t.elementos[2]), buffer);
                 cargarVariable(buffer, real);
                 break;
+
             case esMultiplicacion:
                 sprintf(buffer, "@aux%d", i + 1);
                 fprintf(f, "\tFLD %s \n\tFLD %s \n\tFMULT \n\tFSTP %s",
                     resolverElemento(t.elementos[1]), resolverElemento(t.elementos[2]), buffer);
                 cargarVariable(buffer, real);
                 break;
+
             case esDivision:
                 sprintf(buffer, "@aux%d", i + 1);
                 fprintf(f, "\tFLD %s \n\tFLD %s \n\tFDIV \n\tFSTP %s",
                     resolverElemento(t.elementos[1]), resolverElemento(t.elementos[2]), buffer);
                 cargarVariable(buffer, real);
                 break;
+
             case esComparacion:
                 fprintf(f, "\tFLD %s \n\tFCOMP %s \n\tFSTSW AX \n\tSAHF",
                     resolverElemento(t.elementos[1]), resolverElemento(t.elementos[2]));
                 break;
+
             case esSalto:
                 /*  Acá no hay que usar resolverElemento porque nos devolvería un aux en lugar
                     de la etiqueta. Hay que generarla a mano */
@@ -149,43 +155,55 @@ void generaPrograma (FILE* f) {
                 etiqueta = tercetos[indEtiqueta].elementos[0].valor.cad;
                 fprintf(f, "\t%s %s", salto, etiqueta);
                 break;
+
             case esEtiqueta:
                 /*  Simplemente hay que poner el nombre del tag (el primer elemento del terceto)
                     en forma de etiqueta */
                 fprintf(f, "\n%s:", t.elementos[0].valor.cad);
                 break;
+
             case esGet:
-                switch(t.elementos[1].tipo) {
+                strSimbolo = t.elementos[1].valor.cad;
+                indSimbolo = buscarNombreEnTS(strSimbolo);
+                tipoSimbolo = TOS[indSimbolo].tipo;
+
+                switch(tipoSimbolo) {
                     case string:
-                        fprintf(f, "\tgetString %s\n", resolverElemento(t.elementos[1]));
+                        fprintf(f, "\tGetString %s", resolverElemento(t.elementos[1]));
                         break;
                     case entero:
-                        fprintf(f, "\tGetInteger %d\n", resolverElemento(t.elementos[1]));
-                        break;
+                        /*fprintf(f, "\tGetInteger %d\n", resolverElemento(t.elementos[1]));
+                        break;*/
                     case real:
-                        fprintf(f, "\tGetFloat %f\n", resolverElemento(t.elementos[1]));
+                        fprintf(f, "\tGetFloat %s", resolverElemento(t.elementos[1]));
                         break;
+                    default:
+                        printf("\nError al generar Get de: %s", resolverElemento(t.elementos[1]));
                 }
                 break;
+
             case esDisplay:
-                str = (char *)malloc(100);
-                strcpy(str, (char *)resolverElemento(t.elementos[1]));
-                if(strncmp(str, "_", 1) == 0) {
-                    str ++;
-                    fprintf(f, "\tdisplayString %s\n", str);
-                    free(str);
-                } else {
-                    switch(t.elementos[1].tipo) {
-                        case string:
-                            fprintf(f, "\tdisplayString %s\n", resolverElemento(t.elementos[1]));
-                            break;
-                        case entero:
-                            fprintf(f, "\tDisplayInteger %d\n", resolverElemento(t.elementos[1]));
-                        case real:
-                            fprintf(f, "\tDisplayInteger %d\n", resolverElemento(t.elementos[1]));
-                    }
+                strSimbolo = t.elementos[1].valor.cad;
+                indSimbolo = buscarNombreEnTS(strSimbolo);
+                tipoSimbolo = TOS[indSimbolo].tipo;
+
+                switch(tipoSimbolo) {
+                    case string:
+                    case constString:
+                        fprintf(f, "\tDisplayString %s", resolverElemento(t.elementos[1]));
+                        break;
+                    case entero:
+                    case constEntero:
+                        //fprintf(f, "\tDisplayInteger %d\n", resolverElemento(t.elementos[1]));
+                    case real:
+                    case constReal:
+                        fprintf(f, "\tDisplayFloat %s", resolverElemento(t.elementos[1]));
+                        break;
+                    default:
+                        printf("\nError al generar Display de: %s", resolverElemento(t.elementos[1]));
                 }
                 break;
+
             default:
                 break;
         }

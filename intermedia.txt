@@ -105,7 +105,16 @@
 102: (JMP, [90], _)
 103: (TAG103, _, _)
 104: (DISPLAY, _sarasa, _)
-105: (GET, g, _)
-106: (DISPLAY, g, _)
+105: (DISPLAY, h, _)
+106: (GET, g, _)
+107: (DISPLAY, g, _)
+108: (DISPLAY, _1.400000, _)
+109: (DISPLAY, test_expr, _)
+110: (GET, a1, _)
+111: (DISPLAY, a1, _)
+112: (DISPLAY, _77, _)
+113: (DISPLAY, a, _)
+114: (GET, d, _)
+115: (DISPLAY, d, _)
 
 --- LISTA DE TERCETOS ---
