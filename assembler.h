@@ -32,7 +32,7 @@ void generaAssembler() {
 
 void generaCabecera(FILE* f) {
     fprintf(f, "include macros2.asm\n");
-    fprintf(f, "include number.asm\n");
+    fprintf(f, "include number.asm\n\n");
     fprintf(f, ".MODEL LARGE\n");
     fprintf(f, ".386\n");
     fprintf(f, ".STACK 200h\n");
@@ -41,9 +41,9 @@ void generaCabecera(FILE* f) {
 
 void generaCuerpo(FILE* f) {
     fprintf(f, ".CODE\n\n");
-    fprintf(f, "MOVE EAX, @DATA\n");
-    fprintf(f, "MOVE DS, EAX\n");
-    fprintf(f, "MOVE ES, EAX\n\n");
+    fprintf(f, "MOVE AX, @DATA\n");
+    fprintf(f, "MOVE DS, AX\n");
+    fprintf(f, "MOVE ES, AX\n\n");
 
     fprintf(f, ";Seccion de codigo\n");
     generaPrograma(f);

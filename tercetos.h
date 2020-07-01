@@ -294,6 +294,7 @@ indice crearTercetoDisplayCadena(const char* val) {
     char buffer[900];
     sprintf(buffer, "_%s", val);
     borrarChar(buffer, '"');
+    reemplazarChar(buffer, ' ', '_');
     return crearTerceto(crearElemStr("DISPLAY"), crearElemStr(buffer), crearElemNull(), indefinido, esDisplay);
 }
 

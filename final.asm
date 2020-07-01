@@ -1,289 +1,25 @@
 include macros2.asm
 include number.asm
+
 .MODEL LARGE
 .386
 .STACK 200h
 
 .CODE
 
-MOVE EAX, @DATA
-MOVE DS, EAX
-MOVE ES, EAX
+MOVE AX, @DATA
+MOVE DS, AX
+MOVE ES, AX
 
 ;Seccion de codigo
-	FLD a 
-	FLD b 
-	FADD 
-	FSTP @aux1
-	FLD @aux1 
-	FSTP a
-	FLD a 
-	FLD b 
-	FADD 
-	FSTP @aux3
-	FLD @aux3 
-	FSTP a
-	FLD b 
-	FLD _155 
-	FSUB 
-	FSTP @aux5
-	FLD @aux5 
-	FSTP b
-	FLD a 
-	FLD _4 
-	FMULT 
-	FSTP @aux7
-	FLD @aux7 
-	FSTP a
-	FLD b 
-	FLD _12 
-	FDIV 
-	FSTP @aux9
-	FLD @aux9 
-	FSTP b
-	FLD a 
-	FLD b 
-	FADD 
-	FSTP @aux11
-	FLD @aux11 
-	FSTP d
-	FLD e 
-	FLD f 
-	FMULT 
-	FSTP @aux13
-	FLD @aux13 
-	FSTP d
-	FLD _2 
-	FLD _5 
-	FADD 
-	FSTP @aux15
-	FLD @aux15 
-	FLD _3 
-	FMULT 
-	FSTP @aux16
-	FLD @aux16 
-	FSTP test_expr
-	FLD a 
-	FCOMP b 
-	FSTSW AX 
-	SAHF
-	JNA TAG21
-	FLD _sarasa 
-	FSTP g
-
-TAG21:
-	FLD a 
-	FCOMP b 
-	FSTSW AX 
-	SAHF
-	JNB TAG26
-	FLD d 
-	FCOMP e 
-	FSTSW AX 
-	SAHF
-	JNAE TAG28
-
-TAG26:
-	FLD _sarasa 
-	FSTP h
-
-TAG28:
-	FLD d 
-	FCOMP e 
-	FSTSW AX 
-	SAHF
-	JNE TAG34
-	FLD a 
-	FCOMP f 
-	FSTSW AX 
-	SAHF
-	JE TAG34
-	FLD _zaraza 
-	FSTP h
-
-TAG34:
-	FLD _5 
-	FLD _5 
-	FADD 
-	FSTP @aux35
-	FLD @aux35 
-	FSTP @factAux
-	FLD _1 
-	FSTP @fact
-
-TAG38:
-	FLD @factAux 
-	FCOMP _1 
-	FSTSW AX 
-	SAHF
-	JNA TAG46
-	FLD @fact 
-	FLD @factAux 
-	FMULT 
-	FSTP @aux41
-	FLD @aux41 
-	FSTP @fact
-	FLD @factAux 
-	FLD _1 
-	FSUB 
-	FSTP @aux43
-	FLD @aux43 
-	FSTP @factAux
-	JMP TAG38
-
-TAG46:
-	FLD _12 
-	FLD @fact 
-	FADD 
-	FSTP @aux47
-	FLD _15 
-	FLD @aux47 
-	FMULT 
-	FSTP @aux48
-	FLD @aux48 
-	FSTP b
-	FLD _5 
-	FSTP @factAux
-	FLD _1 
-	FSTP @fact
-
-TAG52:
-	FLD @factAux 
-	FCOMP _1 
-	FSTSW AX 
-	SAHF
-	JNA TAG60
-	FLD @fact 
-	FLD @factAux 
-	FMULT 
-	FSTP @aux55
-	FLD @aux55 
-	FSTP @fact
-	FLD @factAux 
-	FLD _1 
-	FSUB 
-	FSTP @aux57
-	FLD @aux57 
-	FSTP @factAux
-	JMP TAG52
-
-TAG60:
-	FLD @fact 
-	FSTP @combN
-	FLD _2 
-	FSTP @factAux
-	FLD _1 
-	FSTP @fact
-
-TAG64:
-	FLD @factAux 
-	FCOMP _1 
-	FSTSW AX 
-	SAHF
-	JNA TAG72
-	FLD @fact 
-	FLD @factAux 
-	FMULT 
-	FSTP @aux67
-	FLD @aux67 
-	FSTP @fact
-	FLD @factAux 
-	FLD _1 
-	FSUB 
-	FSTP @aux69
-	FLD @aux69 
-	FSTP @factAux
-	JMP TAG64
-
-TAG72:
-	FLD @fact 
-	FSTP @combK
-	FLD _5 
-	FLD _2 
-	FSUB 
-	FSTP @aux74
-	FLD @aux74 
-	FSTP @factAux
-	FLD _1 
-	FSTP @fact
-
-TAG77:
-	FLD @factAux 
-	FCOMP _1 
-	FSTSW AX 
-	SAHF
-	JNA TAG85
-	FLD @fact 
-	FLD @factAux 
-	FMULT 
-	FSTP @aux80
-	FLD @aux80 
-	FSTP @fact
-	FLD @factAux 
-	FLD _1 
-	FSUB 
-	FSTP @aux82
-	FLD @aux82 
-	FSTP @factAux
-	JMP TAG77
-
-TAG85:
-	FLD @combK 
-	FLD @fact 
-	FMULT 
-	FSTP @aux86
-	FLD @combN 
-	FLD @aux86 
-	FDIV 
-	FSTP @aux87
-	FLD @aux87 
-	FSTP a
-	FLD _0 
-	FSTP b
-
-TAG90:
-	FLD a 
-	FCOMP _2 
-	FSTSW AX 
-	SAHF
-	JNA TAG103
-
-TAG93:
-	FLD b 
-	FCOMP _3 
-	FSTSW AX 
-	SAHF
-	JNB TAG99
-	FLD b 
-	FLD _1 
-	FADD 
-	FSTP @aux96
-	FLD @aux96 
-	FSTP b
-	JMP TAG93
-
-TAG99:
-	FLD d 
-	FLD _2 
-	FMULT 
-	FSTP @aux100
-	FLD @aux100 
-	FSTP d
-	JMP TAG90
-
-TAG103:
-	displayString _sarasa
-	displayString h
-	getString g
-	displayString g
-	DisplayFloat _1.400000
-	DisplayFloat test_expr
-	GetFloat a1
-	DisplayFloat a1
-	DisplayFloat _77
-	DisplayFloat a
-	GetFloat d
-	DisplayFloat d
+	displayString _Hola_:)
+	FLD _Esta_es_una_string_de_prueba 
+	FSTP str1
+	displayString str1
+	displayString _Inserte_su_nombre
+	getString str1
+	displayString _Su_nombre_es:
+	displayString str1
 
 MOVE EAX, 4C00h
 INT 21h
@@ -292,65 +28,14 @@ INT 21h
 .DATA
 ;Tabla de simbolos
 
-a1 dd ?
-b1 dd ?
-test_expr dd ?
-variable1 db 30 dup (?),"$"
-g db 30 dup (?),"$"
-h db 30 dup (?),"$"
-p1 dd ?
-p2 dd ?
-p3 dd ?
-a dd ?
-b dd ?
-d dd ?
-e dd ?
-f dd ?
-const1 dd 9.460000
-const2 dd 0.600000
-const3 dd 6.000000
-_155 dd 155.000000
-_4 dd 4.000000
-_12 dd 12.000000
-_2 dd 2.000000
-_5 dd 5.000000
-_3 dd 3.000000
-_sarasa db "sarasa", "$", 30 dup (?)
-_zaraza db "zaraza", "$", 30 dup (?)
-_15 dd 15.000000
-@fact dd ?
-@factAux dd ?
-_1 dd 1.000000
-@comb dd ?
-@combN dd ?
-@combK dd ?
-_0 dd 0.000000
-_1.400000 dd 1.400000
-_77 dd 77.000000
-@aux1 dd ?
-@aux3 dd ?
-@aux5 dd ?
-@aux7 dd ?
-@aux9 dd ?
-@aux11 dd ?
-@aux13 dd ?
-@aux15 dd ?
-@aux16 dd ?
-@aux35 dd ?
-@aux41 dd ?
-@aux43 dd ?
-@aux47 dd ?
-@aux48 dd ?
-@aux55 dd ?
-@aux57 dd ?
-@aux67 dd ?
-@aux69 dd ?
-@aux74 dd ?
-@aux80 dd ?
-@aux82 dd ?
-@aux86 dd ?
-@aux87 dd ?
-@aux96 dd ?
-@aux100 dd ?
+str1 db 30 dup (?),"$"
+f1 dd ?
+f2 dd ?
+i1 dd ?
+i2 dd ?
+_Hola_:) db "Hola :)", "$", 30 dup (?)
+_Esta_es_una_string_de_prueba db "Esta es una string de prueba", "$", 30 dup (?)
+_Inserte_su_nombre db "Inserte su nombre", "$", 30 dup (?)
+_Su_nombre_es: db "Su nombre es:", "$", 30 dup (?)
 
 END;
