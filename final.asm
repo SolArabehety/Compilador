@@ -272,10 +272,10 @@ TAG99:
 	JMP TAG90
 
 TAG103:
-	DisplayString _sarasa
-	DisplayString h
-	GetString g
-	DisplayString g
+	displayString _sarasa
+	displayString h
+	getString g
+	displayString g
 	DisplayFloat _1.400000
 	DisplayFloat test_expr
 	GetFloat a1

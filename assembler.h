@@ -169,11 +169,9 @@ void generaPrograma (FILE* f) {
 
                 switch(tipoSimbolo) {
                     case string:
-                        fprintf(f, "\tGetString %s", resolverElemento(t.elementos[1]));
+                        fprintf(f, "\tgetString %s", resolverElemento(t.elementos[1]));
                         break;
                     case entero:
-                        /*fprintf(f, "\tGetInteger %d\n", resolverElemento(t.elementos[1]));
-                        break;*/
                     case real:
                         fprintf(f, "\tGetFloat %s", resolverElemento(t.elementos[1]));
                         break;
@@ -190,11 +188,10 @@ void generaPrograma (FILE* f) {
                 switch(tipoSimbolo) {
                     case string:
                     case constString:
-                        fprintf(f, "\tDisplayString %s", resolverElemento(t.elementos[1]));
+                        fprintf(f, "\tdisplayString %s", resolverElemento(t.elementos[1]));
                         break;
                     case entero:
                     case constEntero:
-                        //fprintf(f, "\tDisplayInteger %d\n", resolverElemento(t.elementos[1]));
                     case real:
                     case constReal:
                         fprintf(f, "\tDisplayFloat %s", resolverElemento(t.elementos[1]));
