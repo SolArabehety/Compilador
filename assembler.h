@@ -31,6 +31,7 @@ void generaAssembler() {
 }
 
 void generaCabecera(FILE* f) {
+    fprintf(f, "include macros.asm\n");
     fprintf(f, "include macros2.asm\n");
     fprintf(f, "include number.asm\n\n");
     fprintf(f, ".MODEL LARGE\n");
@@ -41,15 +42,16 @@ void generaCabecera(FILE* f) {
 
 void generaCuerpo(FILE* f) {
     fprintf(f, ".CODE\n\n");
-    fprintf(f, "MOVE AX, @DATA\n");
-    fprintf(f, "MOVE DS, AX\n");
-    fprintf(f, "MOVE ES, AX\n\n");
+    fprintf(f, "MAIN:\n\n");
+    fprintf(f, "MOV AX, @DATA\n");
+    fprintf(f, "MOV DS, AX\n");
+    fprintf(f, "MOV ES, AX\n\n");
 
     fprintf(f, ";Seccion de codigo\n");
     generaPrograma(f);
 
     fprintf(f, "\n");
-    fprintf(f, "MOVE EAX, 4C00h\n");
+    fprintf(f, "MOV AX, 4C00h\n");
     fprintf(f, "INT 21h\n\n");
     fprintf(f, "\n");
 }
@@ -62,29 +64,35 @@ void generaTOS(FILE* f) {
     for (i = 0; i< TOStop; i++)
     {
         float val;
-        /* Imprime nombre */
-        fprintf(f, "%s ", TOS[i].nombre);
         
-        /* Lo siguiente depende del tipo de símbolo */
         switch(TOS[i].tipo) {
             case string:
-                fprintf(f, "db %d dup (?),\"$\"", LIM_STR);
+                fprintf(f, "%s ", TOS[i].nombre);
+                fprintf(f, "db %d dup (?), \"$\"", LIM_STR);
                 break;
             case entero:
+                fprintf(f, "%s ", TOS[i].nombre);
                 fprintf(f, "dd ?");
                 break;
             case real:
+                fprintf(f, "%s ", TOS[i].nombre);
                 fprintf(f, "dd ?");
                 break;
             case constString:
+                /*  En el caso de const string, el nombre de la variable en assembler se genera
+                    con str + num de símbolo, esto hay que hacerlo porque al turbo assembler
+                    no le estaban gustando los nombres de la tabla. */
+                fprintf(f, "@str%d ", i);
                 fprintf(f, "db \"%s\", \"$\", %d dup (?)", TOS[i].valor, LIM_STR);
                 break;
             case constEntero:
+                fprintf(f, "%s ", TOS[i].nombre);
                 /* Hay que convertirlo a float */
                 val = atof(TOS[i].valor);
                 fprintf(f, "dd %f", val);
                 break;
             case constReal:
+                fprintf(f, "%s ", TOS[i].nombre);
                 val = atof(TOS[i].valor);
                 fprintf(f, "dd %f", val);
                 break;
@@ -93,7 +101,7 @@ void generaTOS(FILE* f) {
     }
 
     fprintf(f, "\n");
-    fprintf(f, "END;\n");
+    fprintf(f, "END MAIN\n");
 }
 
 void generaPrograma (FILE* f) {
@@ -109,8 +117,20 @@ void generaPrograma (FILE* f) {
         
         switch(t.tipoTerc) {
             case esAsignacion:
-                fprintf(f, "\tFLD %s \n\tFSTP %s",
-                    resolverElemento(t.elementos[2]), resolverElemento(t.elementos[1]));
+                strSimbolo = t.elementos[1].valor.cad;
+                indSimbolo = buscarNombreEnTS(strSimbolo);
+                tipoSimbolo = TOS[indSimbolo].tipo;
+
+                if(tipoSimbolo == string) {
+                    /*  Si la asignación es a una variable de tipo string
+                        la asignación se realiza de una forma especial */
+                    fprintf(f, "\tMOV  SI, OFFSET @str%d \n", buscarNombreEnTS(t.elementos[2].valor.cad));
+                    fprintf(f, "\tMOV  DI, OFFSET %s \n", resolverElemento(t.elementos[1]));
+                    fprintf(f, "\tSTRCPY");
+                } else {
+                    fprintf(f, "\tFLD %s \n\tFSTP %s",
+                        resolverElemento(t.elementos[2]), resolverElemento(t.elementos[1]));
+                }
                 /* No genera etiqueta aux la asignacion */
                 break;
 
@@ -187,14 +207,19 @@ void generaPrograma (FILE* f) {
 
                 switch(tipoSimbolo) {
                     case string:
+                        fprintf(f, "\tdisplayString %s\n", resolverElemento(t.elementos[1]));
+                        fprintf(f, "\tnewLine");
+                        break;
                     case constString:
-                        fprintf(f, "\tdisplayString %s", resolverElemento(t.elementos[1]));
+                        fprintf(f, "\tdisplayString @str%d\n", indSimbolo);
+                        fprintf(f, "\tnewLine");
                         break;
                     case entero:
                     case constEntero:
                     case real:
                     case constReal:
-                        fprintf(f, "\tDisplayFloat %s", resolverElemento(t.elementos[1]));
+                        fprintf(f, "\tDisplayFloat %s\n", resolverElemento(t.elementos[1]));
+                        fprintf(f, "\tnewLine");
                         break;
                     default:
                         printf("\nError al generar Display de: %s", resolverElemento(t.elementos[1]));

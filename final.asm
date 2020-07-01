@@ -1,3 +1,4 @@
+include macros.asm
 include macros2.asm
 include number.asm
 
@@ -7,35 +8,43 @@ include number.asm
 
 .CODE
 
-MOVE AX, @DATA
-MOVE DS, AX
-MOVE ES, AX
+MAIN:
+
+MOV AX, @DATA
+MOV DS, AX
+MOV ES, AX
 
 ;Seccion de codigo
-	displayString _Hola_:)
-	FLD _Esta_es_una_string_de_prueba 
-	FSTP str1
-	displayString str1
-	displayString _Inserte_su_nombre
-	getString str1
-	displayString _Su_nombre_es:
-	displayString str1
+    displayString @str5
+    newLine
+    MOV  SI, OFFSET @str6 
+    MOV  DI, OFFSET str1 
+    STRCPY
+    displayString str1
+    newLine
+    displayString @str7
+    newLine
+    getString str1
+    displayString @str8
+    newLine
+    displayString str1
+    newLine
 
-MOVE EAX, 4C00h
+MOV AX, 4C00h
 INT 21h
 
 
 .DATA
 ;Tabla de simbolos
 
-str1 db 30 dup (?),"$"
+str1 db 30 dup (?), "$"
 f1 dd ?
 f2 dd ?
 i1 dd ?
 i2 dd ?
-_Hola_:) db "Hola :)", "$", 30 dup (?)
-_Esta_es_una_string_de_prueba db "Esta es una string de prueba", "$", 30 dup (?)
-_Inserte_su_nombre db "Inserte su nombre", "$", 30 dup (?)
-_Su_nombre_es: db "Su nombre es:", "$", 30 dup (?)
+@str5 db "Hola :)", "$", 30 dup (?)
+@str6 db "Esta es una string de prueba", "$", 30 dup (?)
+@str7 db "Inserte su nombre", "$", 30 dup (?)
+@str8 db "Su nombre es:", "$", 30 dup (?)
 
-END;
+END MAIN
