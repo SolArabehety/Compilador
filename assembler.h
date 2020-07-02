@@ -43,15 +43,15 @@ void generaCabecera(FILE* f) {
 void generaCuerpo(FILE* f) {
     fprintf(f, ".CODE\n\n");
     fprintf(f, "MAIN:\n\n");
-    fprintf(f, "MOV AX, @DATA\n");
-    fprintf(f, "MOV DS, AX\n");
-    fprintf(f, "MOV ES, AX\n\n");
+    fprintf(f, "MOV EAX, @DATA\n");
+    fprintf(f, "MOV DS, EAX\n");
+    fprintf(f, "MOV ES, EAX\n\n");
 
     fprintf(f, ";Seccion de codigo\n");
     generaPrograma(f);
 
     fprintf(f, "\n");
-    fprintf(f, "MOV AX, 4C00h\n");
+    fprintf(f, "MOV EAX, 4C00h\n");
     fprintf(f, "INT 21h\n\n");
     fprintf(f, "\n");
 }
@@ -79,20 +79,20 @@ void generaTOS(FILE* f) {
                 fprintf(f, "dd ?");
                 break;
             case constString:
-                /*  En el caso de const string, el nombre de la variable en assembler se genera
+                /*  En el caso de las constantes, el nombre de la variable en assembler se genera
                     con str + num de símbolo, esto hay que hacerlo porque al turbo assembler
                     no le estaban gustando los nombres de la tabla. */
                 fprintf(f, "@str%d ", i);
                 fprintf(f, "db \"%s\", \"$\", %d dup (?)", TOS[i].valor, LIM_STR);
                 break;
             case constEntero:
-                fprintf(f, "%s ", TOS[i].nombre);
+                fprintf(f, "@int%d ", i);
                 /* Hay que convertirlo a float */
                 val = atof(TOS[i].valor);
                 fprintf(f, "dd %f", val);
                 break;
             case constReal:
-                fprintf(f, "%s ", TOS[i].nombre);
+                fprintf(f, "@flt%d ", i);
                 val = atof(TOS[i].valor);
                 fprintf(f, "dd %f", val);
                 break;
@@ -192,6 +192,10 @@ void generaPrograma (FILE* f) {
                         fprintf(f, "\tgetString %s", resolverElemento(t.elementos[1]));
                         break;
                     case entero:
+                        /* Los enteros se van a tratar como reales
+                        fprintf(f, "\tGetInteger %s", resolverElemento(t.elementos[1]));
+                        break;
+                        */
                     case real:
                         fprintf(f, "\tGetFloat %s", resolverElemento(t.elementos[1]));
                         break;
@@ -207,18 +211,20 @@ void generaPrograma (FILE* f) {
 
                 switch(tipoSimbolo) {
                     case string:
-                        fprintf(f, "\tdisplayString %s\n", resolverElemento(t.elementos[1]));
-                        fprintf(f, "\tnewLine");
-                        break;
                     case constString:
-                        fprintf(f, "\tdisplayString @str%d\n", indSimbolo);
+                        fprintf(f, "\tdisplayString %s\n", resolverElemento(t.elementos[1]));
                         fprintf(f, "\tnewLine");
                         break;
                     case entero:
                     case constEntero:
+                        /* Los enteros se van a tratar como reales
+                        fprintf(f, "\tDisplayInteger %s\n", resolverElemento(t.elementos[1]));
+                        fprintf(f, "\tnewLine");
+                        break;
+                        */
                     case real:
                     case constReal:
-                        fprintf(f, "\tDisplayFloat %s\n", resolverElemento(t.elementos[1]));
+                        fprintf(f, "\tDisplayFloat %s, 2\n", resolverElemento(t.elementos[1]));
                         fprintf(f, "\tnewLine");
                         break;
                     default:
@@ -243,8 +249,31 @@ const char* resolverElemento (elemento e) {
 
     if (e.tipo == entero) {
         sprintf(buffer, "@aux%d", e.valor.ind + 1);
-    } else if (e.tipo == string) { /* Es un símbolo */
-        sprintf(buffer, "%s", e.valor.cad);
+    } else if (e.tipo == string) {
+        char* strSimbolo = e.valor.cad;
+        int indSimbolo = buscarNombreEnTS(strSimbolo);
+        tipoValor tipoSimbolo = TOS[indSimbolo].tipo;
+
+        switch (tipoSimbolo) {
+            case string:
+            case entero:
+            case real:
+                /* Si es una variable, se devuelve tal como está */
+                sprintf(buffer, "%s", e.valor.cad);
+                break;
+            case constString:
+                sprintf(buffer, "@str%d", indSimbolo);
+                break;
+            case constEntero:
+                sprintf(buffer, "@int%d", indSimbolo);
+                break;
+            case constReal:
+                sprintf(buffer, "@flt%d", indSimbolo);
+                break;
+            default:
+                printf("\nError al resolver elemento de tipo string: %s", strSimbolo);
+                sprintf(buffer, "NULL");
+        }
     } else {
         /*  Ojo que esto no debería pasar, si ocurre es una señal
             de que hay algo mal en la generación de assembler. */
