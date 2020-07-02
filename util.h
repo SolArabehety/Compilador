@@ -44,6 +44,7 @@ typedef struct indice {
 } indice;
 
 void borrarChar(char*, char);
+int reemplazarChar(char*, char, char);
 
 /* Pila para almacenar índices, necesario para CGI */
 typedef struct nodoPila {
@@ -70,6 +71,18 @@ void borrarChar(char* s, char c) {
     }
 
     s[j] = '\0'; 
+}
+
+int reemplazarChar(char* str, char c1, char c2) {
+    char* ix = str;
+    int n = 0;
+
+    while((ix = strchr(ix, c1)) != NULL) {
+        *ix++ = c2;
+        n++;
+    }
+
+    return n;
 }
 
 void inicializarPila(pila* p) {

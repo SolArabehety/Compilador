@@ -1,0 +1,31 @@
+DEFVAR
+    STRING: str1
+    FLOAT : f1; f2
+    INT: i1; i2
+ENDDEF
+
+DISPLAY "Hola :)"
+
+str1 := "Esta es una string de prueba"
+DISPLAY str1
+
+DISPLAY "Inserte su nombre"
+GET str1
+DISPLAY "Su nombre es:"
+DISPLAY str1
+
+DISPLAY "Float de ejemplo:"
+f1 := 1.4
+DISPLAY f1
+DISPLAY "Ingrese un float:"
+GET f2
+DISPLAY "Su float es:"
+DISPLAY f2
+
+DISPLAY "Int de ejemplo:"
+i1 := 7
+DISPLAY i1
+DISPLAY "Ingrese un int:"
+GET i2
+DISPLAY "Su int es:"
+DISPLAY i2

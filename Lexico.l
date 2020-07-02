@@ -77,27 +77,39 @@ ENTERO              {DIGITO}+
 "FACT"          {return FACT;}
 "CONST"         {return CONST;}
 
-{ID}            {   if(validarLongitud(ID) == 0) 
-                        mostrarError(yytext);
+{ID}            {   if(validarLongitud(ID) == 0) {
+                        char buffer[900];
+                        sprintf(buffer, "Este ID es demasiado largo: %s", yytext);
+                        mostrarError(buffer);
+                    }
                     yylval.str_val = strdup(yytext);
                     return ID;
                 }
 
-{ENTERO}        {   if(validarLongitud(ENTERO) == 0) 
-                        mostrarError(yytext);
+{ENTERO}        {   if(validarLongitud(ENTERO) == 0) {
+                        char buffer[900];
+                        sprintf(buffer, "Este entero es demasiado grande: %s", yytext);
+                        mostrarError(buffer);
+                    }
                     sscanf(yytext,"%d",&(yylval.int_val));
                     return ENTERO;
                 }
                 
-{CADENA}        {  if(validarLongitud(CADENA) == 0) 
-                        mostrarError(yytext);
+{CADENA}        {  if(validarLongitud(CADENA) == 0) {
+                        char buffer[900];
+                        sprintf(buffer, "Esta cadena es demasiado larga: %s", yytext);
+                        mostrarError(buffer);
+                    }
                     sprintf(auxS,"%s", yytext);
                     yylval.str_val=auxS; 
                     return CADENA;
                 }
 
-{REAL}          {   if(validarLongitud(REAL) == 0) 
-                        mostrarError(yytext);
+{REAL}          {   if(validarLongitud(REAL) == 0) {
+                        char buffer[900];
+                        sprintf(buffer, "Este real es demasiado grande: %s", yytext);
+                        mostrarError(buffer);
+                    }
                     sscanf(yytext,"%lf",&(yylval.float_val));
                     return REAL;
                 }

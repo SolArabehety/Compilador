@@ -218,6 +218,8 @@ int insertar_STRING_en_Tabla(const char* str)
     if(strcmp(nombreToken, "") == 0) {
         strcpy(nombreSimbolo, "_");
         strcat(nombreSimbolo, valor);
+        // Reemplazar espacios por _
+        reemplazarChar(nombreSimbolo, ' ', '_');
     } else {
         strcpy(nombreSimbolo, nombreToken);
         strcpy(nombreToken, "");

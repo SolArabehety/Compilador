@@ -36,5 +36,7 @@ _1                                 | CONST_INT              | 1                 
 @combN                             | INTEGER                |                                   |                      
 @combK                             | INTEGER                |                                   |                      
 _0                                 | CONST_INT              | 0                                 |                      
+_1.400000                          | CONST_FLOAT            | 1.400000                          |                      
+_77                                | CONST_INT              | 77                                |                      
 
 --------------------------------------------- TABLA DE  SIMBOLOS ---------------------------------------------

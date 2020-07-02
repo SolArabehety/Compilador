@@ -31,8 +31,9 @@ void generaAssembler() {
 }
 
 void generaCabecera(FILE* f) {
+    fprintf(f, "include macros.asm\n");
     fprintf(f, "include macros2.asm\n");
-    fprintf(f, "include number.asm\n");
+    fprintf(f, "include number.asm\n\n");
     fprintf(f, ".MODEL LARGE\n");
     fprintf(f, ".386\n");
     fprintf(f, ".STACK 200h\n");
@@ -41,14 +42,16 @@ void generaCabecera(FILE* f) {
 
 void generaCuerpo(FILE* f) {
     fprintf(f, ".CODE\n\n");
-    fprintf(f, "MOVE EAX, @DATA\n");
-    fprintf(f, "MOVE DS, EAX\n");
-    fprintf(f, "MOVE ES, EAX\n\n");
+    fprintf(f, "MAIN:\n\n");
+    fprintf(f, "MOV EAX, @DATA\n");
+    fprintf(f, "MOV DS, EAX\n");
+    fprintf(f, "MOV ES, EAX\n\n");
 
     fprintf(f, ";Seccion de codigo\n");
     generaPrograma(f);
 
-    fprintf(f, "MOVE EAX, 4C00h\n");
+    fprintf(f, "\n");
+    fprintf(f, "MOV EAX, 4C00h\n");
     fprintf(f, "INT 21h\n\n");
     fprintf(f, "\n");
 }
@@ -61,29 +64,35 @@ void generaTOS(FILE* f) {
     for (i = 0; i< TOStop; i++)
     {
         float val;
-        /* Imprime nombre */
-        fprintf(f, "%s ", TOS[i].nombre);
         
-        /* Lo siguiente depende del tipo de símbolo */
         switch(TOS[i].tipo) {
             case string:
-                fprintf(f, "db %d dup (?),\"$\"", LIM_STR);
+                fprintf(f, "%s ", TOS[i].nombre);
+                fprintf(f, "db %d dup (?), \"$\"", LIM_STR);
                 break;
             case entero:
+                fprintf(f, "%s ", TOS[i].nombre);
                 fprintf(f, "dd ?");
                 break;
             case real:
+                fprintf(f, "%s ", TOS[i].nombre);
                 fprintf(f, "dd ?");
                 break;
             case constString:
+                /*  En el caso de las constantes, el nombre de la variable en assembler se genera
+                    con str + num de símbolo, esto hay que hacerlo porque al turbo assembler
+                    no le estaban gustando los nombres de la tabla. */
+                fprintf(f, "@str%d ", i);
                 fprintf(f, "db \"%s\", \"$\", %d dup (?)", TOS[i].valor, LIM_STR);
                 break;
             case constEntero:
+                fprintf(f, "@int%d ", i);
                 /* Hay que convertirlo a float */
                 val = atof(TOS[i].valor);
                 fprintf(f, "dd %f", val);
                 break;
             case constReal:
+                fprintf(f, "@flt%d ", i);
                 val = atof(TOS[i].valor);
                 fprintf(f, "dd %f", val);
                 break;
@@ -92,7 +101,7 @@ void generaTOS(FILE* f) {
     }
 
     fprintf(f, "\n");
-    fprintf(f, "END;\n");
+    fprintf(f, "END MAIN\n");
 }
 
 void generaPrograma (FILE* f) {
@@ -101,46 +110,63 @@ void generaPrograma (FILE* f) {
     for (i = 0; i < indTercetos; i++) {
         char buffer[100];
         terceto t = tercetos[i];
-        char* salto;
-        int indEtiqueta;
-        char* etiqueta;
-        char *str;
+        char* salto, *etiqueta, *str, *strSimbolo;
+        int indEtiqueta, indSimbolo;
+        tipoValor tipoSimbolo;
         if (DEBUG) fprintf(f, "\n;Terceto %d\n", i + 1);
         
         switch(t.tipoTerc) {
             case esAsignacion:
-                fprintf(f, "\tFLD %s \n\tFSTP %s",
-                    resolverElemento(t.elementos[2]), resolverElemento(t.elementos[1]));
+                strSimbolo = t.elementos[1].valor.cad;
+                indSimbolo = buscarNombreEnTS(strSimbolo);
+                tipoSimbolo = TOS[indSimbolo].tipo;
+
+                if(tipoSimbolo == string) {
+                    /*  Si la asignación es a una variable de tipo string
+                        la asignación se realiza de una forma especial */
+                    fprintf(f, "\tMOV  SI, OFFSET @str%d \n", buscarNombreEnTS(t.elementos[2].valor.cad));
+                    fprintf(f, "\tMOV  DI, OFFSET %s \n", resolverElemento(t.elementos[1]));
+                    fprintf(f, "\tSTRCPY");
+                } else {
+                    fprintf(f, "\tFLD %s \n\tFSTP %s",
+                        resolverElemento(t.elementos[2]), resolverElemento(t.elementos[1]));
+                }
                 /* No genera etiqueta aux la asignacion */
                 break;
+
             case esSuma:
                 sprintf(buffer, "@aux%d", i + 1);
                 fprintf(f, "\tFLD %s \n\tFLD %s \n\tFADD \n\tFSTP %s",
                     resolverElemento(t.elementos[1]), resolverElemento(t.elementos[2]), buffer);
                 cargarVariable(buffer, real);
                 break;
+
             case esResta:
                 sprintf(buffer, "@aux%d", i + 1);
                 fprintf(f, "\tFLD %s \n\tFLD %s \n\tFSUB \n\tFSTP %s",
                     resolverElemento(t.elementos[1]), resolverElemento(t.elementos[2]), buffer);
                 cargarVariable(buffer, real);
                 break;
+
             case esMultiplicacion:
                 sprintf(buffer, "@aux%d", i + 1);
-                fprintf(f, "\tFLD %s \n\tFLD %s \n\tFMULT \n\tFSTP %s",
+                fprintf(f, "\tFLD %s \n\tFLD %s \n\tFMUL \n\tFSTP %s",
                     resolverElemento(t.elementos[1]), resolverElemento(t.elementos[2]), buffer);
                 cargarVariable(buffer, real);
                 break;
+
             case esDivision:
                 sprintf(buffer, "@aux%d", i + 1);
                 fprintf(f, "\tFLD %s \n\tFLD %s \n\tFDIV \n\tFSTP %s",
                     resolverElemento(t.elementos[1]), resolverElemento(t.elementos[2]), buffer);
                 cargarVariable(buffer, real);
                 break;
+
             case esComparacion:
                 fprintf(f, "\tFLD %s \n\tFCOMP %s \n\tFSTSW AX \n\tSAHF",
                     resolverElemento(t.elementos[1]), resolverElemento(t.elementos[2]));
                 break;
+
             case esSalto:
                 /*  Acá no hay que usar resolverElemento porque nos devolvería un aux en lugar
                     de la etiqueta. Hay que generarla a mano */
@@ -149,43 +175,63 @@ void generaPrograma (FILE* f) {
                 etiqueta = tercetos[indEtiqueta].elementos[0].valor.cad;
                 fprintf(f, "\t%s %s", salto, etiqueta);
                 break;
+
             case esEtiqueta:
                 /*  Simplemente hay que poner el nombre del tag (el primer elemento del terceto)
                     en forma de etiqueta */
                 fprintf(f, "\n%s:", t.elementos[0].valor.cad);
                 break;
+
             case esGet:
-                switch(t.elementos[1].tipo) {
+                strSimbolo = t.elementos[1].valor.cad;
+                indSimbolo = buscarNombreEnTS(strSimbolo);
+                tipoSimbolo = TOS[indSimbolo].tipo;
+
+                switch(tipoSimbolo) {
                     case string:
-                        fprintf(f, "\tgetString %s\n", resolverElemento(t.elementos[1]));
+                        fprintf(f, "\tgetString %s", resolverElemento(t.elementos[1]));
                         break;
                     case entero:
-                        fprintf(f, "\tGetInteger %d\n", resolverElemento(t.elementos[1]));
+                        /* Los enteros se van a tratar como reales
+                        fprintf(f, "\tGetInteger %s", resolverElemento(t.elementos[1]));
                         break;
+                        */
                     case real:
-                        fprintf(f, "\tGetFloat %f\n", resolverElemento(t.elementos[1]));
+                        fprintf(f, "\tGetFloat %s", resolverElemento(t.elementos[1]));
                         break;
+                    default:
+                        printf("\nError al generar Get de: %s", resolverElemento(t.elementos[1]));
                 }
                 break;
+
             case esDisplay:
-                str = (char *)malloc(100);
-                strcpy(str, (char *)resolverElemento(t.elementos[1]));
-                if(strncmp(str, "_", 1) == 0) {
-                    str ++;
-                    fprintf(f, "\tdisplayString %s\n", str);
-                    free(str);
-                } else {
-                    switch(t.elementos[1].tipo) {
-                        case string:
-                            fprintf(f, "\tdisplayString %s\n", resolverElemento(t.elementos[1]));
-                            break;
-                        case entero:
-                            fprintf(f, "\tDisplayInteger %d\n", resolverElemento(t.elementos[1]));
-                        case real:
-                            fprintf(f, "\tDisplayInteger %d\n", resolverElemento(t.elementos[1]));
-                    }
+                strSimbolo = t.elementos[1].valor.cad;
+                indSimbolo = buscarNombreEnTS(strSimbolo);
+                tipoSimbolo = TOS[indSimbolo].tipo;
+
+                switch(tipoSimbolo) {
+                    case string:
+                    case constString:
+                        fprintf(f, "\tdisplayString %s\n", resolverElemento(t.elementos[1]));
+                        fprintf(f, "\tnewLine");
+                        break;
+                    case entero:
+                    case constEntero:
+                        /* Los enteros se van a tratar como reales
+                        fprintf(f, "\tDisplayInteger %s\n", resolverElemento(t.elementos[1]));
+                        fprintf(f, "\tnewLine");
+                        break;
+                        */
+                    case real:
+                    case constReal:
+                        fprintf(f, "\tDisplayFloat %s, 2\n", resolverElemento(t.elementos[1]));
+                        fprintf(f, "\tnewLine");
+                        break;
+                    default:
+                        printf("\nError al generar Display de: %s", resolverElemento(t.elementos[1]));
                 }
                 break;
+
             default:
                 break;
         }
@@ -203,8 +249,31 @@ const char* resolverElemento (elemento e) {
 
     if (e.tipo == entero) {
         sprintf(buffer, "@aux%d", e.valor.ind + 1);
-    } else if (e.tipo == string) { /* Es un símbolo */
-        sprintf(buffer, "%s", e.valor.cad);
+    } else if (e.tipo == string) {
+        char* strSimbolo = e.valor.cad;
+        int indSimbolo = buscarNombreEnTS(strSimbolo);
+        tipoValor tipoSimbolo = TOS[indSimbolo].tipo;
+
+        switch (tipoSimbolo) {
+            case string:
+            case entero:
+            case real:
+                /* Si es una variable, se devuelve tal como está */
+                sprintf(buffer, "%s", e.valor.cad);
+                break;
+            case constString:
+                sprintf(buffer, "@str%d", indSimbolo);
+                break;
+            case constEntero:
+                sprintf(buffer, "@int%d", indSimbolo);
+                break;
+            case constReal:
+                sprintf(buffer, "@flt%d", indSimbolo);
+                break;
+            default:
+                printf("\nError al resolver elemento de tipo string: %s", strSimbolo);
+                sprintf(buffer, "NULL");
+        }
     } else {
         /*  Ojo que esto no debería pasar, si ocurre es una señal
             de que hay algo mal en la generación de assembler. */
