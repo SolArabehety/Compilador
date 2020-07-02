@@ -150,7 +150,7 @@ void generaPrograma (FILE* f) {
 
             case esMultiplicacion:
                 sprintf(buffer, "@aux%d", i + 1);
-                fprintf(f, "\tFLD %s \n\tFLD %s \n\tFMULT \n\tFSTP %s",
+                fprintf(f, "\tFLD %s \n\tFLD %s \n\tFMUL \n\tFSTP %s",
                     resolverElemento(t.elementos[1]), resolverElemento(t.elementos[2]), buffer);
                 cargarVariable(buffer, real);
                 break;

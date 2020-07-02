@@ -3,22 +3,40 @@
 
 Nombre:                              Tipo:                    Valor:                              Longitud:            
 ______________________________________________________________________________________________________________
-str1                               | STRING                 |                                   |                      
-f1                                 | FLOAT                  |                                   |                      
-f2                                 | FLOAT                  |                                   |                      
-i1                                 | INTEGER                |                                   |                      
-i2                                 | INTEGER                |                                   |                      
-_Hola_:)                           | CONST_STRING           | Hola :)                           | 7                    
-_Esta_es_una_string_de_prueba      | CONST_STRING           | Esta es una string de prueba      | 28                   
-_Inserte_su_nombre                 | CONST_STRING           | Inserte su nombre                 | 17                   
-_Su_nombre_es:                     | CONST_STRING           | Su nombre es:                     | 13                   
-_Float_de_ejemplo:                 | CONST_STRING           | Float de ejemplo:                 | 17                   
+a1                                 | FLOAT                  |                                   |                      
+b1                                 | FLOAT                  |                                   |                      
+test_expr                          | FLOAT                  |                                   |                      
+variable1                          | STRING                 |                                   |                      
+g                                  | STRING                 |                                   |                      
+h                                  | STRING                 |                                   |                      
+p1                                 | FLOAT                  |                                   |                      
+p2                                 | FLOAT                  |                                   |                      
+p3                                 | FLOAT                  |                                   |                      
+a                                  | INTEGER                |                                   |                      
+b                                  | INTEGER                |                                   |                      
+d                                  | INTEGER                |                                   |                      
+e                                  | INTEGER                |                                   |                      
+f                                  | INTEGER                |                                   |                      
+const1                             | CONST_FLOAT            | 9.460000                          |                      
+const2                             | CONST_FLOAT            | 0.600000                          |                      
+const3                             | CONST_FLOAT            | 6.000000                          |                      
+_155                               | CONST_INT              | 155                               |                      
+_4                                 | CONST_INT              | 4                                 |                      
+_12                                | CONST_INT              | 12                                |                      
+_2                                 | CONST_INT              | 2                                 |                      
+_5                                 | CONST_INT              | 5                                 |                      
+_3                                 | CONST_INT              | 3                                 |                      
+_sarasa                            | CONST_STRING           | sarasa                            | 6                    
+_zaraza                            | CONST_STRING           | zaraza                            | 6                    
+_15                                | CONST_INT              | 15                                |                      
+@fact                              | INTEGER                |                                   |                      
+@factAux                           | INTEGER                |                                   |                      
+_1                                 | CONST_INT              | 1                                 |                      
+@comb                              | INTEGER                |                                   |                      
+@combN                             | INTEGER                |                                   |                      
+@combK                             | INTEGER                |                                   |                      
+_0                                 | CONST_INT              | 0                                 |                      
 _1.400000                          | CONST_FLOAT            | 1.400000                          |                      
-_Ingrese_un_float:                 | CONST_STRING           | Ingrese un float:                 | 17                   
-_Su_float_es:                      | CONST_STRING           | Su float es:                      | 12                   
-_Int_de_ejemplo:                   | CONST_STRING           | Int de ejemplo:                   | 15                   
-_7                                 | CONST_INT              | 7                                 |                      
-_Ingrese_un_int:                   | CONST_STRING           | Ingrese un int:                   | 15                   
-_Su_int_es:                        | CONST_STRING           | Su int es:                        | 10                   
+_77                                | CONST_INT              | 77                                |                      
 
 --------------------------------------------- TABLA DE  SIMBOLOS ---------------------------------------------

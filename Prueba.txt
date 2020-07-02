@@ -48,7 +48,7 @@ THEN
 		THEN
 		b := b+1
 		ENDWHILE
-
+a -= 1
 d := d * 2
 ENDWHILE
 
